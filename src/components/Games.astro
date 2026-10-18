@@ -1,0 +1,25 @@
+---
+import {href,type World} from '../lib/data';
+import Detective from './games/Detective.astro';
+import HorrorScares from './HorrorScares.astro';
+const {world}=Astro.props as {world:World};
+---
+{world==='iznanka'&&<div class="game-shell maze-game" data-game="maze">
+ <div class="tv-cabinet">
+  <img class="tv-photograph" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>
+  <div class="tv-bezel"><div class="maze-tv-screen">
+   <div class="game-toolbar"><span class="eyebrow">ЭТАП <b data-stage>01 / 03</b></span><button class="text-link" data-restart>Сброс</button></div>
+   <canvas width="1000" height="460" tabindex="0" aria-label="Лабиринт. Стрелки или WASD для движения. Можно вести квадрат указателем.">Игра требует поддержки Canvas.</canvas>
+   <div class="tv-glass" aria-hidden="true"></div>
+   <HorrorScares/>
+  </div></div>
+  <img class="tv-surface" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>
+
+ </div>
+ <div class="game-status-line"><span class="status-dot" aria-hidden="true"></span><span data-status role="status" aria-live="polite">Доведите сигнал до выхода</span></div>
+ <div class="game-under"><p>Стрелки / WASD или ведите квадрат пальцем.<br/>Стена вернёт к последней контрольной точке.</p><button class="button" data-start>Начать испытание</button></div>
+ <div class="touch-controls" aria-label="Управление лабиринтом"><button data-key="ArrowLeft" aria-label="Влево">←</button><button data-key="ArrowUp" aria-label="Вверх">↑</button><button data-key="ArrowDown" aria-label="Вниз">↓</button><button data-key="ArrowRight" aria-label="Вправо">→</button></div>
+ <div class="game-result" hidden><span class="eyebrow">СВЯЗЬ ВОССТАНОВЛЕНА</span><h3>На той стороне<br/>вас услышали.</h3><p data-result-copy>Сигнал прошёл все три участка. Теперь можно выбрать квест.</p><a class="button" href={href('iznanka/quests/ne-otvechay/')}>Квест «Не отвечай»</a><button class="text-link" data-replay>Пройти ещё раз</button></div>
+</div>}
+{world==='arhiv'&&<Detective/>}
+{world==='ostrov'&&<div class="game-shell parkour-game" data-game="parkour"><div class="game-toolbar"><span class="eyebrow">ЗВЁЗДЫ <b data-stars>0 / 3</b></span><span data-status role="status" aria-live="polite">Тропа к древним воротам</span><button class="text-link" data-restart>Сначала ↺</button></div><canvas width="1000" height="460" tabindex="0" aria-label="Платформер. Стрелки или A и D — движение, пробел или стрелка вверх — прыжок.">Игра требует поддержки Canvas.</canvas><div class="game-under"><p>← → / A D — движение<br/>Пробел / ↑ — прыжок. Соберите 3 звезды.</p><button class="button" data-start>Начать разведку →</button></div><div class="touch-controls parkour-controls" aria-label="Управление платформером"><button data-key="ArrowLeft" aria-label="Влево">←</button><button data-key="ArrowRight" aria-label="Вправо">→</button><button data-key="Space" aria-label="Прыжок">Прыжок ↑</button></div><div class="game-result" hidden><span class="eyebrow">ВСЕ ЗВЁЗДЫ НА МЕСТЕ</span><h3>Ворота открыты!</h3><p data-result-copy>Ваша команда готова к открытиям.</p><a class="button" href={href('ostrov/quests/kamennyy-labirint/')}>В Каменный лабиринт ↗</a><button class="text-link" data-replay>Сыграть ещё ↺</button></div></div>}

@@ -1,0 +1,102 @@
+/* Shared typography and navigation. World-specific sets stay independent. */
+.site-header .brand>span{font-size:29px;font-weight:500;letter-spacing:.16em}.site-header .brand-sub{font-size:10px;letter-spacing:.12em;margin-top:9px}.desktop-nav{font-size:14px;font-weight:400;gap:30px}.header-tools .sound-toggle{font-size:12px}.header-tools .place{font-size:11px}.site-footer{border:0}.footer-top .brand>span{font-weight:400;letter-spacing:.15em}.footer-top p{font-size:18px}.footer-bottom{font-size:11px;border:0}.footer-bottom nav{font-size:12px}.back-top,.text-link{font-size:14px}.button{font-size:15px;font-weight:500;padding:17px 26px;min-height:58px}.preferences .check,.preferences p{font-size:15px}.preferences .eyebrow{display:none}.section-index,.world-intro-number,.catalog-foot>span,.world-hero-bottom>.eyebrow,.world-gift>.eyebrow{display:none}.catalog-heading>p{font-size:16px;max-width:320px}.museum-label p,.quest-caption p,.island-label p{font-size:14px}.catalog-heading{padding-top:85px}.world-hero-cta>p{font-size:17px;max-width:350px}.world-hero-top .eyebrow{font-size:13px}.experience-copy>p,.faq p{font-size:16px}.faq{font-size:17px}.world-gift .text-link{font-size:17px}.world-gift h2{font-weight:400}.experience-facts dd{font-size:13px}.media-caption{font-size:11px}.world-hero-bottom>a{font-size:14px}
+/* The sides belong to each world; they never cover its interactive surfaces. */
+body[data-world=arhiv]:before,body[data-world=arhiv]:after,body[data-world=ostrov]:before,body[data-world=ostrov]:after,body[data-cinema=horror]:before,body[data-cinema=horror]:after{content:'';position:fixed;top:0;bottom:0;width:12px;z-index:65;pointer-events:none}
+body[data-world=arhiv]:before{left:0;background:linear-gradient(90deg,#332c22,#86755b 35%,#4d4433 65%,#252821);box-shadow:3px 0 15px #1115}body[data-world=arhiv]:after{right:0;background:linear-gradient(90deg,#252821,#86755b 65%,#332c22);box-shadow:-3px 0 15px #1115}
+body[data-world=ostrov]:before{left:0;background:repeating-linear-gradient(25deg,#7f754c 0 3px,#bbae7e 4px 6px,#4e5d45 7px 9px)}body[data-world=ostrov]:after{right:0;background:repeating-linear-gradient(-25deg,#7f754c 0 3px,#bbae7e 4px 6px,#4e5d45 7px 9px)}
+body[data-cinema=horror]:before{left:0;background:linear-gradient(90deg,#060707,#3e3a33 35%,#141514 60%,#070808);box-shadow:3px 0 14px #000}body[data-cinema=horror]:after{right:0;background:linear-gradient(90deg,#070808,#443931 65%,#060707);box-shadow:-3px 0 14px #000}
+/* Corridor always has a visible poster beneath the decoded video. */
+body[data-cinema=horror] .film-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(1.1)}
+body[data-cinema=horror] .horror-film>video{filter:contrast(1.06) brightness(1.1);opacity:0;transition:opacity .7s}
+body[data-cinema=horror] .horror-film.is-playing>video{opacity:1}
+body[data-cinema=horror] .film-vignette{background:linear-gradient(0deg,#040505aa,transparent 30%);box-shadow:inset 0 0 6vw #0004}
+body[data-cinema=horror] .film-tools{opacity:.8;font:14px var(--sans)}
+body[data-cinema=horror] .horror-entry-veil{display:none}
+body[data-cinema=horror] .horror-door-sequence{height:230svh;z-index:1}
+body[data-cinema=horror] .horror-door-sticky{opacity:1}
+body[data-cinema=horror] .door-room-preview{transform:none;filter:brightness(.8)}
+body[data-cinema=horror] .door-room-preview img{width:100%;height:auto;min-height:100%;object-fit:cover;object-position:top;left:0}
+html body[data-cinema=horror] .quests-iznanka{margin-top:0;z-index:2;scroll-margin-top:70px}
+body[data-cinema=horror] .crt-set{filter:grayscale(.25) sepia(.15) brightness(.8) contrast(1.07)}
+body[data-cinema=horror] .crt-viewport{overflow:hidden;max-height:none;overscroll-behavior:auto}
+body[data-cinema=horror] .crt-room-toolbar{top:45px;padding-top:20px}
+body[data-cinema=horror] .crt-room-toolbar h2{font:17px var(--sans);color:#dfd5c5}
+body[data-cinema=horror] .crt-enlarge{font:14px var(--sans)}
+body[data-cinema=horror] .crt-room-instruction{font:15px var(--sans);color:#d0c9bc}
+body[data-cinema=horror] .crt-frame-shade{background:linear-gradient(0deg,#060707b0,transparent 22%);opacity:1}
+body[data-cinema=horror] .crt-selection h3{font:400 clamp(24px,3vw,42px) var(--sans);color:#f1deca}
+body[data-cinema=horror] .crt-room-index{background:#080b0a;border:0;padding-top:22px}.crt-room-index>a>span{font-size:16px}.crt-room-index>a>small{font-size:13px}
+body[data-cinema=horror] .crt-room.is-enlarged .crt-viewport{overflow:auto;max-height:90svh}
+/* A crop of the actual selected cabinet surrounds the display, with the room behind. */
+body[data-cinema=horror] .broadcast-dialog{padding:5svh 4vw;width:100vw;height:100svh;max-width:none;max-height:none;background:linear-gradient(#05090955,#050909aa),var(--room-image) center/cover;overflow:auto;color:#c8e0d3;box-shadow:none}
+body[data-cinema=horror] .broadcast-dialog[open]{display:grid;place-items:center}
+body[data-cinema=horror] .broadcast-dialog:before{display:none}
+.broadcast-cabinet{position:relative;width:min(1100px,92vw,calc(88svh * var(--cabinet-ratio,1.4)));aspect-ratio:var(--cabinet-ratio,1.4);background-image:var(--room-image);background-size:var(--cabinet-size,450% 450%);background-position:var(--cabinet-position,50% 50%);box-shadow:0 25px 90px #000c;filter:drop-shadow(0 0 20px #0008)}
+.broadcast-glass{position:absolute;left:var(--glass-left,6%);top:var(--glass-top,8%);width:var(--glass-width,80%);height:var(--glass-height,80%);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#476b55 #0b1510;border-radius:5% / 6%;padding:35px 38px;background:radial-gradient(ellipse at 45% 40%,#13211b,#080f0d 90%);box-shadow:inset 0 0 45px #000,inset 0 0 6px #8aab8977;font:15px/1.7 monospace}
+.broadcast-glass:before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 3px,#0002 3px 4px);opacity:.5;z-index:1}
+body[data-cinema=horror] .broadcast-close{position:relative;inset:auto;width:100%;font:12px var(--sans);padding:0 0 20px;margin-bottom:5px;color:#a0b8a2}
+body[data-cinema=horror] .broadcast-heading>span{font-size:10px}.broadcast-heading p{font-size:12px}
+body[data-cinema=horror] .broadcast-heading h2{font:400 clamp(22px,2.6vw,36px)/1.25 var(--sans);margin:12px 0;color:#d4e7d5;letter-spacing:-.03em;text-shadow:none}
+body[data-cinema=horror] .broadcast-menu{margin:18px 0;border:0;gap:8px;padding:5px 0}
+body[data-cinema=horror] .broadcast-menu button{font:12px monospace;padding:10px 12px}
+body[data-cinema=horror] .broadcast-content{min-height:0;font:14px/1.8 monospace}
+body[data-cinema=horror] .broadcast-content p{margin-bottom:18px}
+body[data-cinema=horror] .broadcast-content .broadcast-synopsis{font-size:17px;line-height:1.6}
+body[data-cinema=horror] .broadcast-actions{margin-top:20px;padding-top:18px;gap:16px;border-color:#2a4432}
+body[data-cinema=horror] .broadcast-book{font:12px var(--sans);padding:14px 18px}
+body[data-cinema=horror] .broadcast-actions small{font-size:10px}
+.broadcast-dialog[open] .broadcast-glass{animation:signal-settle .55s ease-out}
+@keyframes signal-settle{from{opacity:.3;filter:brightness(2);transform:scaleY(.98)}to{opacity:1;filter:brightness(1);transform:none}}
+body[data-cinema=horror] .crt-zoom-clone{filter:none!important}
+.age-inner .check,.age-inner>p{font-size:15px}.age-inner small{font-size:12px}.age-inner .eyebrow{display:none}
+body[data-cinema=horror] .trial-heading p{font-size:16px}.game-under p{font-size:14px}
+@media(max-width:760px){.site-header .brand>span{font-size:25px}.site-header .brand-sub{font-size:8px}.site-header .header-tools{gap:13px}.footer-top p{font-size:15px}.footer-bottom nav{font-size:11px}.footer-bottom{font-size:10px}.desktop-nav{display:none}.world-hero-cta>p{font-size:16px}.catalog-heading>p{font-size:15px}.experience-copy>p,.faq p{font-size:15px}.section-pad{padding:65px 26px}.catalog-foot>.text-link{font-size:12px}body[data-cinema=horror] .film-tools{font-size:12px}body[data-cinema=horror] .horror-door-sequence{height:190svh}body[data-cinema=horror] .crt-stage{width:100%!important;aspect-ratio:3/2}body[data-cinema=horror] .crt-room-toolbar{position:relative;top:auto;inset:auto;padding:22px;background:#090c0b}body[data-cinema=horror] .crt-room-toolbar h2{font-size:17px;max-width:none}body[data-cinema=horror] .crt-room-instruction{font-size:10px;bottom:5%}body[data-cinema=horror] .crt-room-index{grid-template-columns:1fr 1fr;padding:24px}body[data-cinema=horror] .crt-room-index>a>span{font-size:15px}body[data-cinema=horror] .crt-room.is-enlarged .crt-stage{width:200%!important}body[data-cinema=horror] .crt-room.is-enlarged .crt-viewport{height:auto;max-height:75svh;overflow:auto}.broadcast-cabinet{width:96vw;aspect-ratio:auto;height:88svh;background-size:cover!important;background-position:50% 50%!important;border:12px solid #252822;border-right-width:22px;border-radius:14px}.broadcast-glass{left:0!important;top:0!important;width:100%!important;height:100%!important;padding:26px 22px;border-radius:12px}body[data-cinema=horror] .broadcast-dialog{padding:4svh 2vw}body[data-cinema=horror] .broadcast-content{font-size:14px}body[data-cinema=horror] .broadcast-heading h2{font-size:26px}.age-inner .check,.age-inner>p{font-size:14px}.age-inner small{font-size:11px}.game-under p{font-size:12px}.button{font-size:14px}.world-gift .text-link{font-size:15px}.experience-facts dd{font-size:12px}}
+@media(prefers-reduced-motion:reduce){body[data-cinema=horror] .horror-door-sequence{height:100svh}}
+/* The keyhole reveals the actual interactive room, not a second photograph. */
+html body[data-cinema=horror] .horror-door-sequence{height:260svh;pointer-events:auto;z-index:1}
+html body[data-cinema=horror] .horror-door-sticky{background:#060907;isolation:isolate}
+html body[data-cinema=horror] .horror-room-reveal{position:absolute;inset:0;margin:0;pointer-events:none;z-index:0;scroll-margin-top:0}
+html body[data-cinema=horror] .room-open .horror-room-reveal{pointer-events:auto}
+html body[data-cinema=horror] .horror-door-surface{z-index:5;pointer-events:none}
+html body[data-cinema=horror] .door-spill{z-index:6;pointer-events:none}
+html body[data-cinema=horror] .door-skip{z-index:7}
+html body[data-cinema=horror] .room-open .door-skip{display:none}
+.room-arrival{position:absolute;bottom:100svh;left:0;width:1px;height:1px;scroll-margin-top:0;pointer-events:none}
+html body[data-cinema=horror] .horror-room-reveal .crt-room{height:100svh;background:radial-gradient(ellipse at 50% 40%,#20221d,#060907 80%)}
+html body[data-cinema=horror] .horror-room-reveal .crt-viewport{height:100svh;display:grid;place-items:center;overflow:hidden}
+html body[data-cinema=horror] .horror-room-reveal .crt-stage{width:min(100vw,150svh);max-width:100%;aspect-ratio:3/2}
+html body[data-cinema=horror] .horror-room-reveal .crt-room-index{position:absolute;bottom:0;left:0;right:0;z-index:4;padding:18px 4vw 20px;background:linear-gradient(transparent,#070a09f5 30%);gap:30px}
+html body[data-cinema=horror] .horror-room-reveal .crt-room-index a{padding:6px 0}
+html body[data-cinema=horror] .horror-room-reveal .crt-room-toolbar{top:70px}
+html body[data-cinema=horror] .horror-room-reveal .is-enlarged .crt-viewport{display:block;overflow:auto;max-height:100svh}
+html body[data-cinema=horror] .horror-room-reveal .is-enlarged .crt-stage{width:170%;max-width:none}
+.world-background-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-arhiv .world-hero-title h1{font-size:clamp(80px,14vw,220px);line-height:1;font-weight:400}
+.hero-ostrov .world-hero-title h1{font:400 clamp(80px,14vw,220px)/1 var(--serif)}
+.common-page:has(#gift-form)>h1{font:400 clamp(48px,7vw,100px)/1.05 var(--serif);letter-spacing:-.045em;max-width:900px;margin-bottom:60px}
+.common-page .certificate-preview{background:#d1d5c7;padding:65px 40px;border:0}
+.common-page .certificate-frame{border:0;background:#f0ece1;min-height:340px;box-shadow:0 20px 40px #2f392f22}
+.common-page .certificate-frame:before{display:none}
+.common-page .certificate-brand{font-size:22px;letter-spacing:.15em;font-weight:400}
+.common-page .certificate-frame h2{font-size:60px}
+.common-page .certificate-frame>p{font-size:15px}
+.common-page .certificate-frame>i{font-size:23px}
+.common-page .certificate-frame>small{font-size:9px;line-height:1.6;max-width:90%}
+.common-page #gift-form>p{font-size:17px;line-height:1.7;margin-bottom:30px}
+.common-page #gift-form>.eyebrow{display:none}
+.common-page #gift-form .field{font-size:15px;gap:10px;margin-bottom:24px;font-weight:400}
+.common-page #gift-form input,.common-page #gift-form select,.common-page #gift-form textarea{font-size:17px;padding:12px 0}
+.common-page #gift-form>.button{font-size:16px;padding:18px 28px;background:#263d2c;color:#f3efdf;border-color:#263d2c;width:100%;justify-content:center}
+.common-page #gift-form>.button:hover{background:#e2e8d8;color:#263d2c}
+.common-page #gift-status{font-size:15px;line-height:1.6;display:block;margin-top:20px}
+.detective-game .game-toolbar [data-status]{font-size:16px;max-width:60%}
+.detective-game .desk-actions,.detective-game .desk-actions .text-link{font-size:14px}
+.detective-game .desk-hint{font:17px/1.6 var(--sans);margin-top:20px}
+@media(max-width:760px){html body[data-cinema=horror] .horror-door-sequence{height:220svh}html body[data-cinema=horror] .horror-room-reveal .crt-room-toolbar{position:absolute;top:75px;left:0;right:0;background:none;padding:14px 24px}html body[data-cinema=horror] .horror-room-reveal .crt-viewport{padding-bottom:100px}html body[data-cinema=horror] .horror-room-reveal .crt-room-index{padding:15px 25px 22px;gap:12px 18px}html body[data-cinema=horror] .horror-room-reveal .crt-room-index>a>span{font-size:14px}html body[data-cinema=horror] .horror-room-reveal .crt-room-index>a>small{font-size:11px}.hero-arhiv .world-hero-title h1,.hero-ostrov .world-hero-title h1{font-size:22vw}.common-page .certificate-preview{padding:40px 20px}.common-page .certificate-frame{padding:30px;min-height:300px}.common-page .certificate-frame h2{font-size:48px}.common-page .certificate-frame>i{font-size:21px}.common-page .certificate-frame>small{font-size:8px}.detective-game .game-toolbar [data-status]{font-size:14px;max-width:100%}.detective-game .desk-actions,.detective-game .desk-actions .text-link{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html body[data-cinema=horror] .horror-door-sequence{height:100svh}html body[data-cinema=horror] .horror-door-surface,html body[data-cinema=horror] .door-spill{display:none}}
+.calm body[data-cinema=horror] .horror-door-sequence{height:100svh!important}.calm body[data-cinema=horror] .horror-door-surface,.calm body[data-cinema=horror] .door-spill{display:none}
+@media(max-width:760px){html body[data-cinema=horror] .horror-room-reveal .crt-room.is-enlarged .crt-viewport{display:block;height:calc(100svh - 120px);max-height:none;padding:80px 0 0;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y}html body[data-cinema=horror] .horror-room-reveal .crt-room.is-enlarged .crt-stage{width:max(220vw,120svh)!important;max-width:none;aspect-ratio:3/2}html body[data-cinema=horror] .horror-room-reveal .crt-room-index{background:linear-gradient(#070a0900,#070a09 15%);padding-top:20px}}
+.site-header{border:0}.hero-ostrov .world-hero-cta>p{font-size:17px;line-height:1.7;max-width:340px}
+/* Unlike hidden, clip cannot be scrolled by the dialog autofocus. */
+html body[data-cinema=horror] .horror-door-sticky{overflow:clip}
+@media(max-width:760px){.hero-ostrov .world-hero-cta>p{font-size:16px;max-width:300px}}

@@ -1,0 +1,132 @@
+/* Final material pass, scoped to the existing horror world. No page-wide filters. */
+html body[data-world=iznanka]{--blood:#713536;--ink:#b6b9af;--muted:#929b95;color:#b6b9af}
+html body[data-world=iznanka] :is(h1,h2,h3,h4,p,li,summary,dt,dd,label,legend,small,figcaption,a,button,.film-age,.sound-label,.horror-logo){animation:none!important;text-shadow:none!important;-webkit-text-fill-color:currentColor}
+html body[data-world=iznanka] :is(h1,h2,h3,h4){color:#b1b4a9!important;--pixel-shadow:none;background:none}
+html body[data-world=iznanka] :is(h1,h2,h3) em{color:#935f59!important;-webkit-text-fill-color:currentColor;text-shadow:none!important}
+html body[data-world=iznanka] .brand-horror>.horror-logo{color:#985e58;--pixel-shadow:none;-webkit-text-fill-color:currentColor;font-size:32px!important;letter-spacing:0;line-height:1.25}
+html body[data-world=iznanka] .graphic-text{--glyph-face:#b2b5a8;--glyph-shadow:#202a25;--glyph-scar:#111715;display:inline;position:relative;font-size:inherit!important;line-height:inherit;text-shadow:none!important;-webkit-text-fill-color:initial;white-space:normal;letter-spacing:0}
+html body[data-world=iznanka] .graphic-title{--glyph-face:#afb1a3;--glyph-shadow:#30352e;--glyph-scar:#151c18}
+html body[data-world=iznanka] :is(.graphic-blood,.graphic-logo){--glyph-face:#975c56;--glyph-shadow:#3c2525;--glyph-scar:#211817}
+html body[data-world=iznanka] .graphic-broadcast{--glyph-face:currentColor;--glyph-shadow:#26312a;--glyph-scar:#101714}
+.graphic-transcript{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.broadcast-glyph-definitions{position:absolute;overflow:hidden;pointer-events:none}
+.graphic-objects{display:inline;font-size:inherit!important}.graphic-space{display:inline-block;width:.36em}
+html body[data-world=iznanka] .graphic-word{display:inline-block;vertical-align:-.12em;overflow:visible;max-width:100%;fill:none;isolation:isolate}
+.glyph-face{fill:var(--glyph-face);stroke:var(--glyph-face);stroke-width:var(--glyph-weight,0);stroke-linejoin:bevel}.glyph-shadow{fill:var(--glyph-shadow);opacity:.72}.glyph-damage{fill:var(--glyph-scar);opacity:.6}.glyph-scratch{fill:none;stroke:var(--glyph-scar);stroke-width:.045;opacity:.35}
+html body[data-world=iznanka] .film-copy h1>.graphic-text{filter:drop-shadow(0 1px 1px #0009)}
+html body[data-world=iznanka] .horror-film .film-copy h1{font-size:clamp(36px,5.5vw,72px);line-height:1.25;letter-spacing:0}
+html body[data-world=iznanka] :is(.horror-editorial h2,.horror-afterword h2){font-size:clamp(30px,4.4vw,60px);line-height:1.4;letter-spacing:0}
+html body[data-world=iznanka] :is(.film-description,.horror-editorial-copy>p,.horror-afterword-copy>p,.trial-heading p,.detail-heading>p,.story-lead,.horror-briefing>div>p){color:#a2aaa2!important}
+html body[data-world=iznanka] :is(.horror-editorial .text-link,.detail-back,.skip-trial,.horror-briefing .text-link){color:#a68b7d;border-color:#554039}
+html body[data-world=iznanka] .button{background:#542b2d;border-color:#794449;color:#d0c9b8;box-shadow:inset 0 1px 0 #c8aaa110,0 3px 8px #0006}
+html body[data-world=iznanka] .button:hover{background:#67373b;border-color:#97645e;color:#ded9cd}
+html body[data-world=iznanka] .horror-editorial-photo img{filter:saturate(.45) contrast(1.03) brightness(.85)}
+html body[data-world=iznanka] .gallery-image{box-shadow:inset 0 0 0 1px #a6b0a00c,0 6px 16px #0005;background:#0b100f}
+html body[data-world=iznanka] .gallery-image img{filter:saturate(.45) contrast(1.02) brightness(.88)}
+
+/* Preserve the photographed cabinet lighting; add only local bezel occlusion and spill. */
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-set{filter:grayscale(.3) saturate(.44) contrast(1.03) brightness(.96)}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-projection{mix-blend-mode:normal;opacity:.96;filter:none}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-frame-shade{background:linear-gradient(0deg,#0509084d,transparent 20%,transparent 88%,#03060433);opacity:1}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-screen:is(:hover,.is-active) path{stroke:#939e8150;fill:#a9b0a005;filter:none;stroke-width:1}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-screen:focus-visible path{stroke:#c2c4a8;filter:none}
+html body[data-world=iznanka] .crt-room-index :is(a,a small,a i){color:#969f95}
+html body[data-world=iznanka] .crt-room-index a>span{color:#b1b4a6}
+html body[data-world=iznanka] .crt-selection h3{color:#b5b9aa!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room-instruction{display:none}
+
+/* The accessible reading plane remains in the glass and uses the cabinet's profile. */
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-glass{background:radial-gradient(ellipse at 48% 43%,#18211c,#101813 65%,#060b08);color:#a7b0a2;box-shadow:inset 0 0 28px #0009;scrollbar-color:#65715e #111a13}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-program,.broadcast-close){filter:url(#broadcast-analog-signal) brightness(calc(var(--glass-gain,1)*var(--signal-exposure,1)));isolation:isolate}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-program :is(h2,p,button,dt,dd,small,a){color:inherit!important;-webkit-text-fill-color:currentColor}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading{color:#b5b9a7}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:30px!important;line-height:1.4!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2 .graphic-text{--glyph-face:#b3b7a4}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-menu button{font-size:15px!important;line-height:1.6!important;box-shadow:none!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-menu button[aria-pressed=true]{background:#77826c;color:#11190e!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-menu button[aria-pressed=true] .graphic-text{--glyph-face:#11190e;--glyph-shadow:#58654a;--glyph-scar:#77826c}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-content,.broadcast-content p,.broadcast-content .broadcast-synopsis,.broadcast-content dd){font-size:19px!important;line-height:1.65!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-close,.broadcast-heading p,.broadcast-content dt,.broadcast-actions a,.broadcast-actions small){font-size:16px!important;line-height:1.7!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-close{color:#b0b2a0!important;background:#101813}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-frames img{filter:saturate(.25) contrast(1.02) brightness(.88);image-rendering:auto;box-shadow:0 2px 8px #0007}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-book{background:#707b65;color:#11190e!important}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-book .graphic-text{--glyph-face:#10190e;--glyph-shadow:#4e5b43;--glyph-scar:#707b65}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-phosphor-grid{opacity:1;background:repeating-linear-gradient(0deg,#0000 0px calc(var(--glass-pitch,2.15px)*.72),rgba(0,0,0,var(--glass-scan,.06)) calc(var(--glass-pitch,2.15px)*.72) var(--glass-pitch,2.15px)),repeating-linear-gradient(90deg,#b17d7910 0 1px,#8b9e7d0e 1px 2px,#7e939f0e 2px 3px)}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-noise{opacity:.14;mix-blend-mode:screen}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.crt-tracking-band,.crt-signal-tear){display:none}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-glass-reflection{background:linear-gradient(146deg,#bdc2ad0c,transparent 29%,transparent 75%,#090e0b20),radial-gradient(ellipse 100% 105% at 47% 42%,transparent 48%,#010402b3 100%)}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-glass-reflection:after{opacity:.22}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .crt-glass-rim{box-shadow:inset 0 0 0 1px #a8b29c20,inset 3px 4px 7px #c1c5b714,inset -6px -8px 13px #000b;border-radius:8% / 9%}
+@media(max-width:760px){
+ html body[data-world=iznanka] .brand-horror>.horror-logo{font-size:28px!important}
+ html body[data-world=iznanka] .horror-film .film-copy h1{font-size:clamp(25px,6.6vw,35px);line-height:1.5}
+ html body[data-world=iznanka] :is(.horror-editorial h2,.horror-afterword h2){font-size:clamp(27px,7vw,36px);line-height:1.55}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:24px!important}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-content,.broadcast-content p,.broadcast-content .broadcast-synopsis,.broadcast-content dd){font-size:17px!important;line-height:1.6!important}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-close,.broadcast-heading p,.broadcast-content dt,.broadcast-actions a,.broadcast-actions small){font-size:14px!important}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-menu button{font-size:14px!important;padding:8px 5px}
+}
+@media(prefers-reduced-motion:reduce){.graphic-text [data-letter-ink]{opacity:1}}
+
+/* Recessed, worn controls: the red is a painted edge, not an illuminated arrow. */
+html body[data-world=iznanka] .button,html body[data-world=iznanka][data-cinema=horror] .maze-game [data-start]{
+ position:relative;justify-content:center;gap:12px;min-height:54px;padding:16px 26px;
+ border:1px solid #58605c;border-left:3px solid #84323c;border-radius:2px;
+ background-color:#192020;
+ background-image:linear-gradient(174deg,#acb3a812,transparent 42%,#0005),repeating-linear-gradient(3deg,transparent 0 8px,#a6aaa605 9px,transparent 10px 23px);
+ color:#c9cdc1;letter-spacing:.025em;line-height:1.65;
+ box-shadow:inset 0 1px 0 #b8c0b31c,inset 0 -2px 0 #0007,0 3px 0 #080c0c,0 6px 14px #0005;
+ transition:background-color .2s,border-color .2s,box-shadow .2s,transform .2s;
+}
+html body[data-world=iznanka] .button:hover,html body[data-world=iznanka][data-cinema=horror] .maze-game [data-start]:hover{
+ background-color:#27302e;border-color:#80867c;border-left-color:#a4434c;color:#e0e1d5;
+ box-shadow:inset 0 1px 0 #b8c0b32b,inset 0 -2px 0 #0007,0 3px 0 #080c0c,0 7px 16px #0006;transform:translateY(-1px);
+}
+html body[data-world=iznanka] .button:active,html body[data-world=iznanka][data-cinema=horror] .maze-game [data-start]:active{transform:translateY(2px);box-shadow:inset 0 2px 6px #0009,0 1px 0 #080c0c}
+html body[data-world=iznanka] :is(.button,.team-quests a,.team-size input):focus-visible{outline:2px solid #adb5a7;outline-offset:5px}
+html body[data-world=iznanka] :is(.horror-editorial .text-link,.horror-briefing .text-link,.skip-trial,.detail-back){
+ padding:12px 0;border-bottom:1px solid #81404a;color:#b7bdb3;transition:color .2s,border-color .2s;
+}
+html body[data-world=iznanka] :is(.horror-editorial .text-link,.horror-briefing .text-link,.skip-trial,.detail-back):hover{color:#d6d8ca;border-color:#b35b63;opacity:1}
+html body[data-world=iznanka] .film-tools a{padding:10px 16px;border:1px solid #74807870;border-left:3px solid #84323c;background:#101617b8;color:#c0c6b8;box-shadow:inset 0 1px 0 #bec7ba16,0 2px 6px #0008}
+html body[data-world=iznanka] .film-tools a:hover{background:#222d29;color:#dcdfd0;border-color:#859180}
+
+/* The existing forest scene now answers a practical question about team size. */
+html body[data-world=iznanka] .horror-afterword-copy{width:min(100%,760px);max-width:none;padding-block:64px}
+html body[data-world=iznanka] .horror-afterword h2{font-size:clamp(30px,3.5vw,48px);line-height:1.35}
+html body[data-world=iznanka] .horror-afterword-copy>p{max-width:530px;margin:22px 0 30px}
+html body[data-world=iznanka] .horror-afterword:before{background:linear-gradient(90deg,#080d0ff0 0,#080d0fd9 40%,#080d0f40 76%,#080d0f26),linear-gradient(0deg,#080b0e,transparent 30%,transparent 80%,#080b0e)}
+html body[data-world=iznanka] .team-picker{max-width:560px}
+html body[data-world=iznanka] .team-size{border:0;padding:0;margin:0}
+html body[data-world=iznanka] .team-size legend{font-size:13px;line-height:1.8;color:#b5beb4;margin-bottom:12px;padding:0}
+html body[data-world=iznanka] .team-size>div{display:flex;gap:10px}
+html body[data-world=iznanka] .team-size label{position:relative;cursor:pointer;display:block}
+html body[data-world=iznanka] .team-size input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+html body[data-world=iznanka] .team-size span{display:grid;place-items:center;width:56px;height:48px;border:1px solid #4b5651;background:#111918a3;color:#99a59c;font-size:16px;box-shadow:inset 0 2px 5px #0008;transition:background .2s,border-color .2s,color .2s}
+html body[data-world=iznanka] .team-size input:checked+span{border-color:#889284;border-bottom:3px solid #9a3d47;color:#dadccf;background:#303b32;box-shadow:inset 0 1px 0 #aebba11c,0 2px 7px #0008}
+html body[data-world=iznanka] .team-size input:focus-visible+span{outline:2px solid #adb5a7;outline-offset:4px}
+html body[data-world=iznanka] .team-size label:hover span{border-color:#9aa08e;color:#d0d3c6}
+html body[data-world=iznanka] .team-status{font-size:12px;line-height:1.8;margin:22px 0 12px;color:#aab9a7;min-height:22px}
+html body[data-world=iznanka] .team-quests{list-style:none;padding:0;margin:0;border-top:1px solid #66716655}
+html body[data-world=iznanka] .team-quests li{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:74px;padding:12px 0;border-bottom:1px solid #66716640}
+html body[data-world=iznanka] .team-quests h3{font-size:14px;line-height:1.7;letter-spacing:0;margin:0;color:#c1c7b7!important}
+html body[data-world=iznanka] .team-quests p{font-size:11px;line-height:1.8;color:#95a298;margin:5px 0 0}
+html body[data-world=iznanka] .team-quests a{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 15px;border:1px solid #616f5b;border-left:2px solid #8c3b42;background:#1b2620b8;color:#c7d0bd;font-size:12px;box-shadow:inset 0 1px 0 #c2c9b217,0 2px 5px #0007;transition:background .2s,border-color .2s}
+html body[data-world=iznanka] .team-quests a:hover{background:#344034;border-color:#a0ab92;color:#e1e4d2}
+html body[data-world=iznanka] .team-unavailable{font-size:10px;line-height:1.8;color:#9e8c86;text-align:right;flex-shrink:0}
+html body[data-world=iznanka] .team-quests li[data-suitable=false] h3{color:#7d8880!important}
+html body[data-world=iznanka] .team-quests [hidden]{display:none!important}
+@media(max-width:760px){
+ html body[data-world=iznanka] .horror-afterword-copy{width:100%;padding:64px 24px}
+ html body[data-world=iznanka] .horror-afterword:before{background:linear-gradient(90deg,#080d0fe8,#080d0f99),linear-gradient(0deg,#080b0e,transparent 40%,#080b0e44)}
+ html body[data-world=iznanka] .horror-afterword>img{object-position:68% center}
+ html body[data-world=iznanka] .team-size>div{gap:8px}
+ html body[data-world=iznanka] .team-size span{width:50px;height:48px}
+ html body[data-world=iznanka] .team-quests li{gap:12px;min-height:88px}
+ html body[data-world=iznanka] .team-quests h3{font-size:12px}
+ html body[data-world=iznanka] .team-quests p{font-size:10px}
+ html body[data-world=iznanka] .team-quests a{font-size:11px;padding:8px 10px}
+ html body[data-world=iznanka] .team-unavailable{max-width:76px;font-size:10px}
+}
+
+

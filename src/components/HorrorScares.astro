@@ -1,0 +1,9 @@
+---
+import {href} from '../lib/data';
+---
+<div class="scare-overlay" data-horror-scare role="dialog" aria-label="Перехваченная передача" tabindex="-1" hidden>
+ <video data-scare-video data-src={href('assets/horror-scare-pinterest.mp4')} muted playsinline preload="none" aria-label="Пугающий персонаж из перехваченной передачи"></video>
+ <span class="scare-caption" aria-hidden="true">ЧУЖОЙ СИГНАЛ</span>
+ <button type="button" class="scare-close" data-scare-close>Закрыть · Esc</button>
+</div>
+<script>import {initHorrorScares} from '../scripts/horror-scares';initHorrorScares();</script>

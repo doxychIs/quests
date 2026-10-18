@@ -1,0 +1,35 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AgeGate from '../components/AgeGate.astro';
+import GlyphDefinitions from '../components/GlyphDefinitions.astro';
+import {href,type World} from '../lib/data';
+import '../styles/global.css';
+import '../styles/refinement.css';
+import '../styles/horror-details.css';
+import '../styles/horror-type.css';
+import '../styles/horror-pixel.css';
+import '../styles/horror-analog.css';
+import '../styles/scroll-typing.css';
+import '../styles/motion-visibility.css';
+import '../styles/worlds.css';
+const {title='ИНОЕ — три мира квестов в Перми',description='Выберите квест: хоррор, детектив или семейное приключение. Интерактивный демонстрационный проект.',world,footer=true,cinema=false}=Astro.props as {title?:string;description?:string;world?:World;footer?:boolean;cinema?:boolean};
+---
+<!doctype html>
+<html lang="ru">
+<head>
+ <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content={world==='ostrov'?'#075b6a':world==='arhiv'?'#243a31':world?'#101111':'#eeece6'}/><meta name="color-scheme" content={world==='iznanka'?'dark':'light'}/><title>{title}</title><link rel="icon" type="image/svg+xml" href={href('favicon.svg')}/>
+ <script is:inline>try{sessionStorage.removeItem('gran-enter-horror');if(sessionStorage.getItem('gran-adult')==='yes')document.documentElement.classList.add('adult');if(localStorage.getItem('gran-calm')==='yes')document.documentElement.classList.add('calm')}catch{}</script>
+</head>
+<body data-world={world||'hub'} data-cinema={cinema?'horror':undefined} style={world==='iznanka'?`--horror-wall:url("${href('assets/horror-wall-v2.webp')}")`:undefined}>
+ {world==='iznanka'&&<GlyphDefinitions/>}
+ <a href="#main" class="skip-link">Перейти к содержимому</a>
+ <Header world={world}/>
+ {world==='iznanka'&&<AgeGate/>}
+ <div class:list={[{'restricted':world==='iznanka'}]}><main id="main"><slot/></main>{footer&&<Footer world={world}/>}</div>
+ <dialog id="preferences" class="preferences" aria-labelledby="prefs-title"><form method="dialog"><button class="dialog-close" aria-label="Закрыть настройки">×</button></form><span class="eyebrow">ВАШ ТЕМП</span><h2 id="prefs-title">Настройки впечатлений</h2><label class="check"><input id="calm-setting" type="checkbox"/> Уменьшить движение</label><label class="check"><input id="surprise-setting" type="checkbox"/> Скример в финале мини-игры «Изнанки»</label><p>Звук включается отдельно. Никаких вспышек и стробоскопов.</p><button id="reset-age" class="text-link">Сбросить согласие 18+</button></dialog>
+ <div class="route-curtain" aria-hidden="true"><span>ИНОЕ</span></div>
+ <noscript><div class="no-script">Для интерактивных сцен и мини-игр нужен JavaScript. <a href={href()}>Вернуться к выбору мира</a>.</div></noscript>
+ <script>import '../scripts/app';</script>
+</body>
+</html>

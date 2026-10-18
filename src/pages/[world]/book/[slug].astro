@@ -1,0 +1,27 @@
+---
+import Base from '../../../layouts/Base.astro';
+import {quests,worlds,href,asset,type Quest} from '../../../lib/data';
+import {config} from '../../../lib/config';
+import GraphicText from '../../../components/GraphicText.astro';
+import '../../../styles/inner.css';
+export function getStaticPaths(){return quests.map(quest=>({params:{world:quest.world,slug:quest.slug},props:{quest}}))}
+const {quest:q}=Astro.props as {quest:Quest};
+---
+<Base world={q.world} title={`Запись: ${q.name} — ИНОЕ`}>
+ <section class="booking-page">
+  <div class="booking-art"><img src={asset(q.image)} alt={q.synopsis}/><div class="booking-art-shade"></div><div><span class="eyebrow">ИНОЕ / {worlds[q.world].name}</span><h1>{q.world==='iznanka'?<GraphicText text={q.name} variant="title" flicker/>:q.name}</h1><p>{q.duration} минут / {q.players.join('–')} игроков / {q.age}</p></div></div>
+  <div class="booking-content"><a class="detail-back" href={href(`${q.world}/quests/${q.slug}/`)}>К описанию квеста</a><span class="eyebrow">ЗАПИСЬ НА КВЕСТ</span><h2>Выбрать сеанс</h2><div class="demo-banner"><span>ДЕМО</span><p>Вы проверяете форму. Сеансы условные, данные не отправляются. Реальная бронь и оплата не подключены.</p></div>
+   <form id="booking-form" data-quest={q.name} data-world={q.world} data-slug={q.slug} data-timezone={config.timezone}>
+    <div class="form-row"><label class="field">Дата <input type="date" name="date" required aria-describedby="time-note"/></label><label class="field">Команда <select name="players" required>{Array.from({length:q.players[1]-q.players[0]+1},(_,i)=>i+q.players[0]).map(n=><option value={n}>{n} {n===2||n===3||n===4?'игрока':'игроков'}</option>)}</select></label></div>
+    <fieldset class="slots"><legend>Время <span id="time-note">Пермь · UTC+5 · примеры сеансов</span></legend><div>{['11:00','13:00','15:00','17:00','19:00'].map((t,i)=><label><input type="radio" name="time" value={t} required/><span>{t}</span></label>)}</div></fieldset>
+    <div class="form-row"><label class="field">Имя <input name="name" autocomplete="given-name" minlength="2" maxlength="60" placeholder="Как к вам обращаться" required/></label><label class="field">Телефон <input type="tel" name="phone" autocomplete="tel" placeholder="+7 900 000-00-00" required minlength="10" maxlength="24"/></label></div>
+    <label class="field">Комментарий <textarea name="comment" rows="2" maxlength="500" placeholder="Возраст детей, пожелания к формату"></textarea></label>
+    <div class="cost-note"><span>Стоимость</span><strong>Расчёт не подключён</strong></div>
+    <label class="check"><input type="checkbox" name="consent" required/> Я понимаю, что это демонстрационная заявка, и ознакомлен с <a href={href('privacy/')} target="_blank" rel="noopener">правилами обработки данных</a></label>
+    <button type="submit" class="button">Проверить заявку</button>
+   </form>
+   <section id="booking-result" class="booking-result" hidden tabindex="-1" aria-live="polite"><span class="eyebrow">ЛОКАЛЬНОЕ ПОДТВЕРЖДЕНИЕ</span><h2>Квест выбран.</h2><p class="result-notice">Демонстрационная заявка, не отправлена.</p><dl data-summary></dl><p>Чтобы оформить реальную запись, нужно подключить систему квест-центра. Выбранное время не закреплено за вами.</p><button class="button" data-edit-booking>Изменить выбор</button><a class="text-link" href={href(`${q.world}/#quests`)}>Вернуться к квестам</a></section>
+  </div>
+ </section>
+</Base>
+

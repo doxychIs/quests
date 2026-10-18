@@ -1,0 +1,83 @@
+/* One stage owns the scroll film, frozen frame, signal projection and TV interface. */
+html body[data-cinema=horror] .horror-passage{height:560svh;position:relative;background:#030505;isolation:isolate}
+html body[data-cinema=horror] .passage-sticky{height:100svh;position:sticky;top:0;overflow:clip;background:#030505;isolation:isolate}
+.passage-room{position:absolute;inset:0}
+html body[data-cinema=horror] .horror-passage .crt-room{height:100svh;background:radial-gradient(ellipse,#101716,#030505 75%)}
+html body[data-cinema=horror] .horror-passage .crt-viewport{height:100svh;max-height:none;max-width:none;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center;overflow:hidden;padding:0;overscroll-behavior:auto}
+html body[data-cinema=horror] .horror-passage .crt-stage{width:var(--scene-width,100vw)!important;max-width:none;aspect-ratio:16/9;overflow:visible;margin:0;transform-origin:0 0;transition:transform .95s cubic-bezier(.65,0,.2,1);will-change:transform;flex:none}
+html body[data-cinema=horror] .horror-passage .crt-set{filter:none}
+.passage-film{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:7;pointer-events:none;background:#030505;transition:opacity .4s;opacity:1}
+.horror-passage.room-open .passage-film{opacity:0}
+.horror-passage .crt-projection{transition:opacity .6s;opacity:0}
+.horror-passage.room-open .crt-projection{opacity:1}
+.horror-passage .crt-room-toolbar,.horror-passage .crt-room-index,.horror-passage .crt-room-instruction,.horror-passage .crt-selection{visibility:hidden;opacity:0;transition:opacity .5s}
+.horror-passage.room-open .crt-room-toolbar,.horror-passage.room-open .crt-room-index,.horror-passage.room-open .crt-room-instruction,.horror-passage.room-open .crt-selection{visibility:visible;opacity:1}
+html body[data-cinema=horror] .horror-passage .crt-room-toolbar{position:absolute;inset:85px 0 auto;padding:18px 4vw;z-index:8;background:none;pointer-events:none}
+html body[data-cinema=horror] .horror-passage .crt-room-toolbar h2{font:15px var(--sans);color:#d0d7cf}
+html body[data-cinema=horror] .horror-passage .crt-room-toolbar button{font:12px var(--sans);color:#d0d7cf}
+html body[data-cinema=horror] .horror-passage .crt-room-index{position:absolute;inset:auto 0 0;max-width:none;z-index:8;padding:28px 4vw;gap:25px;background:linear-gradient(transparent,#030505ec 30%)}
+html body[data-cinema=horror] .horror-passage .crt-room-index a{color:#d6d9cf}
+html body[data-cinema=horror] .horror-passage .crt-room-index small{color:#939e96}
+html body[data-cinema=horror] .horror-passage .crt-room-instruction{bottom:5%;font-size:13px;color:#bbc8be}
+html body[data-cinema=horror] .horror-passage .crt-selection h3{font-size:24px;color:#e5e8dc}
+html body[data-cinema=horror] .horror-passage .crt-selection p{font-size:12px}
+.passage-caption{position:absolute;bottom:45px;left:28px;right:28px;display:flex;flex-direction:column;align-items:center;gap:18px;font:12px/1.6 var(--sans);letter-spacing:.05em;color:#d8ded8;text-align:center;text-shadow:0 2px 12px #000;z-index:8;pointer-events:none}
+.passage-caption>span:last-child{font-size:24px}
+.passage-skip{position:absolute;right:4vw;top:100px;z-index:8;color:#b7c3ba;font:12px var(--sans);padding:12px;text-shadow:0 2px 12px #000}
+.room-open .passage-caption,.room-open .passage-skip{display:none}
+html body[data-cinema=horror] .horror-passage .crt-frame-shade{background:linear-gradient(0deg,#03050599,transparent 20%);opacity:.7}
+html body[data-cinema=horror] .horror-passage .crt-room.is-enlarged .crt-viewport{display:block;overflow:auto}
+html body[data-cinema=horror] .horror-passage .crt-room.is-enlarged .crt-stage{width:max(150vw,160svh)!important}
+.crt-interface{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .2s}
+.crt-room.is-screen-ready .crt-interface{opacity:1}
+html body[data-cinema=horror] .horror-passage .crt-room.is-screen-ready .crt-stage{transition:none}
+.broadcast-panel{position:absolute;left:0;top:0;width:960px;height:720px;pointer-events:auto;outline:0}
+html body[data-cinema=horror] .horror-passage .broadcast-glass{position:absolute;inset:0;width:100%;height:100%;border-radius:7% / 8%;overflow:auto;overflow-x:hidden;overscroll-behavior:contain;padding:24px 34px;background:radial-gradient(ellipse at 45% 30%,#15251e,#080f0c 90%);box-shadow:inset 0 0 40px #0008,inset 0 0 3px #b1caa066;font:400 16px/1.65 var(--sans);color:#d3dfd0;scrollbar-width:thin;scrollbar-color:#647d68 #101a13;text-align:left;letter-spacing:normal;overflow-wrap:break-word}
+html body[data-cinema=horror] .horror-passage .broadcast-glass:before{opacity:.12}
+html body[data-cinema=horror] .horror-passage .broadcast-close{position:sticky;inset:0 auto auto;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:36px;font:500 12px/1.4 var(--sans);color:#b4cbb5;padding:8px 0 12px;margin:0 0 10px;background:#101e17}
+html body[data-cinema=horror] .horror-passage .broadcast-close span{font-size:10px;color:#8ca48e}
+html body[data-cinema=horror] .horror-passage .broadcast-heading>span{font:500 10px/1.4 var(--sans);letter-spacing:.12em;color:#92b196}
+html body[data-cinema=horror] .horror-passage .broadcast-heading h2{font:500 32px/1.15 var(--sans);margin:12px 0 8px;color:#e1edda;letter-spacing:-.025em;overflow-wrap:normal;text-shadow:none}
+html body[data-cinema=horror] .horror-passage .broadcast-heading p{font:400 13px/1.5 var(--sans);color:#a4b9a3;margin:0}
+html body[data-cinema=horror] .horror-passage .broadcast-menu{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 22px;padding:0 0 12px;border:0;border-bottom:1px solid #657a5e55}
+html body[data-cinema=horror] .horror-passage .broadcast-menu button{font:500 12px/1.4 var(--sans);min-height:36px;padding:9px 14px;color:#acc2a8;border-radius:3px}
+html body[data-cinema=horror] .horror-passage .broadcast-menu button[aria-pressed=true]{background:#bfd2b5;color:#132016}
+html body[data-cinema=horror] .horror-passage .broadcast-content{min-height:0;font:400 16px/1.65 var(--sans)}
+html body[data-cinema=horror] .horror-passage .broadcast-content .broadcast-synopsis{font:400 19px/1.5 var(--sans);color:#e0ebd7}
+html body[data-cinema=horror] .horror-passage .broadcast-content p{margin:0 0 18px;max-width:62ch}
+html body[data-cinema=horror] .horror-passage .broadcast-content dl{gap:18px 24px;margin:0 0 24px}
+html body[data-cinema=horror] .horror-passage .broadcast-content dt{font:500 10px/1.5 var(--sans);letter-spacing:.08em;color:#97b299}
+html body[data-cinema=horror] .horror-passage .broadcast-content dd{font:500 19px/1.5 var(--sans);margin:4px 0 0}
+html body[data-cinema=horror] .horror-passage .broadcast-content ul{padding-left:20px}
+html body[data-cinema=horror] .horror-passage .broadcast-content li{margin-bottom:10px}
+html body[data-cinema=horror] .horror-passage .broadcast-frames{min-height:0;gap:18px}
+html body[data-cinema=horror] .horror-passage .broadcast-frames figcaption{font:400 10px/1.4 var(--sans);margin-top:6px}
+html body[data-cinema=horror] .horror-passage .broadcast-actions{gap:16px;margin-top:24px;padding-top:20px;border-color:#657a5e55}
+html body[data-cinema=horror] .horror-passage .broadcast-book{font:500 14px/1.4 var(--sans);padding:14px 18px;border-radius:3px}
+html body[data-cinema=horror] .horror-passage .broadcast-actions>a:nth-child(2){font:400 12px/1.5 var(--sans)}
+html body[data-cinema=horror] .horror-passage .broadcast-actions small{font:400 11px/1.5 var(--sans);color:#91a88f}
+.horror-passage .crt-room.is-reading .crt-room-toolbar,.horror-passage .crt-room.is-reading .crt-room-index,.horror-passage .crt-room.is-reading .crt-room-instruction,.horror-passage .crt-room.is-reading .crt-selection{visibility:hidden;opacity:0;pointer-events:none}
+.horror-passage .crt-room.is-reading .crt-surfaces{pointer-events:none;visibility:hidden}
+@media(max-width:760px){
+ html body[data-cinema=horror] .horror-passage{height:500svh}
+ html body[data-cinema=horror] .horror-passage .crt-room-toolbar{inset:90px 0 auto;padding:18px 26px}
+ html body[data-cinema=horror] .horror-passage .crt-room-toolbar h2{font-size:15px}
+ html body[data-cinema=horror] .horror-passage .crt-room-index{grid-template-columns:1fr 1fr;padding:24px 26px 32px;gap:18px}
+ html body[data-cinema=horror] .horror-passage .crt-room-index>a>span{font-size:14px}
+ html body[data-cinema=horror] .horror-passage .crt-room-instruction{font-size:9px;left:5%;bottom:3%}
+ html body[data-cinema=horror] .horror-passage .crt-selection{display:none}
+ .passage-skip{top:90px;right:20px}
+ html body[data-cinema=horror] .horror-passage .broadcast-glass{padding:12px 20px;font-size:15px}
+ html body[data-cinema=horror] .horror-passage .broadcast-close{font-size:11px;min-height:34px;padding:6px 0 9px;margin-bottom:6px}
+ html body[data-cinema=horror] .horror-passage .broadcast-heading>span{font-size:9px}
+ html body[data-cinema=horror] .horror-passage .broadcast-heading h2{font-size:24px;margin:9px 0 6px}
+ html body[data-cinema=horror] .horror-passage .broadcast-heading p{font-size:11px}
+ html body[data-cinema=horror] .horror-passage .broadcast-menu{margin:12px 0 14px;padding-bottom:8px;gap:5px}
+ html body[data-cinema=horror] .horror-passage .broadcast-menu button{font-size:10px;min-height:34px;padding:8px 10px}
+ html body[data-cinema=horror] .horror-passage .broadcast-content{font-size:15px;line-height:1.6}
+ html body[data-cinema=horror] .horror-passage .broadcast-content .broadcast-synopsis{font-size:17px;line-height:1.5}
+ html body[data-cinema=horror] .horror-passage .broadcast-content dd{font-size:16px}
+
+}
+@media(prefers-reduced-motion:reduce){html body[data-cinema=horror] .horror-passage{height:100svh}.horror-passage .passage-film{display:none}html body[data-cinema=horror] .horror-passage .crt-stage{transition:none}}
+.calm body[data-cinema=horror] .horror-passage{height:100svh!important}.calm .horror-passage .passage-film{display:none}.calm body[data-cinema=horror] .horror-passage .crt-stage{transition:none}

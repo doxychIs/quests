@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import HorrorEntrance from '../../components/HorrorEntrance.astro';
+import WorldHero from '../../components/WorldHero.astro';
+import WorldCinema from '../../components/WorldCinema.astro';
+import WorldAfterword from '../../components/WorldAfterword.astro';
+import QuestGallery from '../../components/QuestGallery.astro';
+import Games from '../../components/Games.astro';
+import HorrorAtmosphere from '../../components/HorrorAtmosphere.astro';
+import HorrorAfterword from '../../components/HorrorAfterword.astro';
+import {worlds,worldKeys,href,type World} from '../../lib/data';
+export function getStaticPaths(){return worldKeys.map(world=>({params:{world}}))}
+const world=Astro.params.world as World;const w=worlds[world];
+---
+<Base world={world} cinema={world==='iznanka'} title={`ИНОЕ / ${w.name} — ${w.subtitle}. Пермь`}>
+ {world==='iznanka'?<HorrorEntrance><QuestGallery world={world}/></HorrorEntrance>:<>
+ <WorldHero world={world}/><WorldCinema world={world}/>
+ </>}
+ {world!=='iznanka'&&<section class:list={['quest-section',`quests-${world}`]} id="quests">
+  <div class="catalog-heading section-pad"><div><span class="world-overline">{world==='arhiv'?'Из собрания хранителя':'Четыре направления. Тысяча открытий.'}</span><h2>{world==='arhiv'?<>У каждой рамы<br/><em>— своя тайна.</em></>:<>Куда зовёт<br/><em>любопытство?</em></>}</h2></div><p>{world==='arhiv'?'Выберите историю. Присмотритесь к деталям. В этом доме даже молчание может оказаться уликой.':'Прислушайтесь: джунгли шепчут, лёд звенит, камни хранят секреты, а вулкан… приглашает в гости.'}</p></div>
+  <QuestGallery world={world}/>
+  <div class="catalog-foot"><span>Четыре истории · демонстрационные сценарии</span><a class="text-link" href={href('rules/')}>Правила участия ↗</a></div>
+ </section>}
+ {world==='iznanka'&&<HorrorAtmosphere/>}
+ <section class:list={['trial-section','section-pad',`trial-${world}`]} id="trial"><div class="trial-heading">{world!=='iznanka'&&<span class="section-index">04 / ПОПРОБУЙТЕ СЕБЯ</span>}<h2 class="reveal">{w.game}</h2><p>{w.gameText}</p></div><Games world={world}/><a href={world==='iznanka'?'#quests':'#experience'} class="skip-trial text-link">{world==='iznanka'?'Вернуться к квестам':'Пропустить испытание ↓'}</a></section>
+ {world==='iznanka'&&<HorrorAfterword/>}
+ {world!=='iznanka'&&<WorldAfterword world={world}/>}
+</Base>

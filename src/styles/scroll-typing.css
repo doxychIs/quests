@@ -1,0 +1,13 @@
+/* Hidden tails occupy their original lines. There is no reflow for each keystroke. */
+html body[data-world=iznanka] .scroll-type-run,
+html body[data-world=iznanka] .scroll-type-run span{font-size:inherit!important;line-height:inherit!important;letter-spacing:inherit;font-family:inherit;color:inherit}
+.scroll-type-run,.scroll-type-visual{display:inline}
+.scroll-type-tail,[data-type-hidden]{visibility:hidden}
+.scroll-type-transcript{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.scroll-type-caret{position:fixed;width:2px;pointer-events:none;z-index:65;background:#aeb6a3;box-shadow:0 0 3px #aeb6a328;opacity:.8;contain:layout style paint}
+.scroll-type-caret[data-typing=false]{animation:scroll-caret-wait 1.15s steps(1,end) infinite}
+.scroll-type-caret[data-crt=true]{background:#9ea98f;filter:url(#broadcast-analog-signal);box-shadow:0 0 2px #91a37c20}
+@keyframes scroll-caret-wait{0%,48%{opacity:.8}49%,100%{opacity:0}}
+html.calm .scroll-type-caret{display:none}
+html.calm :is(.scroll-type-tail,[data-type-hidden]){visibility:visible}
+@media(prefers-reduced-motion:reduce){.scroll-type-caret{display:none}.scroll-type-tail,[data-type-hidden]{visibility:visible}}

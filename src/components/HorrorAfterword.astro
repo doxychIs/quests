@@ -1,0 +1,22 @@
+---
+import {asset,href,quests} from '../lib/data';
+import GraphicText from './GraphicText.astro';
+const horrorQuests=quests.filter(q=>q.world==='iznanka');
+---
+<section class="horror-afterword" id="team" aria-labelledby="team-title">
+ <img src={asset('horror-forest-v2')} alt="Дверь лесной сторожки открыта в ночной лес" loading="lazy" width="1536" height="1024"/>
+ <div class="horror-afterword-copy">
+  <h2 id="team-title"><GraphicText text="Соберите" variant="title" flicker/><br/><GraphicText text="команду." variant="blood" flicker/></h2>
+  <p>Выберите число игроков. Ниже — квесты для вашей команды.</p>
+  <div class="team-picker" data-team-picker>
+   <fieldset class="team-size"><legend>Игроков в команде</legend><div>{[2,3,4,5,6].map(n=><label><input type="radio" name="team-size" value={n} checked={n===4}/><span>{n}</span></label>)}</div></fieldset>
+   <p class="team-status" data-team-status role="status" aria-live="polite" aria-atomic="true">Подходят все 4 квеста</p>
+   <ul class="team-quests">{horrorQuests.map(q=><li data-team-quest data-min={q.players[0]} data-max={q.players[1]} data-suitable="true">
+    <div><h3>{q.name}</h3><p>{q.players.join('–')} игроков <span>· {q.duration} мин</span></p></div>
+    <a href={href(`iznanka/book/${q.slug}/?players=4`)} aria-label={`Выбрать квест «${q.name}» для 4 игроков`} data-team-book>Выбрать</a>
+    <span class="team-unavailable" data-team-unavailable hidden></span>
+   </li>)}</ul>
+  </div>
+ </div>
+</section>
+<section class="horror-briefing section-pad"><div><h2>Темнота.<br/><em>Ясные правила.</em></h2><p>Атмосфера может быть тревожной. Правила участия должны быть понятными.</p></div><div class="horror-briefing-info"><dl><div><dt>18+</dt><dd>Только совершеннолетние</dd></div><div><dt>60–75</dt><dd>Минут на квест</dd></div><div><dt>2–6</dt><dd>Человек в команде</dd></div></dl><details class="faq"><summary>Можно ли остановиться?</summary><p>Да. В сценариях предусмотрены подсказки и возможность завершить участие. Условия реальной площадки уточняются до записи.</p></details><details class="faq"><summary>Как выбрать уровень страха?</summary><p>У каждого квеста указаны интенсивность, состав команды и особенности участия. Начните с «Лесника», если предпочитаете менее напряжённую атмосферу.</p></details><a class="text-link" href={href('rules/')}>Все правила участия</a></div></section>

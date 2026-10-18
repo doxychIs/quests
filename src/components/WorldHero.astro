@@ -1,0 +1,24 @@
+---
+import {href,worlds} from '../lib/data';
+import {worldMedia} from '../lib/world-media';
+const {world}=Astro.props as {world:'arhiv'|'ostrov'};
+const w=worlds[world],media=worldMedia[world].hero;
+---
+<section class:list={['story-hero',`story-hero-${world}`]} aria-labelledby="world-title">
+ <div class="story-hero-media" data-hero-media>
+  <img src={href(`assets/${media.image}`)} alt="" fetchpriority="high" width="1536" height="1024"/>
+  {media.video&&<video data-lazy-video data-src={href(media.video)} poster={href(`assets/${media.image}`)} muted loop playsinline preload="none" aria-hidden="true"/>}
+ </div>
+ {world==='arhiv'?<>
+  <div class="archive-hero-shadow" aria-hidden="true"></div>
+  <div class="archive-hero-content"><p class="hero-kicker">Собрание непрочитанных историй · Пермь</p><h1 id="world-title">Архив<span class="title-ink" aria-hidden="true"></span></h1><p class="archive-dedication">У каждой тишины<br/>есть своя история.</p><a href="#passage" class="manuscript-link">Перелистнуть тишину <span aria-hidden="true">↗</span></a></div>
+  <aside class="archive-letter" aria-label="Письмо читателю"><span class="letter-number">Из неопубликованного</span><p>Если вы читаете эти строки,<br/>значит, окно всё ещё открыто.</p><p>Войдите. Некоторые истории<br/>слишком долго ждали<br/>своего читателя.</p><span class="letter-signature">Хранитель архива</span><svg viewBox="0 0 200 40" aria-hidden="true"><path d="M8 28Q58 12 148 24T192 18M90 32q15-38 22-22t-8 17q10-24 16-15t12 5"/></svg></aside>
+  <div class="story-hero-bottom"><span>Детективы без скримеров · 14+</span><a href="#passage">Дом помнит. Листайте <span aria-hidden="true">↓</span></a><span>Четыре незаконченных дела</span></div>
+ </>:<>
+  <div class="island-hero-horizon" aria-hidden="true"></div>
+  <div class="island-hero-copy"><p class="hero-kicker"><span class="expedition-dot" aria-hidden="true"></span> Семейная экспедиция · от 6 лет</p><h1 id="world-title">Остров<span>маленьких<br/>больших открытий.</span></h1><p>Что за поворотом: джунгли, вечные льды<br/>или вулкан? Решает ваша команда.</p><a class="expedition-button" href="#passage">Вперёд, исследователи! <span aria-hidden="true">↗</span></a></div>
+  <div class="island-hero-note"><span aria-hidden="true">✳</span><p>Четыре мира.<br/>Одно большое «ух ты!»</p><svg viewBox="0 0 150 80" aria-hidden="true"><path d="M10 8Q100 0 102 62m-16-9 16 9 10-17"/></svg></div>
+  <div class="expedition-stamp" aria-label="Четыре маршрута для одной команды"><span>БЮРО ПРИКЛЮЧЕНИЙ</span><strong>04</strong><span>МАРШРУТА · ВЫБИРАЙТЕ</span></div>
+  <div class="story-hero-bottom"><span>Дети ведут. Взрослые тоже играют.</span><a href="#passage">Посмотреть с высоты <span aria-hidden="true">↓</span></a><a href="#quests">Сразу к приключениям ↗</a></div>
+ </>}
+</section>

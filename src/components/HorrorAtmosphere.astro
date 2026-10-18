@@ -1,0 +1,8 @@
+---
+import {asset} from '../lib/data';
+import GraphicText from './GraphicText.astro';
+---
+<section class="horror-editorial" id="atmosphere" aria-labelledby="horror-editorial-title">
+ <div class="horror-editorial-photo"><img src={asset('horror-ward-v2')} alt="Холодный свет в заброшенной палате" loading="lazy" width="1536" height="1024"/></div>
+ <div class="horror-editorial-copy"><h2 id="horror-editorial-title"><GraphicText text="У страха" variant="title" flicker/><br/><GraphicText text="есть" variant="title"/> <GraphicText text="место." variant="blood" flicker/></h2><p>Пустая палата. Телефон, который не должен звонить. Шаги в закрытом цехе. В «Изнанке» у каждого квеста — свой голос. И он уже зовёт вас.</p><a href="#quests" class="text-link">Выбрать квест</a></div>
+</section>

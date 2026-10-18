@@ -1,0 +1,9 @@
+---
+import {href,type World} from '../lib/data';
+import HorrorLogo from './HorrorLogo.astro';
+const {world}=Astro.props as {world?:World};
+---
+<footer class="site-footer">
+ <div class="footer-top"><a href={href()} class:list={['brand',{'brand-horror':world==='iznanka'}]} aria-label={world==='iznanka'?'Изнанка / ИНОЕ — выбор мира':undefined}>{world==='iznanka'?<HorrorLogo/>:<span>ИНОЕ</span>}</a><p>{world==='iznanka'?<>Сигнал потерян.<br/>Выход ещё здесь.</>:<>Квесты, в которых<br/>вы по другую сторону.</>}</p><a href={href()} class="text-link">К выбору мира</a></div>
+ <div class="footer-bottom"><span>ПЕРМЬ / ДЕМОНСТРАЦИОННЫЙ ПРОЕКТ © 2026</span><nav aria-label="Информация"><a href={href('contacts/')}>Контакты</a><a href={href('rules/')}>Правила</a><a href={href('privacy/')}>Конфиденциальность</a></nav><button class="back-top">Наверх</button></div>
+</footer>

@@ -1,0 +1,45 @@
+@font-face{font-family:SignalPixel;src:url('../assets/signal-pixel.ttf') format('truetype');font-display:swap}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body[data-cinema=horror]{--paper:#080303;--ink:#ead4cb;--muted:#b08c85;--line:#48211e;background:#080303}
+body[data-cinema=horror] .site-header{position:fixed;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity .5s,transform .5s;background:linear-gradient(#090303e8,#09030300);border:0;height:82px}
+body[data-cinema=horror].past-corridor .site-header,body[data-cinema=horror] .site-header:focus-within{opacity:1;pointer-events:auto;transform:none}
+.horror-film{height:100svh;min-height:460px;position:relative;overflow:hidden;background:#030303}
+.horror-film>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.12) brightness(.82)}
+.film-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 28%,#08000083 100%);box-shadow:inset 0 0 12vw #0007}
+.film-tools{position:absolute;right:32px;top:30px;display:flex;gap:30px;opacity:0;transition:opacity .5s;color:#dec4b9;font:12px monospace;z-index:2}
+.film-tools:focus-within,.horror-film.is-awake .film-tools{opacity:1}.film-tools button{font:inherit;padding:0}.film-tools a,.film-tools button{padding:9px}
+.film-scroll{position:absolute;bottom:25px;left:calc(50% - 20px);width:40px;height:40px;display:grid;place-items:center;color:#b1a39a;opacity:.45;font-size:22px}
+.horror-door-sequence{height:330svh;position:relative;background:#080202;scroll-margin-top:0}
+.horror-door-sticky{height:100svh;min-height:460px;position:sticky;top:0;overflow:hidden;background:#050202;isolation:isolate}
+.door-room-preview{position:absolute;inset:0;filter:sepia(.8) saturate(1.6) hue-rotate(325deg) brightness(.62);transform:scale(var(--room-scale,1.06));transform-origin:50% 45%}
+.door-room-preview img{width:100%;height:100%;object-fit:cover}
+.horror-door-surface{position:absolute;inset:0;width:100%;height:100%;max-width:none;transform:translate(var(--door-x,0px),var(--door-y,0px)) scale(var(--door-zoom,1));transform-origin:51.1% 51.7%;filter:grayscale(1) sepia(1) saturate(2.8) hue-rotate(320deg) brightness(.56);will-change:transform;opacity:var(--door-opacity,1)}
+.door-spill{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 12vw #000b;background:radial-gradient(ellipse at 52% 48%,#8a060611,transparent 60%);opacity:var(--door-opacity,1);animation:door-breathe 8s ease-in-out infinite}
+.door-skip{position:absolute;bottom:28px;right:32px;font:12px monospace;color:#d9b3a6;opacity:var(--door-caption,1)}
+@keyframes door-breathe{0%,100%{filter:brightness(.85)}55%{filter:brightness(1.2)}}
+.horror-entry-veil{position:fixed;inset:0;z-index:110;background:#000;pointer-events:none;opacity:0}
+.horror-entering .horror-entry-veil{opacity:1}
+.horror-launch-frame{position:fixed;z-index:150;pointer-events:none;overflow:hidden;margin:0;max-width:none}
+body[data-cinema=horror] .trial-iznanka{padding-top:100px;background:radial-gradient(ellipse at 50% 0,#300505,#080303 65%)}
+body[data-cinema=horror] .trial-heading{max-width:900px;margin:auto auto 45px;text-align:center}
+body[data-cinema=horror] .trial-heading .section-index{display:none}
+body[data-cinema=horror] .trial-heading h2{font:clamp(18px,2.3vw,32px)/1.8 SignalPixel,monospace;letter-spacing:-.04em;color:#cf392f}
+body[data-cinema=horror] .trial-heading p{margin:20px auto 0;color:#bd9c91;font:15px/1.6 monospace}
+.maze-game{border:1px solid #5a1918!important;background:#0c0303!important;max-width:1100px;margin-inline:auto;box-shadow:0 0 80px #8d060615}
+.maze-game canvas{image-rendering:pixelated;background:#000;border:2px solid #24100f;touch-action:none;cursor:crosshair}
+.maze-game .game-toolbar,.maze-game .game-under{font-family:monospace}.maze-game .game-under p{font-size:13px}
+.maze-game [data-start],.maze-game .touch-controls button{color:#e5c7b5;background:#32100c;border-color:#7b261f}
+.maze-game .game-result{background:#100404f5;border-color:#7e251f}.maze-game .game-result h3{font-family:monospace;color:#c6382c}
+.scare-overlay .scare-close{position:absolute;right:20px;top:20px;z-index:2;background:#090303cf;color:#e6c8b8;padding:14px 20px;font:14px monospace;border:1px solid #ad6f5e}
+.scare-overlay .scare-close:focus-visible{outline:2px solid #fff}
+@media(max-width:760px){.film-tools{right:12px;top:12px;gap:12px}.horror-film{min-height:0}.horror-film>video{object-position:52% center}.horror-door-sticky{min-height:0}.horror-door-sequence{height:280svh}.door-skip{right:20px;bottom:22px}.horror-door-surface{transform-origin:52% 52%}.trial-iznanka .game-toolbar .eyebrow{font-size:9px}.maze-game .game-under p{font-size:11px}.maze-game .game-result{inset:70px 12px 150px}.maze-game .game-result p{display:block;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.horror-door-sequence{height:100svh}.horror-door-surface{transform:none!important}.door-spill{animation:none}.horror-entry-veil{display:none}}
+.calm .horror-door-sequence{height:100svh}.calm .horror-door-surface{transform:none!important}.calm .door-spill{animation:none}.calm .horror-entry-veil{display:none}
+/* Последний кадр двери совпадает с началом зала; прокрутка не показывает две копии комнаты. */
+body[data-cinema=horror] .quests-iznanka{margin-top:-100svh;z-index:1}
+.horror-door-sequence{z-index:2;pointer-events:none}.horror-door-sticky{opacity:var(--stage-opacity,1)}.door-skip{pointer-events:auto}
+.door-room-preview{filter:grayscale(.75) sepia(.8) saturate(1.4) hue-rotate(325deg) brightness(.65) contrast(1.16)}
+.door-room-preview img{height:auto;object-fit:fill}
+@media(max-width:760px){.door-room-preview img{position:relative;width:250%;max-width:none;left:-63%}}
+@media(prefers-reduced-motion:reduce){body[data-cinema=horror] .quests-iznanka{margin-top:0}.horror-door-sequence{pointer-events:auto}.door-room-preview img{width:100%;left:0}}
+.calm body[data-cinema=horror] .quests-iznanka{margin-top:0}.calm .horror-door-sequence{pointer-events:auto}.calm .door-room-preview img{width:100%;left:0}

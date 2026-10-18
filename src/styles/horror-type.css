@@ -1,0 +1,87 @@
+@font-face{font-family:HauntedMono;src:url('../../public/fonts/JetBrainsMono-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:HauntedMono;src:url('../../public/fonts/JetBrainsMono-Medium.woff2') format('woff2');font-weight:500 800;font-display:swap}
+html body[data-world=iznanka]{--terminal:HauntedMono,'Courier New',monospace;--sans:var(--terminal);--serif:var(--terminal);font-family:var(--terminal);font-synthesis:none;font-variant-ligatures:none;font-size:16px;line-height:1.85}
+html body[data-world=iznanka] :is(h1,h2,h3,p,a,button,input,select,textarea,label,li,dt,dd,summary,small){font-family:var(--terminal)}
+html body[data-world=iznanka] :is(h1,h2,h3){font-weight:500;font-style:normal;letter-spacing:-.055em;line-height:1.17;text-shadow:0 0 2px #e7faff2a,0 0 18px #a4e0f526,.7px 0 #9dddef24,-.5px 0 #df4b6220;animation:haunted-carrier 12.7s steps(1,end) infinite}
+html body[data-world=iznanka] :is(h1,h2,h3) em{font:inherit;letter-spacing:inherit;color:inherit}
+html body[data-world=iznanka] :is(p,li,summary){text-shadow:0 0 7px #b2def317;animation:haunted-subcarrier 19.3s steps(1,end) infinite}
+html body[data-world=iznanka] section:nth-of-type(even) :is(h1,h2,h3){animation-delay:-4.9s}
+html body[data-world=iznanka] section:nth-of-type(odd) :is(p,li,summary){animation-delay:-9.1s}
+html body[data-world=iznanka] :is(a,button):focus-visible{animation:none;outline-color:#d9edf5}
+html body[data-world=iznanka] :is(.section-index,.horror-kicker,.horror-editorial-caption,.horror-logo-caption,.detail-heading>.eyebrow,.other-stories>.section-index,.book-note>.eyebrow){display:none}
+html body[data-world=iznanka] .film-age{display:block;font:14px/1.5 var(--terminal);color:#b9cdd6;margin-bottom:26px}
+html body[data-world=iznanka] .horror-film .film-copy h1{font:500 clamp(38px,5.8vw,88px)/1.15 var(--terminal);letter-spacing:-.06em;margin:0 0 28px;max-width:100%}
+html body[data-world=iznanka] .horror-film .film-description{font:16px/1.9 var(--terminal);max-width:620px}
+html body[data-world=iznanka] :is(.film-tools,.horror-film .film-scroll,.passage-caption,.passage-skip){font:14px/1.6 var(--terminal);letter-spacing:0;text-transform:none}
+html body[data-world=iznanka] :is(.horror-editorial h2,.horror-afterword h2){font:500 clamp(36px,4.8vw,68px)/1.2 var(--terminal);letter-spacing:-.06em}
+html body[data-world=iznanka] .horror-editorial-copy{max-width:840px}
+html body[data-world=iznanka] :is(.horror-editorial-copy>p,.horror-afterword-copy>p){font:16px/1.95 var(--terminal);max-width:440px;margin:30px 0 34px}
+html body[data-world=iznanka] :is(.horror-editorial .text-link,.horror-afterword .button,.skip-trial,.horror-briefing .text-link){font-size:15px;letter-spacing:0}
+html body[data-world=iznanka][data-cinema=horror] .trial-heading h2{font:500 clamp(32px,4.2vw,58px)/1.25 var(--terminal);letter-spacing:-.06em}
+html body[data-world=iznanka][data-cinema=horror] .trial-heading p{font:16px/1.9 var(--terminal);max-width:640px}
+html body[data-world=iznanka][data-cinema=horror] .maze-game .game-toolbar{font:12px/1.5 var(--terminal);padding:16px 25px 8px;gap:14px}
+html body[data-world=iznanka] .maze-game .game-toolbar :is(.eyebrow,.text-link){font:12px/1.5 var(--terminal);letter-spacing:0;white-space:nowrap}
+html body[data-world=iznanka] :is(.game-status-line,.maze-game .game-under p,.game-scare-note){font:14px/1.85 var(--terminal);color:#a8bdca;max-width:none}
+html body[data-world=iznanka] .maze-game .game-under p{max-width:470px}
+html body[data-world=iznanka][data-cinema=horror] .maze-game [data-start]{font:500 14px/1.6 var(--terminal);min-width:245px}
+html body[data-world=iznanka] :is(.horror-briefing h2,.quest-story h2,.rules-book h2){font:500 clamp(30px,3.7vw,50px)/1.24 var(--terminal);letter-spacing:-.05em}
+html body[data-world=iznanka] :is(.horror-briefing>div>p,.horror-briefing-info dd,.horror-briefing-info .faq p,.horror-briefing-info .faq,.story-copy .mission p,.rules-book ul){font:16px/1.9 var(--terminal)}
+html body[data-world=iznanka] .horror-briefing-info dt{font:500 28px/1.5 var(--terminal)}
+html body[data-world=iznanka] .detail-heading h1{font:500 clamp(42px,6.9vw,100px)/1.13 var(--terminal);letter-spacing:-.065em}
+html body[data-world=iznanka] .detail-heading>p{font:16px/1.9 var(--terminal);max-width:570px}
+html body[data-world=iznanka] .detail-back{font:14px/1.7 var(--terminal)}
+html body[data-world=iznanka] .story-lead{font:17px/1.95 var(--terminal)}
+html body[data-world=iznanka] .story-copy .mission .eyebrow{font:14px/1.7 var(--terminal);letter-spacing:.04em}
+html body[data-world=iznanka] .horror-case-facts span{font:13px/1.6 var(--terminal);letter-spacing:.04em}
+html body[data-world=iznanka] .horror-case-facts strong{font:500 16px/1.7 var(--terminal)}
+html body[data-world=iznanka] .quest-gallery .gallery-head{display:block;margin-bottom:30px}
+html body[data-world=iznanka] .gallery-head h2{font:500 30px/1.35 var(--terminal);letter-spacing:-.04em;margin-bottom:16px}
+html body[data-world=iznanka] .gallery-head>span:last-child{font:14px/1.8 var(--terminal);max-width:none;text-align:left;display:block}
+html body[data-world=iznanka] :is(.demo-context,.book-note small,.book-note>p,.booking-price>span,.book-note .button,.lightbox p){font:14px/1.85 var(--terminal)}
+html body[data-world=iznanka] .book-note h3{font:500 clamp(25px,2.7vw,36px)/1.3 var(--terminal);overflow-wrap:anywhere}
+html body[data-world=iznanka] .other-story h3{font:500 clamp(18px,2vw,26px)/1.4 var(--terminal)}
+html body[data-world=iznanka] .other-story>span{font-size:14px}
+html body[data-world=iznanka] :is(.footer-bottom,.footer-bottom nav,.back-top,.header-tools .sound-toggle){font:14px/1.8 var(--terminal)}
+html body[data-world=iznanka] .header-tools .place{display:none}
+html body[data-world=iznanka] .footer-top p{font:18px/1.8 var(--terminal)}
+html body[data-world=iznanka] :is(.booking-content .eyebrow,.booking-content .field,.demo-banner p,.cost-note,.booking-content .check,.booking-price strong){font-size:14px;line-height:1.9}
+html body[data-world=iznanka] .booking-content h2{font-size:clamp(30px,3.6vw,48px);line-height:1.25}
+html body[data-world=iznanka] .booking-art h1{font:500 clamp(32px,4vw,58px)/1.2 var(--terminal);letter-spacing:-.05em}
+html body[data-world=iznanka] .booking-art p{font-size:15px}
+html body[data-world=iznanka] .booking-art .eyebrow{display:none}
+@keyframes haunted-carrier{0%,17%,18.7%,61%,62.7%,100%{opacity:1}17.3%{opacity:.84;text-shadow:1px 0 #a8dce56b,-.6px 0 #e6445e40,0 0 13px #c6e9f045}17.8%{opacity:.97}18.2%{opacity:.9}61.4%{opacity:.89}62%{opacity:.98}}
+@keyframes haunted-subcarrier{0%,39%,40.5%,100%{opacity:1}39.4%{opacity:.93}39.9%{opacity:.98}}
+@media(max-width:760px){
+ html body[data-world=iznanka] .horror-film .film-copy h1{font-size:clamp(25px,6.8vw,43px);line-height:1.25;letter-spacing:-.055em}
+ html body[data-world=iznanka] .horror-film .film-description{font-size:15px;line-height:1.8;max-width:330px}
+ html body[data-world=iznanka] :is(.horror-editorial h2,.horror-afterword h2){font-size:clamp(27px,7.2vw,44px);line-height:1.28}
+ html body[data-world=iznanka] :is(.horror-editorial-copy>p,.horror-afterword-copy>p){font-size:15px;line-height:1.9;max-width:100%}
+ html body[data-world=iznanka] .horror-afterword .button{font-size:14px;gap:18px;padding:16px 20px}
+ html body[data-world=iznanka][data-cinema=horror] .trial-heading h2{font-size:clamp(25px,6.5vw,37px);line-height:1.3}
+ html body[data-world=iznanka][data-cinema=horror] .trial-heading p{font-size:15px;line-height:1.85}
+ html body[data-world=iznanka][data-cinema=horror] .maze-game .game-toolbar{padding:9px 12px 4px;gap:8px}
+ html body[data-world=iznanka] .maze-game .game-toolbar :is(.eyebrow,.text-link){font-size:11px}
+ html body[data-world=iznanka] :is(.game-status-line,.maze-game .game-under p,.game-scare-note){font-size:14px;line-height:1.85}
+ html body[data-world=iznanka] .game-scare-note{max-width:100%;padding:0 15px}
+ html body[data-world=iznanka] .game-status-line{padding:0 12px;text-align:center}
+ html body[data-world=iznanka] :is(.horror-briefing h2,.quest-story h2,.rules-book h2){font-size:clamp(26px,6.8vw,38px);line-height:1.3}
+ html body[data-world=iznanka] .horror-briefing-info dl{grid-template-columns:1fr;gap:18px}
+ html body[data-world=iznanka] .horror-briefing-info dl>div{display:flex;align-items:center;gap:20px}
+ html body[data-world=iznanka] .horror-briefing-info dt{font-size:25px;min-width:100px}
+ html body[data-world=iznanka] .horror-briefing-info dd{font-size:14px;margin:0}
+ html body[data-world=iznanka] .detail-heading h1{font-size:clamp(28px,7.8vw,47px);line-height:1.2;letter-spacing:-.06em}
+ html body[data-world=iznanka] .detail-heading>p{font-size:15px;line-height:1.9}
+ html body[data-world=iznanka] .detail-back{font-size:13px;margin-bottom:45px}
+ html body[data-world=iznanka] .horror-case-facts{gap:16px 10px}
+ html body[data-world=iznanka] .horror-case-facts span{font-size:12px}
+ html body[data-world=iznanka] .horror-case-facts strong{font-size:14px}
+ html body[data-world=iznanka] .gallery-head h2{font-size:25px}
+ html body[data-world=iznanka] .other-story{grid-template-columns:1fr;gap:12px}
+ html body[data-world=iznanka] .other-story>img{grid-row:auto}
+ html body[data-world=iznanka] .other-story h3{font-size:21px}
+ html body[data-world=iznanka] .footer-bottom{gap:22px;font-size:13px}
+ html body[data-world=iznanka] .footer-bottom nav{gap:16px;flex-wrap:wrap;font-size:13px}
+ html body[data-world=iznanka] .booking-art h1{font-size:clamp(28px,7.3vw,43px)}
+}
+@media(prefers-reduced-motion:reduce){html body[data-world=iznanka] :is(h1,h2,h3,p,li,summary){animation:none!important}}
+html.calm body[data-world=iznanka] :is(h1,h2,h3,p,li,summary){animation:none!important}

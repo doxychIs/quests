@@ -1,0 +1,66 @@
+---
+import {quests,href,asset} from '../lib/data';
+import {roomScreens,roomSize,roundedScreenPath} from '../lib/crt-room';
+import GraphicText from './GraphicText.astro';
+import '../styles/horror-room.css';
+import '../styles/crt-reading.css';
+const screens=roomScreens.filter(s=>s.kind==='quest').map(s=>({...s,quest:quests.find(q=>q.world==='iznanka'&&q.slug===s.slug)!}));
+---
+<div class="crt-room" data-crt-room>
+ <svg width="0" height="0" class="crt-glass-definitions" aria-hidden="true"><defs>
+  <filter id="broadcast-analog-signal" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+   <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
+   <feOffset in="red" dx=".45" dy="0" result="red-shift" data-analog-red/>
+   <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
+   <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
+   <feOffset in="blue" dx="-.25" dy="0" result="blue-shift" data-analog-blue/>
+   <feBlend in="red-shift" in2="green" mode="screen" result="rg"/><feBlend in="rg" in2="blue-shift" mode="screen" result="rgb"/>
+   <feOffset in="SourceGraphic" dx="2.2" dy=".12" result="echo"/>
+   <feColorMatrix in="echo" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .035 0" result="weak-echo"/>
+   <feMerge result="signal"><feMergeNode in="weak-echo"/><feMergeNode in="rgb"/></feMerge>
+   <feTurbulence type="fractalNoise" baseFrequency="0 .038" numOctaves="1" seed="137" result="line-timebase" data-analog-timebase/>
+   <feColorMatrix in="line-timebase" type="matrix" values="1 0 0 0 0  0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 1" result="horizontal-only"/>
+   <feDisplacementMap in="signal" in2="horizontal-only" scale=".28" xChannelSelector="R" yChannelSelector="B" data-analog-displacement/>
+  </filter>
+ </defs></svg>
+ <svg width="0" height="0" class="crt-glass-definitions" aria-hidden="true"><defs><clipPath id="crt-reading-glass" clipPathUnits="objectBoundingBox"><path d="M .09 .025 Q .5 -.015 .91 .025 Q .98 .03 .985 .12 Q 1.015 .5 .985 .88 Q .98 .97 .91 .975 Q .5 1.015 .09 .975 Q .02 .97 .015 .88 Q -.015 .5 .015 .12 Q .02 .03 .09 .025 Z"/></clipPath></defs></svg>
+ <div class="crt-room-toolbar"><h2>Выберите квест</h2><button type="button" class="crt-enlarge" data-room-enlarge aria-pressed="false">Рассмотреть ближе <span aria-hidden="true">＋</span></button></div>
+ <div class="crt-viewport" data-room-viewport tabindex="0" aria-label="Комната с телевизорами. При увеличении перемещайте сцену прокруткой.">
+  <div class="crt-stage" data-room-stage>
+   <picture class="crt-set"><img src={href('assets/horror-room-final.jpg')} width={roomSize.width} height={roomSize.height} alt="Семь старых телевизоров в комнате за замочной скважиной. Четыре экрана открывают квесты." loading="lazy" decoding="async"/></picture>
+   <video class="passage-film" data-passage-film data-src={href('assets/horror-passage.mp4')} data-src-mobile={href('assets/horror-passage-mobile.mp4')} poster={href('assets/horror-passage-poster.jpg')} muted playsinline preload="none" width="1280" height="720" aria-label="Проход из коридора через замок к семи телевизорам, управляемый прокруткой"></video>
+   <canvas class="crt-projection" data-room-projection aria-hidden="true" width={roomSize.width} height={roomSize.height}></canvas>
+   <svg class="crt-surfaces" viewBox={`0 0 ${roomSize.width} ${roomSize.height}`} aria-label="Четыре экрана с квестами" role="group">
+    {roomScreens.filter(s=>s.kind==='ambient').map(s=><path class="crt-ambient" d={roundedScreenPath(s.quad,s.radius)} data-screen-id={s.id} data-scroll-graphic={s.id==='unidentified-face'?'НЕ ВЫКЛЮЧАЙ':undefined} aria-hidden="true"/>)}
+    {screens.map((s,i)=><a class="crt-screen" href={href(`iznanka/quests/${s.slug}/`)} data-room-screen={s.id} data-scroll-graphic={s.quest.name} data-quest-name={s.quest.name} data-quest-image={asset(s.quest.image)} data-quest-info={`${s.quest.age} · ${s.quest.duration} минут · ${s.quest.players.join('–')} игроков · страх ${s.quest.level}/5`} data-quest-slug={s.slug} aria-label={`${s.quest.name}. ${s.description}. Открыть квест.`} tabindex="0"><title>{s.quest.name} — {s.description}</title><path d={roundedScreenPath(s.quad,s.radius)} vector-effect="non-scaling-stroke"/></a>)}
+   </svg>
+   <div class="crt-frame-shade" aria-hidden="true"></div>
+   <span class="crt-room-instruction" data-room-instruction>Наведите на экран · нажмите, чтобы войти</span>
+   <div class="crt-selection" data-room-selection hidden aria-live="polite"><div><h3 data-room-title>ПАЛАТА 06</h3><p data-room-info>18+ · 60 минут · 2–5 игроков</p></div><a href={href('iznanka/quests/palata-06/')} data-room-open>Открыть квест</a></div>
+  </div>
+ <div class="crt-interface" data-room-interface><div class="broadcast-panel" data-broadcast-panel hidden role="region" tabindex="-1" aria-label="Описание выбранного квеста на экране телевизора">
+  <div class="broadcast-glass">
+  <button type="button" class="broadcast-close" data-broadcast-close ><GraphicText text="К квестам"/></button>
+  {screens.map(s=><article class="broadcast-program" data-broadcast-program={s.slug} hidden aria-labelledby={`broadcast-${s.slug}`}>
+   <header class="broadcast-heading"><h2 id={`broadcast-${s.slug}`}><GraphicText text={s.quest.name} flicker/></h2><p><GraphicText text={`${s.quest.genre} / ${s.quest.age}`}/></p></header>
+   <nav class="broadcast-menu" aria-label="Разделы записи"><button type="button" data-broadcast-tab="story" aria-pressed="true"><GraphicText text="СЮЖЕТ"/></button><button type="button" data-broadcast-tab="info" aria-pressed="false"><GraphicText text="СВЕДЕНИЯ"/></button><button type="button" data-broadcast-tab="frames" aria-pressed="false"><GraphicText text="КАДРЫ"/></button></nav>
+   <div class="broadcast-content" data-broadcast-pane="story"><p class="broadcast-synopsis"><GraphicText text={s.quest.synopsis}/></p><p><GraphicText text={s.quest.story}/></p><p><GraphicText text={`Ваша задача. ${s.quest.task}`}/></p></div>
+   <div class="broadcast-content" data-broadcast-pane="info" hidden><dl><div><dt><GraphicText text="ВОЗРАСТ"/></dt><dd><GraphicText text={s.quest.age}/></dd></div><div><dt><GraphicText text="ВРЕМЯ"/></dt><dd><GraphicText text={`${s.quest.duration} минут`}/></dd></div><div><dt><GraphicText text="КОМАНДА"/></dt><dd><GraphicText text={`${s.quest.players.join('–')} игроков`}/></dd></div><div><dt><GraphicText text="СТРАХ"/></dt><dd><GraphicText text={`${'■'.repeat(s.quest.level)}${'□'.repeat(5-s.quest.level)} ${s.quest.level}/5`}/></dd></div></dl><ul>{s.quest.rules.map(rule=><li><GraphicText text={rule}/></li>)}</ul></div>
+   <div class="broadcast-frames" data-broadcast-pane="frames" hidden>{s.quest.gallery.map(name=><figure><img src={asset(name)} alt={`Художественная декорация квеста «${s.quest.name}»`} loading="lazy"/><figcaption>ОБРАЗ ДЕКОРАЦИИ</figcaption></figure>)}</div>
+   <footer class="broadcast-actions"><a class="broadcast-book" href={href(`iznanka/book/${s.slug}/`)}><GraphicText text="ВЫБРАТЬ СЕАНС"/></a><a href={href(`iznanka/quests/${s.slug}/`)}><GraphicText text="Полная страница квеста"/></a><small><GraphicText text="Демонстрационный квест · запись работает в деморежиме"/></small></footer>
+  </article>)}
+  </div>
+  <div class="broadcast-crt" aria-hidden="true">
+   <canvas class="crt-noise" data-crt-noise width="240" height="180"></canvas>
+   <span class="crt-phosphor-grid"></span><span class="crt-tracking-band"></span><span class="crt-signal-tear"></span>
+   <span class="crt-glass-reflection"></span><span class="crt-glass-rim"></span>
+  </div>
+ </div></div>
+ </div>
+ <nav class="crt-room-index" aria-label="Квесты телевизионной комнаты">{screens.map(s=><a href={href(`iznanka/quests/${s.slug}/`)} data-room-index={s.id}><span>{s.quest.name}</span><small>{s.quest.duration} мин · {s.quest.players.join('–')} игроков</small></a>)}</nav>
+ <div class="crt-video-bank" hidden aria-hidden="true">
+  {roomScreens.map((screen,i)=><video data-signal-video={screen.id} data-src={href('assets/'+['horror-broadcast-compatible.mp4','horror-mask.mp4','horror-corridor-mobile.mp4','horror-face.mp4','horror-face.mp4','horror-broadcast-compatible.mp4','horror-mask.mp4'][i])} muted loop playsinline preload="none"></video>)}
+ </div>
+
+</div>
+<script>import {initHorrorRoom} from '../scripts/horror-room';initHorrorRoom();</script>

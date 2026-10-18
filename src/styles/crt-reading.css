@@ -1,0 +1,78 @@
+/* The glass has depth and interference; the reading plane stays front-facing. */
+.crt-glass-definitions{position:absolute;pointer-events:none}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-panel{--crt-pixel:SignalPixel,monospace;isolation:isolate;overflow:hidden;clip-path:url(#crt-reading-glass);border-radius:7% / 8%;background:#060c10}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-glass{padding:32px 42px;background:radial-gradient(ellipse at 50% 42%,#14232c 0,#0b141c 65%,#03070c 100%);color:#b6cfd8;font:400 13px/2 var(--crt-pixel);letter-spacing:0;text-shadow:-.5px 0 #ff5e5e25,.5px 0 #48cfff35,0 0 3px #b9ff952c;box-shadow:inset 0 0 36px #000a;scrollbar-color:#6a8b5b #08110a;font-variant-ligatures:none}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-glass:before{display:none}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-close{font:400 9px/1.8 var(--crt-pixel);min-height:38px;padding:8px 0 12px;color:#acc8d3;background:#0a141c;margin-bottom:14px;text-shadow:inherit}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-close span{font:400 8px var(--crt-pixel);color:#819fac}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading>span{font:400 8px/1.8 var(--crt-pixel);letter-spacing:.04em;color:#89a5b3}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font:400 20px/1.65 var(--crt-pixel);letter-spacing:0;margin:18px 0 10px;color:#d3e6ed;text-shadow:-1px 0 #ec66662e,1px 0 #62cad438,0 0 7px #a8e78c40;overflow-wrap:anywhere}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading p{font:400 10px/1.8 var(--crt-pixel);color:#89a5b3}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu{gap:8px;margin:22px 0;padding-bottom:12px;border-color:#91bb7133}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu button{font:400 9px/1.8 var(--crt-pixel);padding:10px 12px;min-height:38px;border-radius:0;color:#a3beca}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu button[aria-pressed=true]{background:#b6ced9;color:#0d1920;box-shadow:0 0 12px #9fcb7e20;text-shadow:none}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content{font:400 13px/2 var(--crt-pixel)}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content .broadcast-synopsis{font:400 14px/1.9 var(--crt-pixel);color:#d1e1e9}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content p{max-width:65ch;margin-bottom:22px}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content dt{font:400 8px/1.8 var(--crt-pixel);letter-spacing:0;color:#89a5b3}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content dd{font:400 14px/1.8 var(--crt-pixel);color:#cbdfe7;margin-top:7px}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-frames img{image-rendering:pixelated;filter:grayscale(1) sepia(.4) hue-rotate(45deg) contrast(1.15)}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-frames figcaption{font:400 8px/1.8 var(--crt-pixel)}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-book{font:400 10px/1.8 var(--crt-pixel);padding:16px 18px;border-radius:0;background:#b6ced9;color:#0d1920;text-shadow:none}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-actions>a:nth-child(2){font:400 9px/1.9 var(--crt-pixel)}
+html body[data-cinema=horror] .horror-passage .crt-room .broadcast-actions small{font:400 8px/1.9 var(--crt-pixel);color:#86a578}
+.broadcast-crt{position:absolute;inset:0;z-index:10;overflow:hidden;pointer-events:none;border-radius:inherit}
+.broadcast-crt>span,.broadcast-crt>canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.crt-noise{image-rendering:pixelated;opacity:.08;mix-blend-mode:screen}
+.crt-phosphor-grid{background:repeating-linear-gradient(0deg,#0000 0 2px,#0005 2px 3px),repeating-linear-gradient(90deg,#d8555512 0 1px,#73dd761a 1px 2px,#598bd316 2px 3px);opacity:.5}
+.broadcast-crt .crt-tracking-band{inset:-25% 0 auto;height:22%;background:linear-gradient(transparent,#abcfe420 45%,#d0e5f30c 55%,transparent);opacity:.4;animation:crt-reading-sweep 9s linear infinite}
+.broadcast-crt .crt-signal-tear{inset:57% 0 auto;height:5px;background:repeating-linear-gradient(90deg,#a3dc8940 0 8px,#03080580 8px 23px,transparent 23px 47px);box-shadow:0 8px 0 #99c97a16,0 -2px 0 #e2a6c71c;opacity:0;animation:crt-reading-tear 13s steps(1,end) infinite}
+.crt-glass-reflection{background:radial-gradient(ellipse 80% 22% at 45% -5%,#e6ffeb26,transparent 75%),radial-gradient(ellipse 20% 80% at -5% 45%,#d7f1ef18,transparent 75%),radial-gradient(ellipse 60% 110% at 50% 42%,transparent 45%,#0008 100%)}
+.crt-glass-reflection:after{content:'';position:absolute;inset:0;border-radius:45%;background:linear-gradient(155deg,#e8fff10d,transparent 35%,transparent 75%,#c8edca06)}
+.crt-glass-rim{box-shadow:inset 0 0 0 2px #a8c9b31a,inset 8px 8px 22px #d6eee810,inset -14px -15px 32px #0009;border-radius:8% / 9%}
+.crt-room.is-screen-ready .broadcast-program{animation:crt-reading-flicker 4.7s linear infinite}
+.crt-room.is-signal-still .broadcast-crt *,.crt-room.is-signal-still .broadcast-program{animation-play-state:paused}
+@keyframes crt-reading-flicker{0%,100%{opacity:1}19%{opacity:.96}20%{opacity:.985}48%{opacity:.97}49%{opacity:1}76%{opacity:.95}78%{opacity:.99}}
+@keyframes crt-reading-sweep{to{transform:translateY(600%)}}
+@keyframes crt-reading-tear{0%,44%,50%,100%{opacity:0;transform:none}45%{opacity:.24;transform:translateX(-3px)}47%{opacity:.14;transform:translateX(2px)}49%{opacity:.2;transform:none}}
+@media(max-width:760px){
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-glass{padding:14px 22px;font-size:11px;line-height:1.95}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-close{font-size:8px;min-height:34px;margin-bottom:6px;padding:6px 0 9px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading>span{font-size:7px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:12px;line-height:1.75;margin:12px 0 8px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading p{font-size:8px;line-height:1.8}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu{gap:5px;margin:12px 0 14px;padding-bottom:8px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu button{font-size:8px;min-height:34px;padding:8px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content{font-size:11px;line-height:1.95}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content .broadcast-synopsis{font-size:12px;line-height:1.9}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-content dd{font-size:12px;line-height:1.9}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-book{font-size:9px;padding:14px}
+ .crt-phosphor-grid{opacity:.42}
+}
+@media(max-width:360px){
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading>span,
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading p{display:none}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:11px;margin:8px 0}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-close{min-height:28px;margin-bottom:2px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu{margin:8px 0;padding-bottom:6px}
+ html body[data-cinema=horror] .horror-passage .crt-room .broadcast-menu button{min-height:30px;padding:6px 8px}
+}
+@media(prefers-reduced-motion:reduce){.crt-room .broadcast-program,.crt-room .broadcast-crt *{animation:none!important}.crt-tracking-band,.crt-signal-tear{display:none}}
+.calm .crt-room .broadcast-program,.calm .crt-room .broadcast-crt *{animation:none!important}.calm .crt-tracking-band,.calm .crt-signal-tear{display:none}
+
+/* Readable terminal lettering at the actual size of the photographed glass. */
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-panel{--crt-pixel:var(--terminal)}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-glass,.broadcast-content){font-size:16px;line-height:1.85}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:30px;line-height:1.25;letter-spacing:-.04em}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-close,.broadcast-heading p,.broadcast-menu button,.broadcast-content dt,.broadcast-actions>a,.broadcast-actions small){font-size:14px;line-height:1.75}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-close>.key-hint{display:none}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-content .broadcast-synopsis,.broadcast-content dd){font-size:17px;line-height:1.85}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-actions small{display:block;color:#a8bdca}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-frames figcaption{display:none}
+html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-frames img{image-rendering:auto;filter:grayscale(.35) contrast(.95) brightness(.85)}
+@media(max-width:760px){
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-glass,.broadcast-content){font-size:14px;line-height:1.85}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room .broadcast-heading h2{font-size:23px;line-height:1.3}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-close,.broadcast-heading p,.broadcast-menu button,.broadcast-content dt,.broadcast-actions>a,.broadcast-actions small){font-size:13px}
+ html body[data-world=iznanka][data-cinema=horror] .horror-passage .crt-room :is(.broadcast-content .broadcast-synopsis,.broadcast-content dd){font-size:15px}
+}

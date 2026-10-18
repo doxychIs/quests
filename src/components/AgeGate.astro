@@ -1,0 +1,19 @@
+---
+import {href} from '../lib/data';
+---
+<dialog id="age-gate" class="age-overlay" open aria-labelledby="age-title">
+ <div class="age-inner">
+  <span class="eyebrow">ИНОЕ / КОНТРОЛЬ ДОСТУПА</span>
+  <div class="age-number" aria-hidden="true">18<span>+</span></div>
+  <h1 id="age-title">За этой дверью<br/>может быть неуютно.</h1>
+  <p>Раздел содержит пугающие сцены, изображения крови, мрачные силуэты и резкие звуковые эффекты. Людям с повышенной чувствительностью к таким материалам рекомендуется выбрать другой раздел. Анимации с резкими вспышками отключены.</p>
+  <form id="age-form">
+   <label class="check"><input type="checkbox" name="adult" required/> Мне исполнилось 18 лет</label>
+   <label class="check"><input type="checkbox" name="surprise"/> Разрешить скример в финале мини-игры</label>
+   <label class="check"><input type="checkbox" name="sound"/> Включить звук</label>
+   <label class="check"><input type="checkbox" name="calm"/> Уменьшить движение</label>
+   <div class="age-actions"><button class="button" type="submit">Войти</button><a href={href()} class="text-link">Вернуться к выбору</a></div>
+  </form>
+  <small>Выбор сохраняется только в этом браузере. Это подтверждение возраста, а не проверка личности.</small>
+ </div>
+</dialog>

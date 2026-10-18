@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import {worlds,href,asset,worldKeys} from '../lib/data';
+import '../styles/hub.css';
+---
+<Base>
+ <section class="world-selector" id="worlds" data-world-selector data-active-world="arhiv" aria-label="Выбор мира">
+  <div class="selector-scenes" aria-hidden="true">
+   <div class="selector-scene scene-iznanka" data-scene="iznanka"><div class="closed-threshold"><span></span></div><img data-safe-src={asset('iznanka')} class="adult-preview" alt=""/></div>
+   <div class="selector-scene scene-arhiv is-current" data-scene="arhiv"><img src={asset('arhiv')} alt="" fetchpriority="high"/></div>
+   <div class="selector-scene scene-ostrov" data-scene="ostrov"><img src={asset('ostrov')} alt=""/><video data-hub-film data-src={href('assets/sea-film.mp4')} muted loop playsinline preload="none"></video></div>
+  </div>
+  <div class="selector-vignette" aria-hidden="true"></div>
+  <div class="selector-heading"><p>Квесты в Перми</p><h1>Выберите свой мир.</h1></div>
+  <nav class="world-zones" aria-label="Три мира">
+   {worldKeys.map(w=><a href={href(w+'/')} class="world-zone" data-world-zone={w} aria-label={`Войти в ${worlds[w].name}`}><span class="zone-content"><span class="zone-genre">{worlds[w].subtitle} · {worlds[w].age}</span><span class="zone-name">{worlds[w].name}</span><span class="zone-enter">Войти в мир <span aria-hidden="true">⟶</span></span></span></a>)}
+  </nav>
+  <div class="selector-bottom"><span>Три мира квестов. Выбор за вами.</span><a href="#about-experience">О квестах</a></div>
+ </section>
+ <section class="hub-story" id="about-experience"><div><p class="hub-kicker">В реальности</p><h2>Комната.<br/>История.<br/><em>Ваша команда.</em></h2></div><div class="hub-story-copy"><p>Исследуйте пространство, замечайте детали, принимайте решения вместе. В каждом мире — свои квесты и свой способ их пройти.</p><dl><div><dt>2–6</dt><dd>человек в команде</dd></div><div><dt>60–75</dt><dd>минут на квест</dd></div></dl><a href={href('about/')} class="quiet-link">Как проходит игра</a></div></section>
+ <section class="hub-invitation"><div class="invitation-art" aria-hidden="true"><div class="invitation-envelope"><span>ИНОЕ</span><i>Для тебя.</i><span>Мир выбираешь ты</span></div></div><div class="invitation-copy"><p class="hub-kicker">Подарочное приглашение</p><h2>Подарите<br/><em>выбор.</em></h2><p>Добавьте имя, несколько слов от себя и сохраните приглашение в один из трёх миров.</p><a class="invitation-link" href={href('certificates/')}>Создать приглашение <span aria-hidden="true">⟶</span></a></div></section>
+ <p class="hub-demo-note">Концепция квест-центра. Истории вымышлены, бронирование демонстрационное.</p>
+ <script>import {initWorldSelector} from '../scripts/world-selector';initWorldSelector();</script>
+</Base>

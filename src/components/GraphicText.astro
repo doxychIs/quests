@@ -1,0 +1,18 @@
+---
+import {graphicWords,glyphAdvance,glyphEm,glyphId} from '../lib/broadcast-glyphs';
+const {text,variant='broadcast',seed=0,flicker=false}=Astro.props as {text:string;variant?:'broadcast'|'title'|'blood'|'logo';seed?:number;flicker?:boolean};
+const words=graphicWords(text,seed);
+---
+<span class:list={['graphic-text',`graphic-${variant}`]} data-graphic-text={text} data-letter-flicker={flicker?'rare':undefined}>
+ <span class="graphic-transcript">{text}</span>
+ <span class="graphic-objects" data-graphic-lazy={variant==='broadcast'?String(seed):undefined} aria-hidden="true">{variant!=='broadcast'&&words.map(word=>word.space?<span class="graphic-space"> </span>:<svg class="graphic-word" viewBox={`-.3 -1 ${word.width+.8} 9.3`} style={`width:${(word.width+.8)/glyphEm}em;height:1.034em`} focusable="false" aria-hidden="true">
+  {word.letters.map((g,n)=><g data-letter={g.char} data-letter-index={g.index} style={`--glyph-weight:${g.weight};${g.color?'--glyph-face:'+g.color:''}`} transform={`translate(${n*glyphAdvance+g.dx} ${g.dy}) rotate(${g.rotate} 2.5 3.5) scale(${g.scaleX} ${g.scaleY})`}>
+   <g data-letter-ink opacity={g.opacity}>
+    {g.customPath?<path class="glyph-shadow" d={g.customPath} transform="translate(.08 .17)"/>:<use class="glyph-shadow" href={`#${glyphId(g.char)}`} transform="translate(.08 .17)"/>}
+    {g.customPath?<path class="glyph-face" d={g.customPath}/>:<use class="glyph-face" href={`#${glyphId(g.char)}`}/>}
+    <path class="glyph-damage" d={g.damage}/>
+    <path class="glyph-scratch" d={g.scratch}/>
+   </g>
+  </g>)}
+ </svg>)}</span>
+</span>
