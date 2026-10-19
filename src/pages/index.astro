@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import {worlds,href,asset,worldKeys,quests} from '../lib/data';
 import '../styles/hub.css';
 const descriptions={iznanka:'Для тех, кто хочет почувствовать больше.',arhiv:'Для тех, кто замечает больше остальных.',ostrov:'Для маленьких исследователей и их взрослых.'};
+const coverDescriptions={iznanka:'Приоткрытая дверь в старом коридоре и светящийся кинескопный телевизор',arhiv:'Тайная библиотека: раскрытая рукопись, старые книги и латунный глобус',ostrov:'Четыре острова: тропические джунгли, ледяные горы, каменные руины и вулкан'};
 ---
 <Base>
  <section class="world-selector" id="worlds" data-world-selector data-active-world="arhiv" aria-labelledby="portal-title">
@@ -11,8 +12,7 @@ const descriptions={iznanka:'Для тех, кто хочет почувство
    {worldKeys.map((w,i)=><a class:list={['world-zone',`zone-${w}`,{'is-current':w==='arhiv'}]} href={href(w+'/')} data-world-zone={w} data-world-caption={descriptions[w]} aria-label={`Войти в мир «${worlds[w].name}»`}>
     <span class="portal-door-top"><span>0{i+1} / {worlds[w].subtitle}</span><span>{worlds[w].age}</span></span>
     <span class="portal-door"><span class:list={['selector-scene',`scene-${w}`,{'is-current':w==='arhiv'}]} data-scene={w}>
-     {w==='iznanka'?<><span class="closed-threshold" aria-hidden="true"><span class="threshold-light"></span><i></i></span><img data-safe-src={asset('iznanka')} class="adult-preview" alt="" width="1536" height="1024"/></>:<img src={asset(w==='arhiv'?'archive-hero-poster':'island-hero-poster')} alt="" width="1280" height="720" fetchpriority={w==='arhiv'?'high':'auto'}/>}
-     {w==='ostrov'&&<video data-hub-film data-src={href('assets/sea-film.mp4')} data-src-mobile={href('assets/sea-film-mobile.mp4')} muted loop playsinline preload="none" aria-hidden="true"/>}
+     <img src={asset(`portal-${w}-v1`)} srcset={`${asset(`portal-${w}-v1-small`)} 384w, ${asset(`portal-${w}-v1`)} 768w`} sizes="(max-width:760px) calc((100vw - 74px)/3), 17vw" alt={coverDescriptions[w]} width="768" height="1152" loading="eager" fetchpriority={w==='arhiv'?'high':'auto'}/>
     </span><span class="portal-door-handle" aria-hidden="true">↗</span><span class="portal-door-note">{w==='iznanka'?'Заходите, если решитесь.':w==='arhiv'?'Каждая деталь — улика.':'Приключения любят компанию.'}</span></span>
     <span class="zone-caption"><span class="zone-name">{worlds[w].name}</span><span class="zone-enter" aria-hidden="true">↗</span></span><span class="zone-genre">{quests.filter(q=>q.world===w).length} истории · {w==='iznanka'?'хоррор и перформанс':w==='arhiv'?'детективы и загадки':'семейные приключения'}</span>
    </a>)}

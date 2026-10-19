@@ -4,14 +4,14 @@ import {JSDOM} from 'jsdom';
 import {setupDOM} from './dom-harness.mjs';
 import {invitationSVG,giftNames} from '../src/lib/gift-invitation.ts';
 
-test('Главная: выбор мира с клавиатуры меняет подсказку; фоновое видео не работает вне экрана',()=>{
+test('Главная: выбор мира с клавиатуры меняет подсказку, фокус не подтверждает согласие 18+',()=>{
  const x=setupDOM('');try{
-  const root=x.d.querySelector('[data-world-selector]'),film=root.querySelector('video');
-  const worlds=[...root.querySelectorAll('[data-world-zone]')];assert.equal(worlds.length,3);assert.equal(film.getAttribute('src'),null);
-  x.intersect(root,true);worlds[2].dispatchEvent(new x.w.Event('focus'));
+  const root=x.d.querySelector('[data-world-selector]');
+  const worlds=[...root.querySelectorAll('[data-world-zone]')];assert.equal(worlds.length,3);
+  worlds[2].dispatchEvent(new x.w.Event('focus'));
   assert.equal(root.dataset.activeWorld,'ostrov');assert.match(root.querySelector('[data-selector-caption]').textContent,/маленьких исследователей/);
-  assert.equal(film.dataset.playing,'yes');x.intersect(root,false);assert.equal(film.dataset.playing,'no');
-  assert.equal(root.querySelector('img[data-safe-src]').getAttribute('src'),null);assert.deepEqual(x.errors,[]);
+  worlds[0].dispatchEvent(new x.w.Event('focus'));assert.equal(root.dataset.activeWorld,'iznanka');assert.match(root.querySelector('[data-selector-caption]').textContent,/почувствовать больше/);
+  assert.equal(x.d.documentElement.classList.contains('adult'),false);assert.equal(x.w.sessionStorage.getItem('gran-adult'),null);assert.deepEqual(x.errors,[]);
  }finally{x.close()}
 });
 test('Правила и конфиденциальность: все пункты содержания ведут к существующим разделам',()=>{
