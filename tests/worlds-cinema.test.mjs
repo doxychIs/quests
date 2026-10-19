@@ -61,11 +61,42 @@ test('Сигналы ОСТРОВА открываются только на ф�
   assert.deepEqual(x.errors,[]);
  }finally{x.close()}
 });
-test('ОСТРОВ: четыре новых сюжета в каталоге, названия сигналов совпадают с ними',()=>{
+test('ОСТРОВ: четыре сигнала открывают краткие окна; отдельного каталога ниже сцены нет',()=>{
  const x=setupDOM('ostrov');try{
   const names=['Шёпот джунглей','Сердце зимы','Каменный лабиринт','Дыхание вулкана'];
   assert.deepEqual([...x.d.querySelectorAll('.signal-name')].map(e=>e.textContent),names);
-  assert.deepEqual([...x.d.querySelectorAll('.expedition-quest h3')].map(e=>e.textContent),names);
+  assert.deepEqual([...x.d.querySelectorAll('[data-world-preview] h3')].map(e=>e.textContent),names);
+  assert.equal(x.d.querySelectorAll('.expedition-collection,.archive-collection,.quest-section').length,0);
+  assert.equal(x.d.querySelector('#quests').closest('[data-world-cinema]')!==null,true);
   assert.doesNotMatch(x.d.body.textContent,/маяк|дирижабль|остров сокровищ|мастерская чудес/i);
+ }finally{x.close()}
+});
+test('Картины и сигналы: окно внутри сцены, переключение, закрытие и возврат фокуса',()=>{
+ for(const route of ['arhiv','ostrov']){
+  const x=setupDOM(route,{calm:true});try{
+   const scene=x.d.querySelector('[data-world-cinema]'),dialog=scene.querySelector('dialog');
+   const links=[...scene.querySelectorAll(route==='arhiv'?'.painting-link':'.island-signal')];
+   const previews=[...dialog.querySelectorAll('[data-world-preview]')];
+   links[1].dispatchEvent(new x.w.MouseEvent('click',{bubbles:true,cancelable:true}));
+   assert.equal(dialog.open,true);assert.equal(previews[1].hidden,false);
+   assert.equal(previews.filter(p=>!p.hidden).length,1);
+   assert.equal(dialog.getAttribute('aria-labelledby'),previews[1].querySelector('h3').id);
+   assert.match(previews[1].querySelector('.quest-dialog-details').href,/\/quests\//);
+   dialog.querySelector('[data-world-step="1"]').click();assert.equal(previews[2].hidden,false);
+   dialog.dispatchEvent(new x.w.Event('cancel',{cancelable:true}));assert.equal(dialog.open,false);
+   assert.equal(x.d.activeElement,links[1]);
+   scene.querySelector('[data-cinema-enlarge]').click();assert.equal(scene.classList.contains('cinema-inspect'),true);
+   scene.querySelector('[data-cinema-enlarge]').click();assert.equal(scene.classList.contains('cinema-inspect'),false);
+   assert.deepEqual(x.errors,[]);
+  }finally{x.close()}
+ }
+});
+test('АРХИВ: четыре картины содержат изображения своих квестов, полный сюжет оставлен на отдельных страницах',()=>{
+ const x=setupDOM('arhiv');try{
+  const links=[...x.d.querySelectorAll('.painting-link')];
+  assert.equal(links.length,4);
+  assert.deepEqual(links.map(p=>p.querySelector('image').getAttribute('href')),['/assets/archive-1.webp','/assets/archive-2.webp','/assets/archive-3.webp','/assets/archive-4.webp']);
+  assert.equal(x.d.querySelectorAll('.archive-collection,.quest-section').length,0);
+  assert.equal(x.d.querySelectorAll('[data-world-preview] .story-lead').length,0);
  }finally{x.close()}
 });

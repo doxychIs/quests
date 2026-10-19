@@ -12,3 +12,10 @@ export const islandIdentities=[
  {theme:'stone',symbol:'◇',place:'Древние пещеры',note:'У каждой стены есть своя история',x:65,y:37},
  {theme:'volcano',symbol:'☀',place:'Вулкан',note:'Приключение с огоньком',x:84,y:53}
 ] as const;
+// Внутренние полотна в финальном кадре 1280×720. Рамы остаются частью видео.
+export const archivePaintings=[
+ {points:'555,186 722,187 723,416 554,414',x:554,y:186,width:170,height:231},
+ {points:'343,160 475,158 476,333 343,334',x:343,y:158,width:134,height:177},
+ {points:'339,380 479,378 480,495 337,494',x:337,y:378,width:144,height:118},
+ {points:'803,310 930,310 930,430 803,430',x:803,y:310,width:128,height:121}
+] as const;

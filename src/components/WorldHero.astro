@@ -11,8 +11,9 @@ const w=worlds[world],media=worldMedia[world].hero;
  </div>
  {world==='arhiv'?<>
   <div class="archive-hero-shadow" aria-hidden="true"></div>
+  <div class="library-dust library-dust-hero" aria-hidden="true">{Array.from({length:24},(_,i)=><i style={`--dust-x:${(i*31+9)%100}%;--dust-y:${(i*19+3)%100}%;--dust-delay:${-i*2.3}s;--dust-time:${19+i%9}s`}/>)}</div>
   <div class="archive-hero-content"><p class="hero-kicker">Собрание непрочитанных историй · Пермь</p><h1 id="world-title">Архив<span class="title-ink" aria-hidden="true"></span></h1><p class="archive-dedication">У каждой тишины<br/>есть своя история.</p><a href="#passage" class="manuscript-link">Перелистнуть тишину <span aria-hidden="true">↗</span></a></div>
-  <aside class="archive-letter" aria-label="Письмо читателю"><span class="letter-number">Из неопубликованного</span><p>Если вы читаете эти строки,<br/>значит, окно всё ещё открыто.</p><p>Войдите. Некоторые истории<br/>слишком долго ждали<br/>своего читателя.</p><span class="letter-signature">Хранитель архива</span><svg viewBox="0 0 200 40" aria-hidden="true"><path d="M8 28Q58 12 148 24T192 18M90 32q15-38 22-22t-8 17q10-24 16-15t12 5"/></svg></aside>
+  <aside class="archive-letter" aria-label="Письмо читателю"><span class="letter-number">Из закрытого собрания</span><p>Не всякая книга<br/>согласится быть прочитанной.</p><p>Здесь часы помнят чужое время,<br/>а на полях рукописей<br/>проступают новые строки.</p><span class="letter-signature">Хранитель архива</span><svg viewBox="0 0 200 40" aria-hidden="true"><path d="M8 28Q58 12 148 24T192 18M90 32q15-38 22-22t-8 17q10-24 16-15t12 5"/></svg></aside>
   <div class="story-hero-bottom"><span>Детективы без скримеров · 14+</span><a href="#passage">Дом помнит. Листайте <span aria-hidden="true">↓</span></a><span>Четыре незаконченных дела</span></div>
  </>:<>
   <div class="island-hero-horizon" aria-hidden="true"></div>

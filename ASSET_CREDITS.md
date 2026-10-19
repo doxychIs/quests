@@ -133,3 +133,9 @@ The Cyrillic/Latin broadcast alphabet in `src/lib/broadcast-glyphs.ts` is origin
 Новые локальные шрифты с кириллицей и лицензиями SIL OFL: [Caveat](https://github.com/googlefonts/caveat), [Marck Script](https://github.com/google/fonts/tree/main/ofl/marckscript), [Comfortaa](https://github.com/google/fonts/tree/main/ofl/comfortaa). Файлы `public/fonts/caveat.ttf`, `marck-script.ttf`, `comfortaa.ttf` и соответствующие `*-OFL.txt` получены из официального репозитория Google Fonts. АРХИВ использует рукописные Caveat и Marck Script, ОСТРОВ — Comfortaa в заголовках и существующий Manrope в практической информации.
 
 Первый экран АРХИВА использует имеющийся `arhiv.webp`; первый экран ОСТРОВА — статичный чистый общий план присланного ролика (`island-passage-final.webp`). Видеопролёты не запускаются фоном первого экрана. Отдельные будущие хиро-видео настраиваются в `src/lib/world-media.ts`.
+
+## Библиотека и поиск предметов, 19 октября 2026
+
+`archive-hidden-objects.webp` и `archive-library-relic.webp` — оригинальные статичные изображения встроенного ImageGen, 1536×1024: стол хранителя с предметами и мистический библиотечный натюрморт. Это художественные образы, не фотографии действующих квестов. Полные промпты и исходники: `docs/archive-library-art.json`. Снимки чужих игр в сайт не включались; Mystery Case Files: Ravenhearst и игры Artifex Mundi изучались как ориентиры механики поиска предметов. Новые видео не создавались.
+
+Четыре полотна в финальной комнате АРХИВА заполнены существующими `archive-1.webp` — `archive-4.webp` как самостоятельные элементы сайта поверх неподвижного конечного кадра. Присланный видеоролик не перерисовывался. Рамы и остальная комната сохранены.

@@ -1,0 +1,22 @@
+.hidden-object-game{width:min(1180px,100%);margin:0 auto;color:#e2d6b6}
+.hidden-object-viewport{overflow:hidden;width:100%;border:1px solid #79603b;box-shadow:0 25px 65px #0007;background:#16130e;overscroll-behavior:contain;outline-offset:5px}
+.hidden-object-game.is-zoomed .hidden-object-viewport{overflow:auto;aspect-ratio:3/2;max-height:75svh}
+.hidden-object-picture{position:relative;width:100%;min-width:100%;aspect-ratio:3/2;cursor:crosshair}
+.hidden-object-picture.is-enlarged{width:200%;min-width:1000px}
+.hidden-object-picture>img,.hidden-object-picture>svg{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.hidden-object-picture polygon{fill:transparent;stroke:transparent;stroke-width:3;cursor:crosshair}
+.hidden-object-picture polygon.is-found{stroke:#e3d497;stroke-opacity:.65;fill:#d3ce7212;pointer-events:none}
+.hidden-object-picture polygon.is-hinted{stroke:#f2d98e;stroke-dasharray:8 5;filter:drop-shadow(0 0 5px #e0b365)}
+.hidden-object-picture polygon:focus-visible{outline:none;stroke:#fff1bc;stroke-width:4;stroke-dasharray:5 4}
+.hidden-object-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 0 10px}
+.hidden-object-task>span{display:block;font:400 20px/1.4 Caveat,cursive;color:#b0a58a}
+.hidden-object-task>strong{display:block;font:400 clamp(30px,3.5vw,48px)/1.15 Marck,cursive;margin-top:5px}
+.hidden-object-count{font:400 24px/1 Caveat,cursive;color:#b0a58a;white-space:nowrap}
+.hidden-object-tools{display:flex;flex-wrap:wrap;gap:14px 28px;font:400 21px/1.4 Caveat,cursive;color:#bdac82}
+.hidden-object-tools>button{padding:7px 0;min-height:44px;border-bottom:1px solid #8b795d44}
+.hidden-object-tools>button:disabled{opacity:.4;cursor:default}
+.hidden-object-status{min-height:30px;margin:12px 0 0;font:400 21px/1.4 Caveat,cursive;color:#c2b699}
+.hidden-object-finish{padding:22px 0;border-top:1px solid #8b795d44;font:400 25px/1.4 Caveat,cursive}
+.hidden-object-finish[hidden]{display:none}
+.hidden-object-finish a{display:inline-block;padding:10px 0;border-bottom:1px solid currentColor;margin-top:8px}
+@media(max-width:760px){.hidden-object-picture.is-enlarged{width:300%;min-width:900px}.hidden-object-caption{padding-top:20px}.hidden-object-tools{font-size:19px;gap:8px 22px}.hidden-object-status{font-size:19px}.hidden-object-task>strong{font-size:31px}}

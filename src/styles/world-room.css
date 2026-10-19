@@ -1,0 +1,92 @@
+/* Геометрия и механика общие с «Изнанкой», декорации принадлежат своему миру. */
+.world-cinema .world-cinema-sticky{overflow:clip}
+.world-cinema .cinema-viewport{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:clip;outline-offset:-5px}
+.world-cinema .cinema-picture{width:var(--scene-width,100vw);max-width:none;aspect-ratio:16/9;flex:none;isolation:isolate}
+.world-cinema .cinema-heading{top:100px;pointer-events:none;text-shadow:0 2px 12px #000}
+.world-cinema .cinema-heading>a,.world-cinema .cinema-heading>button{pointer-events:auto}
+.world-cinema .cinema-heading>button{display:none;padding:10px 15px;min-height:44px;border:1px solid #eee0b64d;background:#101c1de0;color:inherit;border-radius:3px;font:inherit;font-size:20px}
+.world-cinema.cinema-arrived .cinema-heading>button{display:block}
+.world-cinema.cinema-arrived .cinema-heading>a{display:none}
+.world-cinema .cinema-heading>span{max-width:65%;font-size:24px}
+.world-cinema.cinema-ostrov .cinema-heading>button{font:500 12px/1.4 var(--adventure);border-radius:25px}
+.world-cinema.cinema-ostrov .cinema-heading>span{font-size:14px}
+.world-cinema .cinema-final{z-index:1;pointer-events:none;transition:opacity .5s}
+.world-cinema.cinema-arrived .cinema-final{opacity:1}
+.world-cinema .cinema-bottom{bottom:90px;pointer-events:none;text-shadow:0 2px 12px #000}
+.world-cinema .cinema-quest-index{position:absolute;z-index:4;bottom:24px;left:5vw;right:5vw;display:flex;justify-content:center;flex-wrap:wrap;gap:8px 30px;opacity:0;pointer-events:none;transition:opacity .4s}
+.world-cinema .cinema-quest-index a{padding:8px 0;font-size:21px;line-height:1.3;color:#e7d8ae;min-height:44px;text-shadow:0 2px 10px #000}
+.world-cinema .cinema-quest-index a>span{font-size:.72em;opacity:.55;margin-right:5px}
+.world-cinema.cinema-ostrov .cinema-quest-index a{font:500 12px/1.5 var(--adventure);color:#fff4d4}
+.world-cinema.cinema-arrived .cinema-quest-index{opacity:1;pointer-events:auto}
+.cinema-arrival{position:absolute;top:calc(98% - 98svh + 100px);width:1px;height:1px;scroll-margin:0}
+.archive-paintings>svg{display:block;width:100%;height:100%}
+.world-cinema .island-signals{z-index:2}
+.archive-paintings{position:absolute;inset:0;width:100%;height:100%;z-index:2;opacity:0;pointer-events:none;transition:opacity .75s}
+.cinema-arrived .archive-paintings{opacity:1}
+.cinema-arrived .painting-link{pointer-events:auto;cursor:pointer}
+.painting-outline{fill:transparent;stroke:#d8bb79;stroke-width:2;stroke-opacity:.15;transition:stroke-opacity .4s,filter .4s}
+.painting-link:hover .painting-outline,.painting-link:focus-visible .painting-outline{stroke-opacity:1;stroke-width:3;filter:drop-shadow(0 0 8px #e8b460)}
+.painting-link image{filter:brightness(.8) saturate(.7);transition:filter .6s}
+.painting-link:hover image,.painting-link:focus-visible image{filter:brightness(1.1) saturate(.9)}
+.painting-link:focus{outline:none}
+.world-cinema.cinema-inspect .cinema-viewport{display:block;overflow:auto;overscroll-behavior:contain;padding-block:150px 165px;touch-action:pan-x pan-y}
+.world-cinema.cinema-inspect .cinema-picture{margin:auto;min-height:0}
+.world-cinema.cinema-inspect .cinema-heading{background:linear-gradient(#0b1517e8,#0b151700);inset:90px 0 auto;padding:15px 5vw}
+.world-cinema.cinema-inspect .cinema-bottom{display:none}
+.world-cinema.cinema-inspect .cinema-quest-index{background:#101c1deb;padding:8px 3vw;bottom:0;left:0;right:0}
+.world-quest-dialog{position:fixed;inset:0 5vw 0 auto;margin:auto 0;width:390px;max-width:calc(100vw - 32px);max-height:calc(100svh - 48px);border:1px solid #8c784b;border-radius:4px;padding:0;background:#17211d;color:#e8ddc2;box-shadow:0 25px 100px #000b;overflow:auto;overscroll-behavior:contain}
+.world-quest-dialog::backdrop{background:#080e0d85}
+.world-quest-dialog [hidden]{display:none!important}
+.world-quest-dialog .quest-dialog-close{position:sticky;top:0;width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;padding:8px 24px;background:inherit;color:inherit;z-index:2;border-bottom:1px solid #b8a47133;font:400 20px/1.3 Caveat,cursive}
+.quest-dialog-close>span{font:300 28px/1 sans-serif}
+.quest-dialog-image{height:175px;overflow:hidden;position:relative}
+.quest-dialog-image img{width:100%;height:100%;object-fit:cover}
+.quest-dialog-copy{padding:22px 28px 8px}
+.quest-dialog-genre{font:400 20px/1.3 Caveat,cursive;color:#b4a782}
+.world-quest-dialog h3{font:400 36px/1.08 Marck,cursive;margin:8px 0 14px;color:#eee0bb}
+.world-quest-dialog p{font:400 23px/1.35 Caveat,cursive;margin:0}
+.world-quest-dialog dl{display:flex;gap:12px;margin:22px 0;border-block:1px solid #ae9a6f40;padding:12px 0}
+.world-quest-dialog dl>div{flex:1}
+.world-quest-dialog dt{font:400 18px/1.4 Caveat,cursive;color:#b7a882}
+.world-quest-dialog dd{font:500 23px/1.3 Caveat,cursive;margin:0}
+.quest-dialog-details{display:flex;align-items:center;justify-content:space-between;gap:14px;font:400 23px/1.3 Caveat,cursive;padding:10px 0;border-bottom:1px solid #b8a47166;min-height:44px}
+.quest-dialog-book{display:block;padding:12px 0;font:400 21px/1.3 Caveat,cursive;color:#c5b382;min-height:44px}
+.quest-dialog-switch{display:flex;align-items:center;justify-content:space-between;padding:0 24px 12px}
+.quest-dialog-switch button{font:400 25px/1 Caveat,cursive;min-height:44px;min-width:50px;border:1px solid #b8a47133}
+.quest-dialog-switch span{font:400 20px/1 Caveat,cursive;color:#b7a882}
+.quest-dialog-ostrov{background:#fff8e8;color:#214b49;border:0;border-radius:20px;width:350px}
+.quest-dialog-ostrov::backdrop{background:#073e514d}
+.quest-dialog-ostrov .quest-dialog-close{font:500 12px/1.5 var(--adventure);border-color:#245e5522}
+.quest-dialog-ostrov .quest-dialog-image{height:155px}
+.quest-dialog-ostrov .quest-dialog-copy{padding:18px 25px 5px}
+.quest-dialog-ostrov .quest-dialog-genre{font:600 10px/1.5 var(--adventure);color:#527e70}
+.quest-dialog-ostrov h3{font:700 25px/1.18 var(--adventure);letter-spacing:-.04em;color:#174f4c}
+.quest-dialog-ostrov p{font:400 13px/1.6 var(--sans)}
+.quest-dialog-ostrov dl{border-color:#245e5533;margin:18px 0;padding-block:12px}
+.quest-dialog-ostrov dt{font:400 10px/1.5 var(--sans);color:#53756e}
+.quest-dialog-ostrov dd{font:600 12px/1.5 var(--adventure)}
+.quest-dialog-ostrov .quest-dialog-details{font:700 12px/1.5 var(--adventure);border-color:#245e5544}
+.quest-dialog-ostrov .quest-dialog-book{font:600 12px/1.5 var(--adventure);color:#317569}
+.quest-dialog-ostrov .quest-dialog-switch button{font:500 21px/1.3 var(--adventure);border-color:#245e5533;border-radius:50%}
+.quest-dialog-ostrov .quest-dialog-switch span{font:600 11px/1.5 var(--adventure);color:#53756e}
+@media(max-width:760px){
+ .world-cinema .cinema-heading{top:92px;gap:12px}
+ .world-cinema .cinema-heading>span{font-size:20px;max-width:55%}
+ .world-cinema .cinema-heading>a,.world-cinema .cinema-heading>button{font-size:17px}
+ .world-cinema.cinema-ostrov .cinema-heading>span{font-size:11px}
+ .world-cinema.cinema-ostrov .cinema-heading>button{font-size:10px;padding:10px}
+ .world-cinema .cinema-bottom{bottom:150px;gap:10px}
+ .world-cinema .cinema-bottom p{font-size:20px;max-width:90%}
+ .world-cinema.cinema-ostrov .cinema-bottom p{font-size:12px}
+ .world-cinema .cinema-progress,.world-cinema .cinema-counter{display:none}
+ .world-cinema .cinema-quest-index{bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+ .world-cinema .cinema-quest-index a{font-size:18px;border-bottom:1px solid #dfd3ac33}
+ .world-cinema.cinema-ostrov .cinema-quest-index a{font-size:10px}
+ .world-quest-dialog{inset:0 16px;margin:auto 0;width:calc(100vw - 32px);max-height:calc(100svh - 32px)}
+ .quest-dialog-image{height:140px}
+ .quest-dialog-copy{padding:16px 23px 5px}
+ .world-quest-dialog h3{font-size:32px}
+ .quest-dialog-ostrov h3{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){.world-cinema :is(.archive-paintings,.painting-link image,.cinema-quest-index,.cinema-final){transition:none}}
+.calm .world-cinema :is(.archive-paintings,.painting-link image,.cinema-quest-index,.cinema-final){transition:none}

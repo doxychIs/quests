@@ -1,21 +1,49 @@
 ---
-import {href,quests} from '../lib/data';
-import {worldMedia,islandIdentities} from '../lib/world-media';
+import {href,asset,quests} from '../lib/data';
+import {worldMedia,islandIdentities,archivePaintings} from '../lib/world-media';
+import '../styles/world-room.css';
 const {world}=Astro.props as {world:'arhiv'|'ostrov'};
+const archive=world==='arhiv';
 const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
 ---
-<section id="passage" class:list={['world-cinema',`cinema-${world}`]} data-world-cinema data-cinema-end={media.end} data-cinema-fps={media.fps} aria-label={world==='arhiv'?'Вход в дом архива. Прокрутка двигает камеру вперёд и назад.':'Подъём над архипелагом. Прокрутка двигает камеру вперёд и назад.'}>
+<section id="passage" class:list={['world-cinema',`cinema-${world}`]} data-world-cinema data-cinema-world={world} data-cinema-end={media.end} data-cinema-fps={media.fps} aria-label={archive?'Вход в дом архива. Прокрутка двигает камеру вперёд и назад.':'Подъём над архипелагом. Прокрутка двигает камеру вперёд и назад.'}>
  <div class="world-cinema-sticky">
-  <div class="cinema-heading"><span>{world==='arhiv'?'За окном начинается история':'Выше облаков. Ближе к приключениям.'}</span><a href="#quests">{world==='arhiv'?'К собранию дел':'Выбрать маршрут'} ↗</a></div>
-  <div class="cinema-picture">
-   <img class="cinema-still cinema-start" src={href(`assets/${media.name}-passage-poster.webp`)} alt={world==='arhiv'?'Заросший плющом старый дом':'Тропическая тропа на острове приключений'} loading="lazy" width="1280" height="720"/>
-   <img class="cinema-still cinema-final" src={href(`assets/${media.name}-passage-final.webp`)} alt={world==='arhiv'?'Зал старинного дома с картинами и книгами':'Четыре маршрута: зелёные джунгли слева, льды сверху, древние сооружения справа от них и вулкан на правом краю'} loading="lazy" width="1280" height="720"/>
-   <video data-scroll-film data-src={href(`assets/${media.name}-passage.mp4`)} data-src-mobile={href(`assets/${media.name}-passage-mobile.mp4`)} poster={href(`assets/${media.name}-passage-poster.webp`)} muted playsinline preload="none" width="1280" height="720" aria-label={world==='arhiv'?'Камера входит через окно в комнату с картинами':'Камера поднимается от тропической тропы к общему виду архипелага'}></video>
-   {world==='ostrov'&&<nav class="island-signals" data-cinema-reveal inert aria-label="Сигналы четырёх приключений">{list.map((q,i)=>{const id=islandIdentities[i];return <a class:list={['island-signal',`signal-${id.theme}`]} href={href(`ostrov/quests/${q.slug}/`)} style={`--signal-x:${id.x}%;--signal-y:${id.y}%;--signal-order:${i}`} aria-label={`Открыть квест «${q.name}»`}><span class="signal-spark" aria-hidden="true"></span><span class="signal-name">{q.name}</span><span class="signal-tail" aria-hidden="true"></span></a>})}</nav>}
+  <div class="cinema-viewport" data-cinema-viewport tabindex="0" aria-label="Кинематографическая сцена. Увеличенную сцену можно прокручивать.">
+   <div class="cinema-picture">
+    <img class="cinema-still cinema-start" src={href(`assets/${media.name}-passage-poster.webp`)} alt={archive?'Заросший плющом старый дом':'Тропическая тропа на острове приключений'} loading="lazy" width="1280" height="720"/>
+    <img class="cinema-still cinema-final" src={href(`assets/${media.name}-passage-final.webp`)} alt={archive?'Зал старинного дома с картинами и книгами':'Зелёные джунгли слева, льды сверху, древние сооружения справа от них и вулкан на правом краю'} loading="lazy" width="1280" height="720"/>
+    <video data-scroll-film data-src={href(`assets/${media.name}-passage.mp4`)} data-src-mobile={href(`assets/${media.name}-passage-mobile.mp4`)} poster={href(`assets/${media.name}-passage-poster.webp`)} muted playsinline preload="none" width="1280" height="720" aria-label={archive?'Камера входит через окно в комнату с картинами':'Камера поднимается от тропической тропы к общему виду архипелага'}></video>
+    {archive?<div class="archive-paintings" data-cinema-reveal inert><svg viewBox="0 0 1280 720" role="group" aria-label="Четыре картины с историями">
+     <defs><linearGradient id="painting-patina" x2="1" y2="1"><stop stop-color="#16180d" stop-opacity=".36"/><stop offset=".5" stop-color="#8b6c2f" stop-opacity=".08"/><stop offset="1" stop-color="#121910" stop-opacity=".4"/></linearGradient>
+      {archivePaintings.map((p,i)=><clipPath id={`painting-${i}`}><polygon points={p.points}/></clipPath>)}
+     </defs>
+     {list.map((q,i)=>{const p=archivePaintings[i];return <a href={href(`${world}/quests/${q.slug}/`)} data-world-quest={q.slug} aria-label={`Открыть картину «${q.name}»`} class="painting-link">
+      <title>{q.name}</title><g clip-path={`url(#painting-${i})`}>
+       <image href={asset(q.image)} x={p.x} y={p.y} width={p.width} height={p.height} preserveAspectRatio="xMidYMid slice"/>
+       <rect x={p.x} y={p.y} width={p.width} height={p.height} fill="url(#painting-patina)"/>
+      </g><polygon points={p.points} class="painting-outline"/>
+     </a>})}
+    </svg></div>:<nav class="island-signals" data-cinema-reveal inert aria-label="Сигналы четырёх приключений">{list.map((q,i)=>{const id=islandIdentities[i];return <a class:list={['island-signal',`signal-${id.theme}`]} href={href(`ostrov/quests/${q.slug}/`)} data-world-quest={q.slug} style={`--signal-x:${id.x}%;--signal-y:${id.y}%;--signal-order:${i}`} aria-label={`Открыть квест «${q.name}»`}><span class="signal-spark" aria-hidden="true"></span><span class="signal-name">{q.name}</span><span class="signal-tail" aria-hidden="true"></span></a>})}</nav>}
+   </div>
   </div>
-  {world==='arhiv'&&<p class="cinema-inscription" data-cinema-reveal>Четыре рамы. Четыре истории.<br/><span>Ни одна ещё не закончена.</span></p>}
-  <div class="cinema-bottom"><p data-cinema-caption>{world==='arhiv'?'Листайте, чтобы войти. Остановитесь, чтобы присмотреться.':'Листайте — и остров откроет свои секреты.'}</p><span class="cinema-progress" aria-hidden="true"><i></i></span><span class="cinema-counter" data-cinema-percent aria-hidden="true">0%</span></div>
-  <p class="cinema-error" role="status" hidden>Видео не загрузилось. Перед вами финальная сцена — все квесты доступны ниже. <button type="button" data-cinema-retry>Повторить загрузку</button></p>
+  {archive&&<div class="library-dust" aria-hidden="true">{Array.from({length:20},(_,i)=><i style={`--dust-x:${(i*37+11)%100}%;--dust-y:${(i*23+7)%100}%;--dust-delay:${-i*1.7}s;--dust-time:${17+i%7}s`}/>)}</div>}
+  <div class="cinema-heading"><span>{archive?'Каждая картина хранит чью-то тайну':'Четыре острова. Какой зовёт вас?'}</span><a href="#quests" data-cinema-skip>К выбору квеста ↗</a><button type="button" data-cinema-enlarge data-cinema-reveal inert aria-pressed="false">Рассмотреть ближе ⤢</button></div>
+  <div class="cinema-bottom"><p data-cinema-caption>{archive?'Листайте, чтобы войти. Остановитесь, чтобы присмотреться.':'Листайте — и остров откроет свои секреты.'}</p><span class="cinema-progress" aria-hidden="true"><i></i></span><span class="cinema-counter" data-cinema-percent aria-hidden="true">0%</span></div>
+  <nav class="cinema-quest-index" data-cinema-reveal inert aria-label={archive?'Истории в картинах':'Маршруты экспедиции'}>{list.map((q,i)=><a href={href(`${world}/quests/${q.slug}/`)} data-world-quest={q.slug}><span aria-hidden="true">{String(i+1).padStart(2,'0')}</span> {q.name}</a>)}</nav>
+  <p class="cinema-error" role="status" hidden>Видео не загрузилось. Вы можете выбрать квест в финальной сцене. <button type="button" data-cinema-retry>Повторить загрузку</button></p>
+  <dialog class:list={['world-quest-dialog',`quest-dialog-${world}`]} data-world-dialog aria-label="Краткая информация о квесте">
+   <button type="button" class="quest-dialog-close" data-world-close aria-label="Закрыть информацию о квесте" autofocus>Закрыть <span aria-hidden="true">×</span></button>
+   {list.map((q,i)=><article data-world-preview={q.slug} hidden>
+    <div class="quest-dialog-image"><img src={asset(q.image)} alt={archive?`Образ истории «${q.name}»`:`Пейзаж приключения «${q.name}»`} width="1536" height="1024" loading="lazy"/></div>
+    <div class="quest-dialog-copy"><span class="quest-dialog-genre">{archive?`Дело ${q.index} · ${q.genre}`:islandIdentities[i].place}</span><h3 id={`preview-${q.slug}`}>{q.name}</h3><p>{q.synopsis}</p>
+     <dl><div><dt>Возраст</dt><dd>{q.age}</dd></div><div><dt>Время</dt><dd>{q.duration} мин</dd></div><div><dt>Команда</dt><dd>{q.players[0]}–{q.players[1]} чел.</dd></div></dl>
+     <a class="quest-dialog-details" href={href(`${world}/quests/${q.slug}/`)}>Вся история и подробности <span aria-hidden="true">↗</span></a>
+     <a class="quest-dialog-book" href={href(`${world}/book/${q.slug}/`)}>Выбрать время →</a>
+    </div>
+   </article>)}
+   <div class="quest-dialog-switch"><button type="button" data-world-step="-1" aria-label="Предыдущий квест">←</button><span data-world-position></span><button type="button" data-world-step="1" aria-label="Следующий квест">→</button></div>
+  </dialog>
  </div>
+ <span id="quests" class="cinema-arrival" aria-hidden="true"></span>
 </section>
 <script>import {initWorldCinema} from '../scripts/world-cinema';initWorldCinema();</script>
