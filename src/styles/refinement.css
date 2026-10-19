@@ -73,22 +73,6 @@ html body[data-cinema=horror] .horror-room-reveal .is-enlarged .crt-stage{width:
 .world-background-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero-arhiv .world-hero-title h1{font-size:clamp(80px,14vw,220px);line-height:1;font-weight:400}
 .hero-ostrov .world-hero-title h1{font:400 clamp(80px,14vw,220px)/1 var(--serif)}
-.common-page:has(#gift-form)>h1{font:400 clamp(48px,7vw,100px)/1.05 var(--serif);letter-spacing:-.045em;max-width:900px;margin-bottom:60px}
-.common-page .certificate-preview{background:#d1d5c7;padding:65px 40px;border:0}
-.common-page .certificate-frame{border:0;background:#f0ece1;min-height:340px;box-shadow:0 20px 40px #2f392f22}
-.common-page .certificate-frame:before{display:none}
-.common-page .certificate-brand{font-size:22px;letter-spacing:.15em;font-weight:400}
-.common-page .certificate-frame h2{font-size:60px}
-.common-page .certificate-frame>p{font-size:15px}
-.common-page .certificate-frame>i{font-size:23px}
-.common-page .certificate-frame>small{font-size:9px;line-height:1.6;max-width:90%}
-.common-page #gift-form>p{font-size:17px;line-height:1.7;margin-bottom:30px}
-.common-page #gift-form>.eyebrow{display:none}
-.common-page #gift-form .field{font-size:15px;gap:10px;margin-bottom:24px;font-weight:400}
-.common-page #gift-form input,.common-page #gift-form select,.common-page #gift-form textarea{font-size:17px;padding:12px 0}
-.common-page #gift-form>.button{font-size:16px;padding:18px 28px;background:#263d2c;color:#f3efdf;border-color:#263d2c;width:100%;justify-content:center}
-.common-page #gift-form>.button:hover{background:#e2e8d8;color:#263d2c}
-.common-page #gift-status{font-size:15px;line-height:1.6;display:block;margin-top:20px}
 .detective-game .game-toolbar [data-status]{font-size:16px;max-width:60%}
 .detective-game .desk-actions,.detective-game .desk-actions .text-link{font-size:14px}
 .detective-game .desk-hint{font:17px/1.6 var(--sans);margin-top:20px}

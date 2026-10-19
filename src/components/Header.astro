@@ -2,13 +2,15 @@
 import {href,worlds,type World} from '../lib/data';
 import HorrorLogo from './HorrorLogo.astro';
 const {world}=Astro.props as {world?:World};
+const current=(path:string)=>Astro.url.pathname===href(path)?'page':undefined;
 ---
 <header class:list={['site-header',{ 'on-world':world}]}>
  <a class:list={['brand',{'brand-horror':world==='iznanka'}]} href={href()} aria-label={world==='iznanka'?'Изнанка / ИНОЕ — выбор мира':'ИНОЕ — выбор мира'}>{world==='iznanka'?<HorrorLogo/>:<span>ИНОЕ<span class="brand-sub">{world ? worlds[world].name : 'КВЕСТЫ В РЕАЛЬНОСТИ'}</span></span>}</a>
  <nav class="desktop-nav" aria-label="Основная навигация">
-  <a href={world?href(world+'/#quests'):href()+'#worlds'}>{world?'Квесты':'Выбрать мир'}</a>
-  <a href={world?href(world+'/#trial'):href('about/')}>{world?'Испытание':'Как это устроено'}</a>
-  <a href={href('certificates/')}>Сертификаты</a>
+  <a href={world?href(world+'/#quests'):href()+'#worlds'} aria-current={!world?current(''):undefined}>{world?'Квесты':'Выбрать мир'}</a>
+  <a href={world?href(world+'/#trial'):href('about/')} aria-current={!world?current('about/'):undefined}>{world?'Испытание':'Как это устроено'}</a>
+  <a href={href('certificates/')} aria-current={!world?current('certificates/'):undefined}>Сертификаты</a>
+  {!world&&<a href={href('contacts/')} aria-current={current('contacts/')}>Контакты</a>}
  </nav>
- <div class="header-tools"><span class="place">ПЕРМЬ <span class="dot"></span></span><button class="sound-toggle" aria-pressed="false" aria-label="Включить звук"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">Звук выкл.</span></button><button class="settings-toggle" aria-label="Настройки впечатлений">⚙</button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()}>Три мира</a><a href={world?href(world+'/#quests'):href()+'#worlds'}>Выбрать квест</a><a href={href('certificates/')}>Сертификаты</a><a href={href('contacts/')}>Контакты</a></nav></details></div>
+ <div class="header-tools"><span class="place">ПЕРМЬ <span class="dot"></span></span><button class="sound-toggle" aria-pressed="false" aria-label="Включить звук"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">Звук выкл.</span></button><button class="settings-toggle" aria-label="Настройки впечатлений">⚙</button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()}>Три мира</a><a href={world?href(world+'/#quests'):href()+'#worlds'}>Выбрать квест</a><a href={href('about/')}>Как это устроено</a><a href={href('certificates/')}>Сертификаты</a><a href={href('contacts/')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
 </header>

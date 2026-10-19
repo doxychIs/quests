@@ -8,6 +8,7 @@ export function initWorldSelector(){
   root!.dataset.activeWorld=world;
   root!.querySelectorAll<HTMLElement>('[data-scene]').forEach(s=>s.classList.toggle('is-current',s.dataset.scene===world));
   links.forEach(link=>link.classList.toggle('is-current',link.dataset.worldZone===world));
+  const caption=root!.querySelector<HTMLElement>('[data-selector-caption]'),selected=links.find(link=>link.dataset.worldZone===world);if(caption&&selected?.dataset.worldCaption)caption.textContent=selected.dataset.worldCaption;
   if(!film)return;
   if(visible&&!document.hidden&&world==='ostrov'&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('calm')){
    prepareVideo(film).start();film.play().catch(()=>{});
