@@ -8,7 +8,7 @@ import '../styles/hub.css';
   <div class="selector-scenes" aria-hidden="true">
    <div class="selector-scene scene-iznanka" data-scene="iznanka"><div class="closed-threshold"><span></span></div><img data-safe-src={asset('iznanka')} class="adult-preview" alt=""/></div>
    <div class="selector-scene scene-arhiv is-current" data-scene="arhiv"><img src={asset('arhiv')} alt="" fetchpriority="high"/></div>
-   <div class="selector-scene scene-ostrov" data-scene="ostrov"><img src={asset('ostrov')} alt=""/><video data-hub-film data-src={href('assets/sea-film.mp4')} muted loop playsinline preload="none"></video></div>
+   <div class="selector-scene scene-ostrov" data-scene="ostrov"><img src={asset('ostrov')} alt=""/><video data-hub-film data-src={href('assets/sea-film.mp4')} data-src-mobile={href('assets/sea-film-mobile.mp4')} muted loop playsinline preload="none"></video></div>
   </div>
   <div class="selector-vignette" aria-hidden="true"></div>
   <div class="selector-heading"><p>Квесты в Перми</p><h1>Выберите свой мир.</h1></div>

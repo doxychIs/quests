@@ -1,12 +1,15 @@
 ---
 import {href} from '../lib/data';
 import GraphicText from './GraphicText.astro';
+import MediaLoading from './MediaLoading.astro';
+import SceneLoading from './SceneLoading.astro';
 import '../styles/horror-cinema.css';
 import '../styles/horror-passage.css';
 ---
-<section class="horror-film" aria-label="Коридор с тянущимися из стен руками">
- <img class="film-poster" src={href('assets/horror-hero-poster.jpg')} alt="" aria-hidden="true" fetchpriority="high" width="1280" height="720"/>
- <video data-horror-film data-src={href('assets/horror-hero.mp4')} data-src-mobile={href('assets/horror-hero-mobile.mp4')} poster={href('assets/horror-hero-poster.jpg')} muted loop playsinline preload="none" width="1280" height="720" aria-label="Камера движется по мрачному коридору, из стен которого тянутся руки"></video>
+<MediaLoading world="iznanka"/>
+<section class="horror-film" aria-label="Заброшенный коридор с приоткрытой дверью">
+ <img class="film-poster" src={href('assets/horror-hero-poster.jpg?v=20261019')} alt="" aria-hidden="true" fetchpriority="high" width="1280" height="720"/>
+ <video data-horror-film data-src={href('assets/horror-hero.mp4?v=20261019')} data-src-mobile={href('assets/horror-hero-mobile.mp4?v=20261019')} poster={href('assets/horror-hero-poster.jpg?v=20261019')} muted loop playsinline preload="none" width="1280" height="720" aria-label="Туман и пыль в заброшенном коридоре, отпечаток ладони на стене"></video>
  <div class="film-vignette" aria-hidden="true"></div>
  <div class="film-copy">
   <span class="film-age">18+</span>
@@ -21,6 +24,7 @@ import '../styles/horror-passage.css';
   <section class="passage-room" aria-label="Телевизионная комната"><slot/></section>
   <div class="passage-caption"><span data-passage-caption>Продолжайте листать. Дверь уже открыта.</span></div>
   <a class="passage-skip" href="#quests">К выбору квеста</a>
+  <SceneLoading/>
  </div>
  <span id="quests" class="room-arrival" aria-hidden="true"></span>
 </section>

@@ -2,6 +2,7 @@
 import {href,asset,quests} from '../lib/data';
 import {worldMedia,islandIdentities,archivePaintings} from '../lib/world-media';
 import '../styles/world-room.css';
+import SceneLoading from './SceneLoading.astro';
 const {world}=Astro.props as {world:'arhiv'|'ostrov'};
 const archive=world==='arhiv';
 const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
@@ -12,7 +13,7 @@ const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
    <div class="cinema-picture">
     <img class="cinema-still cinema-start" src={href(`assets/${media.name}-passage-poster.webp`)} alt={archive?'Заросший плющом старый дом':'Тропическая тропа на острове приключений'} loading="lazy" width="1280" height="720"/>
     <img class="cinema-still cinema-final" src={href(`assets/${media.name}-passage-final.webp`)} alt={archive?'Зал старинного дома с картинами и книгами':'Зелёные джунгли слева, льды сверху, древние сооружения справа от них и вулкан на правом краю'} loading="lazy" width="1280" height="720"/>
-    <video data-scroll-film data-src={href(`assets/${media.name}-passage.mp4`)} data-src-mobile={href(`assets/${media.name}-passage-mobile.mp4`)} poster={href(`assets/${media.name}-passage-poster.webp`)} muted playsinline preload="none" width="1280" height="720" aria-label={archive?'Камера входит через окно в комнату с картинами':'Камера поднимается от тропической тропы к общему виду архипелага'}></video>
+    <video data-scroll-film data-src={href(`assets/${media.name}-passage.mp4?v=20261019`)} data-src-mobile={href(`assets/${media.name}-passage-mobile.mp4?v=20261019`)} poster={href(`assets/${media.name}-passage-poster.webp`)} muted playsinline preload="none" width="1280" height="720" aria-label={archive?'Камера входит через окно в комнату с картинами':'Камера поднимается от тропической тропы к общему виду архипелага'}></video>
     {archive?<div class="archive-paintings" data-cinema-reveal inert><svg viewBox="0 0 1280 720" role="group" aria-label="Четыре картины с историями">
      <defs><linearGradient id="painting-patina" x2="1" y2="1"><stop stop-color="#16180d" stop-opacity=".36"/><stop offset=".5" stop-color="#8b6c2f" stop-opacity=".08"/><stop offset="1" stop-color="#121910" stop-opacity=".4"/></linearGradient>
       {archivePaintings.map((p,i)=><clipPath id={`painting-${i}`}><polygon points={p.points}/></clipPath>)}
@@ -30,7 +31,7 @@ const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
   <div class="cinema-heading"><span>{archive?'Каждая картина хранит чью-то тайну':'Четыре острова. Какой зовёт вас?'}</span><a href="#quests" data-cinema-skip>К выбору квеста ↗</a><button type="button" data-cinema-enlarge data-cinema-reveal inert aria-pressed="false">Рассмотреть ближе ⤢</button></div>
   <div class="cinema-bottom"><p data-cinema-caption>{archive?'Листайте, чтобы войти. Остановитесь, чтобы присмотреться.':'Листайте — и остров откроет свои секреты.'}</p><span class="cinema-progress" aria-hidden="true"><i></i></span><span class="cinema-counter" data-cinema-percent aria-hidden="true">0%</span></div>
   <nav class="cinema-quest-index" data-cinema-reveal inert aria-label={archive?'Истории в картинах':'Маршруты экспедиции'}>{list.map((q,i)=><a href={href(`${world}/quests/${q.slug}/`)} data-world-quest={q.slug}><span aria-hidden="true">{String(i+1).padStart(2,'0')}</span> {q.name}</a>)}</nav>
-  <p class="cinema-error" role="status" hidden>Видео не загрузилось. Вы можете выбрать квест в финальной сцене. <button type="button" data-cinema-retry>Повторить загрузку</button></p>
+  <SceneLoading/>
   <dialog class:list={['world-quest-dialog',`quest-dialog-${world}`]} data-world-dialog aria-label="Краткая информация о квесте">
    <button type="button" class="quest-dialog-close" data-world-close aria-label="Закрыть информацию о квесте" autofocus>Закрыть <span aria-hidden="true">×</span></button>
    {list.map((q,i)=><article data-world-preview={q.slug} hidden>

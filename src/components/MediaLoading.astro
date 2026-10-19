@@ -1,0 +1,10 @@
+---
+const {world}=Astro.props as {world:'arhiv'|'ostrov'|'iznanka'};
+const lines={arhiv:['Открываем рукопись','Пока дом вспоминает свою историю…'],ostrov:['Готовим экспедицию','Ещё немного — и можно отправляться.'],iznanka:['Настраиваем сигнал','Коридор уже по ту сторону.']};
+---
+<dialog class="media-loading" data-page-loader aria-labelledby="media-load-title" aria-describedby="media-load-note">
+ <div class="media-loading-inner"><span class="media-loading-brand" aria-hidden="true">ИНОЕ</span><span class="media-loading-world">{world==='arhiv'?'Архив':world==='ostrov'?'Остров':'Изнанка'}</span>
+ <h2 id="media-load-title">{lines[world][0]}</h2><p id="media-load-note" data-load-message>{lines[world][1]}</p>
+ <progress data-load-progress max="100" aria-label="Подготовка видео"></progress><span data-load-percent aria-hidden="true"></span>
+ <div class="media-loading-actions"><button type="button" data-load-retry hidden>Повторить загрузку</button><button type="button" data-load-skip>Войти сейчас</button></div><small>Видео продолжат загружаться, пока вы осматриваетесь.</small></div>
+</dialog>

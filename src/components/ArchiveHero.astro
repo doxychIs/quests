@@ -2,8 +2,10 @@
 import {href,asset} from '../lib/data';
 import {worldMedia} from '../lib/world-media';
 import NotebookMark from './NotebookMark.astro';
+import MediaLoading from './MediaLoading.astro';
 const media=worldMedia.arhiv.hero;
 ---
+<MediaLoading world="arhiv"/>
 <section class="story-hero story-hero-arhiv notebook-hero" aria-labelledby="world-title">
  <span class="notebook-folio" aria-hidden="true">Тетрадь четвёртая / не окончено</span>
  <div class="archive-hero-content">
@@ -14,8 +16,9 @@ const media=worldMedia.arhiv.hero;
   <a href="#passage" class="manuscript-link">Перелистнуть тишину <span aria-hidden="true">↗</span></a>
  </div>
  <figure class="story-hero-media notebook-photo notebook-hero-photo" data-hero-media>
-  <img src={href(`assets/${media.image}`)} alt="Старая библиотека на вклеенной чёрно-белой фотографии" fetchpriority="high" width="1536" height="1024"/>
-  {media.video&&<video data-lazy-video data-src={href(media.video)} poster={href(`assets/${media.image}`)} muted loop playsinline preload="none" aria-hidden="true"/>}
+  <img src={href(`assets/${media.image}`)} alt="Старая библиотека на вклеенной чёрно-белой фотографии" fetchpriority="high" width="1280" height="720"/>
+  <video data-hero-video data-lazy-video data-src={href(media.video)} data-src-mobile={href(media.mobile)} poster={href(`assets/${media.image}`)} muted loop playsinline preload="none" width="1280" height="720" aria-hidden="true"/>
+  <div class="hero-video-tools"><span class="hero-video-state" data-hero-video-state role="status"></span><button type="button" data-hero-video-pause aria-pressed="false">Пауза видео</button></div>
   <figcaption>Дом, которого нет на карте.<br/><span>Окно снова оставалось открытым.</span></figcaption>
  </figure>
  <figure class="notebook-photo notebook-book-photo" aria-hidden="true"><img src={asset('archive-3')} alt="" width="1536" height="1024" loading="eager"/><figcaption>Не вырывать страницы.</figcaption></figure>

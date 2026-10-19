@@ -1,10 +1,10 @@
 /** Независимые материалы первого экрана и прокручиваемой сцены.
- * Для будущего хиро замените только hero.video на путь к новому ролику.
+ * Фон первого экрана и пролёт подготовлены из разных исходников.
  * Ролики пролёта никогда не используются как фон первого экрана.
  */
 export const worldMedia={
- arhiv:{hero:{image:'arhiv.webp',video:null as string|null},cinema:{name:'archive',end:9.875,fps:24}},
- ostrov:{hero:{image:'island-passage-final.webp',video:null as string|null},cinema:{name:'island',end:6.25,fps:24}}
+ arhiv:{hero:{image:'archive-hero-poster.webp',video:'assets/archive-hero.mp4',mobile:'assets/archive-hero-mobile.mp4'},cinema:{name:'archive',end:9.875,fps:24}},
+ ostrov:{hero:{image:'island-hero-poster.webp',video:'assets/island-hero.mp4',mobile:'assets/island-hero-mobile.mp4'},cinema:{name:'island',end:6.25,fps:24}}
 };
 export const islandIdentities=[
  {theme:'jungle',symbol:'✳',place:'Джунгли',note:'Там, где тропинки играют в прятки',x:24,y:45},

@@ -1,3 +1,4 @@
+import {prepareVideo} from '../lib/video-loading';
 export function initWorldSelector(){
  const root=document.querySelector<HTMLElement>('[data-world-selector]');if(!root)return;
  const links=[...root.querySelectorAll<HTMLAnchorElement>('[data-world-zone]')];
@@ -9,7 +10,7 @@ export function initWorldSelector(){
   links.forEach(link=>link.classList.toggle('is-current',link.dataset.worldZone===world));
   if(!film)return;
   if(visible&&!document.hidden&&world==='ostrov'&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('calm')){
-   if(!film.getAttribute('src'))film.src=film.dataset.src!;film.play().catch(()=>{});
+   prepareVideo(film).start();film.play().catch(()=>{});
   }else film.pause();
  }
  links.forEach(link=>{link.addEventListener('pointerenter',()=>select(link.dataset.worldZone!));link.addEventListener('focus',()=>select(link.dataset.worldZone!));link.addEventListener('pointerdown',()=>select(link.dataset.worldZone!));});

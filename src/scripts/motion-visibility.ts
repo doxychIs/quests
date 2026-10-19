@@ -1,3 +1,4 @@
+import {prepareVideo} from '../lib/video-loading';
 /** Pause infinite animations at their current time instead of restarting them on scroll. */
 export function initAnimationVisibility(){
  const html=document.documentElement;
@@ -45,19 +46,29 @@ export function initAnimationVisibility(){
 export function initLazyVideoVisibility(){
  const query=matchMedia('(prefers-reduced-motion: reduce)');
  const calm=()=>query.matches||document.documentElement.classList.contains('calm');
- const states=new Map<HTMLVideoElement,{visible:boolean;wanted:boolean;autoPaused:boolean}>();let suspended=false;
+ const states=new Map<HTMLVideoElement,{visible:boolean;wanted:boolean;autoPaused:boolean;blocked:boolean}>();let suspended=false;
  function sync(video:HTMLVideoElement){const state=states.get(video)!;
-  if(!suspended&&state.visible&&!document.hidden&&!calm()&&state.wanted){
-   if(!video.getAttribute('src')&&video.dataset.src)video.src=matchMedia('(max-width:760px)').matches&&video.dataset.srcMobile?video.dataset.srcMobile:video.dataset.src;
-   state.autoPaused=false;video.play().catch(()=>{});
+  if(!suspended&&state.visible&&!document.hidden&&!calm()&&state.wanted&&!state.blocked){
+   prepareVideo(video).start();
+   state.autoPaused=false;video.play().catch((error:DOMException)=>{if(error.name==='AbortError')return;state.blocked=true;paint(video)});
   }else{state.autoPaused=true;video.pause()}
+ }
+ function paint(video:HTMLVideoElement){
+  const section=video.closest('.story-hero'),button=section?.querySelector<HTMLButtonElement>('[data-hero-video-pause]'),label=section?.querySelector<HTMLElement>('[data-hero-video-state]');if(!button)return;
+  const state=states.get(video)!,phase=prepareVideo(video).state.phase;
+  button.textContent=phase==='error'?'Повторить видео':state.blocked?'Включить видео':state.wanted?'Пауза видео':'Продолжить видео';button.setAttribute('aria-pressed',String(!state.wanted));
+  if(label)label.textContent=phase==='error'?'Видео не загрузилось':phase==='loading'?'Загружаем видео…':'';
  }
  const syncAll=()=>states.forEach((_,video)=>sync(video));
  const observer=new IntersectionObserver(entries=>{for(const entry of entries){const video=entry.target as HTMLVideoElement;states.get(video)!.visible=entry.isIntersecting;sync(video)}},{threshold:0});
  document.querySelectorAll<HTMLVideoElement>('[data-lazy-video]').forEach(video=>{
-  const state={visible:false,wanted:true,autoPaused:true};states.set(video,state);observer.observe(video);
-  video.addEventListener('pause',()=>{if(!state.autoPaused&&state.visible&&!document.hidden&&video.paused)state.wanted=false});
-  video.addEventListener('play',()=>{state.wanted=true;if(suspended||!state.visible||document.hidden||calm()){state.autoPaused=true;video.pause()}else state.autoPaused=false});
+  const state={visible:false,wanted:true,autoPaused:true,blocked:false};states.set(video,state);observer.observe(video);
+  const loader=prepareVideo(video);let previousPhase=loader.state.phase;
+  video.addEventListener('video:state',()=>{if(loader.state.phase==='loading'&&previousPhase==='error'){state.blocked=false;queueMicrotask(()=>sync(video))}previousPhase=loader.state.phase;paint(video)});
+  video.closest('.story-hero')?.querySelector('[data-hero-video-pause]')?.addEventListener('click',()=>{if(loader.state.phase==='error'){state.wanted=true;state.blocked=false;loader.retry()}else if(state.blocked){state.blocked=false;state.wanted=true}else state.wanted=!state.wanted;sync(video);paint(video)});
+  video.addEventListener('pause',()=>{if(!state.autoPaused&&state.visible&&!document.hidden&&video.paused)state.wanted=false;paint(video)});
+  video.addEventListener('playing',()=>{state.blocked=false;paint(video)});
+  video.addEventListener('play',()=>{state.wanted=true;if(suspended||!state.visible||document.hidden||calm()){state.autoPaused=true;video.pause()}else state.autoPaused=false;paint(video)});
  });
  document.addEventListener('visibilitychange',syncAll);query.addEventListener('change',syncAll);
  new MutationObserver(syncAll).observe(document.documentElement,{attributes:true,attributeFilter:['class']});

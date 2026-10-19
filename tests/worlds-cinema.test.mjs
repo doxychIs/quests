@@ -27,12 +27,12 @@ test('Медленная перемотка применяет последни�
  film.readyState=1;film.dispatchEvent(new Event('loadedmetadata'));assert.equal(film.currentTime,7);
  scrub.setTime(100);assert.equal(film.currentTime,9.97);
 });
-test('АРХИВ и ОСТРОВ: первые экраны статичны; пролёты без loop/autoplay и постороннего видео',()=>{
+test('АРХИВ и ОСТРОВ: отдельные фоновые видео; пролёты без loop/autoplay',()=>{
  for(const route of ['arhiv','ostrov']){
   const x=setupDOM(route);try{
-   assert.equal(x.d.querySelectorAll('.story-hero video').length,0);
+   const hero=x.d.querySelector('.story-hero video');assert.ok(hero);assert.match(hero.dataset.src,/hero\.mp4$/);assert.match(hero.dataset.srcMobile,/hero-mobile\.mp4$/);assert.equal(hero.loop,true);
    const film=x.d.querySelector('[data-scroll-film]');assert.equal(film.loop,false);assert.equal(film.autoplay,false);assert.equal(film.dataset.playing,'no');
-   assert.equal(x.d.querySelectorAll('[data-lazy-video]').length,0);
+   assert.equal(x.d.querySelectorAll('[data-lazy-video]').length,1);assert.ok(x.d.querySelector('[data-page-loader]'));assert.notEqual(hero.dataset.src,film.dataset.src);
    assert.deepEqual(x.errors,[]);
   }finally{x.close()}
  }

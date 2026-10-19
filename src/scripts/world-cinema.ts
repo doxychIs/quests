@@ -1,16 +1,17 @@
 import {cinemaTimeline,createFrameScrubber} from '../lib/scroll-cinema';
+import {bindSceneLoading} from './media-loading';
 
 export function initWorldCinema(){
  document.querySelectorAll<HTMLElement>('[data-world-cinema]').forEach(scene=>{
   if(scene.dataset.ready)return;scene.dataset.ready='yes';
   const video=scene.querySelector<HTMLVideoElement>('[data-scroll-film]')!;
   const reveals=scene.querySelectorAll<HTMLElement>('[data-cinema-reveal]');
-  const error=scene.querySelector<HTMLElement>('.cinema-error')!;
   const caption=scene.querySelector<HTMLElement>('[data-cinema-caption]')!;
   const percent=scene.querySelector<HTMLElement>('[data-cinema-percent]')!;
   const initialCaption=caption.textContent;
   const query=matchMedia('(prefers-reduced-motion: reduce)');
   const scrubber=createFrameScrubber(video);
+  const loading=bindSceneLoading(video,scene);
   const viewport=scene.querySelector<HTMLElement>('[data-cinema-viewport]')!;
   const enlarge=scene.querySelector<HTMLButtonElement>('[data-cinema-enlarge]')!;
   const dialog=scene.querySelector<HTMLDialogElement>('[data-world-dialog]')!;
@@ -68,17 +69,15 @@ export function initWorldCinema(){
    scene.dataset.cinemaProgress=p.toFixed(3);
    percent.textContent=`${Math.round((quiet||failed?1:p)*100)}%`;
    reveals.forEach(reveal=>reveal.inert=!arrived);
-   error.hidden=!failed;
    caption.textContent=arrived?(scene.dataset.cinemaWorld==='arhiv'?'Нажмите на картину — её история откроется здесь.':'Нажмите на светящийся сигнал — выберите приключение.'):initialCaption;
    if(!quiet&&!failed&&rect.top<innerHeight*2&&rect.bottom>0){
-    if(!video.getAttribute('src')){video.preload='auto';video.src=matchMedia('(max-width:760px)').matches?video.dataset.srcMobile!:video.dataset.src!}
+    loading.start();
     scrubber.setTime(state.time);
    }
   }
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(render)};
   video.addEventListener('loadeddata',()=>{scene.classList.add('cinema-decoded');schedule()});
-  video.addEventListener('error',()=>{failed=true;schedule()});
-  scene.querySelector('[data-cinema-retry]')?.addEventListener('click',()=>{failed=false;scene.classList.remove('cinema-decoded');video.load();render()});
+  video.addEventListener('video:state',()=>{const next=loading.state.phase==='error';if(next!==failed){failed=next;schedule()}if(loading.state.phase==='loading')scene.classList.remove('cinema-decoded')});
   addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule);
   new IntersectionObserver(schedule,{rootMargin:'100% 0px'}).observe(scene);
   query.addEventListener('change',schedule);

@@ -59,7 +59,7 @@ const screens=roomScreens.filter(s=>s.kind==='quest').map(s=>({...s,quest:quests
  </div>
  <nav class="crt-room-index" aria-label="Квесты телевизионной комнаты">{screens.map(s=><a href={href(`iznanka/quests/${s.slug}/`)} data-room-index={s.id}><span>{s.quest.name}</span><small>{s.quest.duration} мин · {s.quest.players.join('–')} игроков</small></a>)}</nav>
  <div class="crt-video-bank" hidden aria-hidden="true">
-  {roomScreens.map((screen,i)=><video data-signal-video={screen.id} data-src={href('assets/'+['horror-broadcast-compatible.mp4','horror-mask.mp4','horror-corridor-mobile.mp4','horror-face.mp4','horror-face.mp4','horror-broadcast-compatible.mp4','horror-mask.mp4'][i])} muted loop playsinline preload="none"></video>)}
+  {roomScreens.map((screen,i)=><video data-signal-video={screen.id} data-src={href('assets/'+['horror-broadcast-compatible.mp4','horror-mask.mp4','horror-corridor-mobile.mp4?v=20261019','horror-face.mp4','horror-face.mp4','horror-broadcast-compatible.mp4','horror-mask.mp4'][i])} muted loop playsinline preload="none"></video>)}
  </div>
 
 </div>
