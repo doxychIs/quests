@@ -1,0 +1,26 @@
+---
+import {href,asset} from '../lib/data';
+import {worldMedia} from '../lib/world-media';
+import NotebookMark from './NotebookMark.astro';
+const media=worldMedia.arhiv.hero;
+---
+<section class="story-hero story-hero-arhiv notebook-hero" aria-labelledby="world-title">
+ <span class="notebook-folio" aria-hidden="true">Тетрадь четвёртая / не окончено</span>
+ <div class="archive-hero-content">
+  <p class="hero-kicker">Черновик. Не для чужих глаз.</p>
+  <h1 id="world-title" data-manuscript-write>Архив</h1>
+  <p class="archive-dedication" data-manuscript-write>У каждой тишины<br/>есть своя история.</p>
+  <p class="archive-rough-note"><s>Ничего необычного.</s><br/><span data-manuscript-write>Записать всё, пока дом<br/>снова не начал забывать.</span></p>
+  <a href="#passage" class="manuscript-link">Перелистнуть тишину <span aria-hidden="true">↗</span></a>
+ </div>
+ <figure class="story-hero-media notebook-photo notebook-hero-photo" data-hero-media>
+  <img src={href(`assets/${media.image}`)} alt="Старая библиотека на вклеенной чёрно-белой фотографии" fetchpriority="high" width="1536" height="1024"/>
+  {media.video&&<video data-lazy-video data-src={href(media.video)} poster={href(`assets/${media.image}`)} muted loop playsinline preload="none" aria-hidden="true"/>}
+  <figcaption>Дом, которого нет на карте.<br/><span>Окно снова оставалось открытым.</span></figcaption>
+ </figure>
+ <figure class="notebook-photo notebook-book-photo" aria-hidden="true"><img src={asset('archive-3')} alt="" width="1536" height="1024" loading="eager"/><figcaption>Не вырывать страницы.</figcaption></figure>
+ <aside class="archive-letter" aria-label="Запись хранителя"><span class="letter-number">На полях, позднее</span><p data-manuscript-write>Не всякая книга<br/>согласится быть прочитанной.</p><p>Здесь часы помнят чужое время,<br/>а на полях рукописей<br/>проступают новые строки.</p><span class="letter-signature">Хранитель архива</span></aside>
+ <NotebookMark kind="house" class="hero-house-sketch"/><NotebookMark kind="ink" class="hero-ink-stain"/><NotebookMark kind="arrow" class="hero-photo-arrow"/>
+ <span class="notebook-side-note" aria-hidden="true">не переписывать начисто</span>
+ <div class="story-hero-bottom"><span>Детективы без скримеров · 14+</span><a href="#passage">Продолжение за окном <span aria-hidden="true">↓</span></a><span>Четыре незаконченных дела</span></div>
+</section>
