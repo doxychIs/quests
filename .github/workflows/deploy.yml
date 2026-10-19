@@ -1,49 +1,45 @@
-name: Build and deploy Astro to GitHub Pages
+name: Проверка и сборка сайта
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Получить исходники
         uses: actions/checkout@v4
-      - name: Set up Node
+      - name: Подготовить Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "npm"
-      - name: Install dependencies
+          node-version: "24"
+          cache: npm
+      - name: Установить зависимости
         run: npm ci
-      - name: Build Astro for project subpath
+      - name: Проверить TypeScript
+        run: npm run check
+      - name: Собрать сайт для проверок
+        run: npm run build
+      - name: Проверить сайт и взаимодействия
+        run: npm test
+      - name: Собрать версию для портфолио
         run: npm run build
         env:
-          SITE_URL: "https://doxychis.github.io"
-          BASE_PATH: "/quests/"
-      - name: Upload site
-        uses: actions/upload-pages-artifact@v3
+          SITE_URL: https://doxychis.github.io
+          BASE_PATH: /quests/
+      - name: Сохранить готовый сайт
+        uses: actions/upload-artifact@v4
         with:
-          path: "./dist"
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          name: quests-site
+          path: dist/
+          retention-days: 7

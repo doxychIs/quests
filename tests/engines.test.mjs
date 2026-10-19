@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Maze,mazePath,insideMaze} from '../src/lib/maze.ts';
+import {Platformer,platforms,platformX} from '../src/lib/platformer.ts';
+test('Лабиринт: весь маршрут, три контрольные точки и финиш',()=>{const m=new Maze();for(const p of mazePath.slice(1))m.move(p);assert.equal(m.stage,3);assert.equal(m.won,true);assert.equal(m.mistakes,0)});
+test('Лабиринт: стену нельзя перескочить длинным движением указателя',()=>{const m=new Maze();m.move({x:920,y:330});assert.equal(m.won,false);assert.equal(m.mistakes,1);assert.deepEqual(m.pos,mazePath[0])});
+test('Лабиринт: коллизия возвращает к последней контрольной точке',()=>{const m=new Maze();m.move(mazePath[1]);m.move(mazePath[2]);assert.equal(m.stage,1);m.move({x:300,y:180});assert.deepEqual(m.pos,mazePath[2]);assert.equal(m.mistakes,1);assert.equal(insideMaze({x:20,y:20}),false)});
+test('Платформер: полный проходимый маршрут со всеми звёздами',()=>{const g=new Platformer();let frames=0,lastJump=-1;for(;frames<7200&&!g.won;frames++){let jump=false;if(g.grounded){const p=platforms[g.on<0?0:g.on],x=platformX(p,g.time),star=g.stars.find(s=>!s.got&&Math.abs(s.x-(g.x+14))<75&&s.x>g.x-20);if((star||g.x>x+p.w-65)&&frames-lastJump>4){jump=true;lastJump=frames}}g.step(1/60,1,jump)}assert.equal(g.won,true);assert.ok(g.stars.every(s=>s.got));assert.equal(g.deaths,0);assert.ok(frames/60<60)});
+test('Платформер: падение сохраняет звёзды и возвращает на чекпоинт',()=>{const g=new Platformer();g.checkpoint={x:1840,y:280};g.stars[0].got=true;g.y=530;g.step(1/60,0,false);assert.equal(g.deaths,1);assert.equal(g.x,1840);assert.equal(g.stars[0].got,true);g.reset();assert.equal(g.deaths,0);assert.equal(g.stars[0].got,false)});
+test('Платформер: финиш не засчитывается без трёх звёзд',()=>{const g=new Platformer();g.x=3250;g.y=310;g.step(1/60,0,false);assert.equal(g.won,false);g.stars.forEach(s=>s.got=true);g.step(1/60,0,false);assert.equal(g.won,true)});
+test('Движущиеся платформы меняют положение и не исчезают',()=>{for(const p of platforms.filter(p=>p.move)){assert.notEqual(platformX(p,0),platformX(p,1));assert.ok(Math.abs(platformX(p,2)-p.x)<=p.move)}});
