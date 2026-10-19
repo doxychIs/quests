@@ -87,7 +87,9 @@ export function initScrollTyping(onKeystroke:()=>void=()=>{}){
   for(const entry of entries){const run=records.get(entry.target as HTMLElement);if(run)run.visible=entry.isIntersecting;}
   positionCaret(!!frame);
  },{threshold:0});
- function track(run:TextRun){records.set(run.element,run);observer.observe(run.element);render(run,calm()||run.element.closest('.horror-film')?run.total:0);}
+ // Открытая передача должна читаться сразу: её прокрутка служит чтению,
+ // а не обязательному проявлению ещё невидимых заголовков и сведений.
+ function track(run:TextRun){records.set(run.element,run);observer.observe(run.element);render(run,calm()||run.element.closest('.horror-film,[data-crt-room]')?run.total:0);}
  function graphics(element:HTMLElement){
   if(element.closest('.site-header,dialog,a,button,summary,form'))return;
   const letters=[...element.querySelectorAll<SVGGElement>('[data-letter]')];if(!letters.length)return;
