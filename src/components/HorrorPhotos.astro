@@ -1,0 +1,17 @@
+---
+import {quests,asset,href} from '../lib/data';
+import {horrorPhotos} from '../lib/horror-settings';
+import '../styles/horror-photos.css';
+const stories=quests.filter(q=>q.world==='iznanka');
+---
+<section class="horror-photos section-pad" id="frames" data-photo-gallery aria-labelledby="photo-gallery-title">
+ <header class="photo-gallery-heading"><div><span class="photo-overline">Фрагменты четырёх историй</span><h2 id="photo-gallery-title">За каждой дверью —<br/>своё место.</h2></div><p>Палата, квартира, цех и лесная сторожка. Визуализации декораций и персонажей в стиле обычной съёмки с телефона.</p></header>
+ <div class="photo-gallery-tools"><div class="photo-filters" role="group" aria-label="Показать кадры выбранного квеста"><button type="button" data-photo-filter="all" aria-pressed="true">Все кадры</button>{stories.map(q=><button type="button" data-photo-filter={q.slug} aria-pressed="false">{q.name}</button>)}</div><p data-photo-count role="status" aria-live="polite">Показано кадров: {horrorPhotos.length}</p></div>
+ <div class="photo-contact-sheet">{horrorPhotos.map((photo,i)=>{const quest=stories.find(q=>q.slug===photo.quest)!;return <figure data-photo-card data-photo-quest={photo.quest}>
+  <a class="reportage-photo" href={asset(photo.image)} data-reportage-open data-photo-title={photo.title} data-photo-story={quest.name} data-photo-link={href(`iznanka/quests/${quest.slug}/#location`)} aria-label={`Увеличить кадр: ${photo.title}. ${quest.name}`}><img src={asset(photo.image+'-thumb')} width="600" height="450" alt={photo.alt} loading="lazy" decoding="async"/><span class="photo-enlarge" aria-hidden="true">＋</span></a>
+  <figcaption><span class="photo-number">{String(i+1).padStart(2,'0')}</span><div><span>{quest.name}</span><p>{photo.title}</p></div></figcaption>
+ </figure>})}</div>
+ <p class="photo-gallery-note">Кадры созданы для концепции «Изнанки» и не являются фотографиями действующей площадки. Описание каждой локации и роли актёра — на странице квеста.</p>
+ <dialog class="reportage-dialog" data-photo-dialog aria-labelledby="reportage-title"><div class="reportage-toolbar"><span data-photo-position aria-live="polite"></span><button type="button" data-photo-close aria-label="Закрыть галерею">Закрыть ×</button></div><div class="reportage-large"><img alt="" data-photo-large/><p data-photo-error role="status" hidden>Не удалось загрузить кадр.</p></div><div class="reportage-caption"><div><h3 id="reportage-title" data-photo-caption></h3><p>Визуализация декораций · сгенерированный кадр</p><a href="#" data-photo-quest-link>О локации и актёре ↗</a></div><div class="reportage-arrows"><button type="button" data-photo-step="-1" aria-label="Предыдущий кадр">←</button><button type="button" data-photo-step="1" aria-label="Следующий кадр">→</button></div></div></dialog>
+</section>
+<script>import {initReportage} from '../scripts/reportage';initReportage();</script>

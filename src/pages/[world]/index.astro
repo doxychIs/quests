@@ -8,6 +8,7 @@ import QuestGallery from '../../components/QuestGallery.astro';
 import Games from '../../components/Games.astro';
 import HorrorAtmosphere from '../../components/HorrorAtmosphere.astro';
 import HorrorAfterword from '../../components/HorrorAfterword.astro';
+import HorrorPhotos from '../../components/HorrorPhotos.astro';
 import {worlds,worldKeys,href,type World} from '../../lib/data';
 export function getStaticPaths(){return worldKeys.map(world=>({params:{world}}))}
 const world=Astro.params.world as World;const w=worlds[world];
@@ -17,6 +18,7 @@ const world=Astro.params.world as World;const w=worlds[world];
  <WorldHero world={world}/><WorldCinema world={world}/>
  </>}
  {world==='iznanka'&&<HorrorAtmosphere/>}
+ {world==='iznanka'&&<HorrorPhotos/>}
  <section class:list={['trial-section','section-pad',`trial-${world}`]} id="trial"><div class="trial-heading">{world!=='iznanka'&&<span class="section-index">04 / ПОПРОБУЙТЕ СЕБЯ</span>}<h2 class:list={[{reveal:world==='iznanka'}]}>{w.game}</h2><p>{w.gameText}</p></div><Games world={world}/><a href={world==='iznanka'?'#quests':'#experience'} class="skip-trial text-link">{world==='iznanka'?'Вернуться к квестам':'Пропустить испытание ↓'}</a></section>
  {world==='iznanka'&&<HorrorAfterword/>}
  {world!=='iznanka'&&<WorldAfterword world={world}/>}

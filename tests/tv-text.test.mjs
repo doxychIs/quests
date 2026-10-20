@@ -15,7 +15,7 @@ test('Все телевизоры: названия, сюжет и сведен�
     assert.ok(program.querySelector('h2 [data-letter]'));
     assert.ok(program.querySelector('.broadcast-synopsis [data-letter]'));
     assert.equal(program.querySelectorAll('[data-type-hidden]').length,0,slug);
-    for(const tab of ['info','story']){
+    for(const tab of ['info','place','story']){
      program.querySelector(`[data-broadcast-tab="${tab}"]`).click();
      const pane=program.querySelector(`[data-broadcast-pane="${tab}"]`);
      assert.equal(pane.hidden,false);assert.equal(pane.querySelectorAll('[data-type-hidden]').length,0);

@@ -2,6 +2,7 @@
 import {quests,href,asset} from '../lib/data';
 import {roomScreens,roomSize,roundedScreenPath} from '../lib/crt-room';
 import GraphicText from './GraphicText.astro';
+import {horrorSettings} from '../lib/horror-settings';
 import '../styles/horror-room.css';
 import '../styles/crt-reading.css';
 const screens=roomScreens.filter(s=>s.kind==='quest').map(s=>({...s,quest:quests.find(q=>q.world==='iznanka'&&q.slug===s.slug)!}));
@@ -43,10 +44,11 @@ const screens=roomScreens.filter(s=>s.kind==='quest').map(s=>({...s,quest:quests
   <button type="button" class="broadcast-close" data-broadcast-close ><GraphicText text="К квестам"/></button>
   {screens.map(s=><article class="broadcast-program" data-broadcast-program={s.slug} hidden aria-labelledby={`broadcast-${s.slug}`}>
    <header class="broadcast-heading"><h2 id={`broadcast-${s.slug}`}><GraphicText text={s.quest.name} flicker/></h2><p><GraphicText text={`${s.quest.genre} / ${s.quest.age}`}/></p></header>
-   <nav class="broadcast-menu" aria-label="Разделы записи"><button type="button" data-broadcast-tab="story" aria-pressed="true"><GraphicText text="СЮЖЕТ"/></button><button type="button" data-broadcast-tab="info" aria-pressed="false"><GraphicText text="СВЕДЕНИЯ"/></button><button type="button" data-broadcast-tab="frames" aria-pressed="false"><GraphicText text="КАДРЫ"/></button></nav>
+   <nav class="broadcast-menu" aria-label="Разделы записи"><button type="button" data-broadcast-tab="story" aria-pressed="true"><GraphicText text="СЮЖЕТ"/></button><button type="button" data-broadcast-tab="info" aria-pressed="false"><GraphicText text="СВЕДЕНИЯ"/></button><button type="button" data-broadcast-tab="place" aria-pressed="false"><GraphicText text="ЛОКАЦИЯ"/></button><button type="button" data-broadcast-tab="frames" aria-pressed="false"><GraphicText text="КАДРЫ"/></button></nav>
    <div class="broadcast-content" data-broadcast-pane="story"><p class="broadcast-synopsis"><GraphicText text={s.quest.synopsis}/></p><p><GraphicText text={s.quest.story}/></p><p><GraphicText text={`Ваша задача. ${s.quest.task}`}/></p></div>
    <div class="broadcast-content" data-broadcast-pane="info" hidden><dl><div><dt><GraphicText text="ВОЗРАСТ"/></dt><dd><GraphicText text={s.quest.age}/></dd></div><div><dt><GraphicText text="ВРЕМЯ"/></dt><dd><GraphicText text={`${s.quest.duration} минут`}/></dd></div><div><dt><GraphicText text="КОМАНДА"/></dt><dd><GraphicText text={`${s.quest.players.join('–')} игроков`}/></dd></div><div><dt><GraphicText text="СТРАХ"/></dt><dd><GraphicText text={`${'■'.repeat(s.quest.level)}${'□'.repeat(5-s.quest.level)} ${s.quest.level}/5`}/></dd></div></dl><ul>{s.quest.rules.map(rule=><li><GraphicText text={rule}/></li>)}</ul></div>
-   <div class="broadcast-frames" data-broadcast-pane="frames" hidden>{s.quest.gallery.map(name=><figure><img src={asset(name)} alt={`Художественная декорация квеста «${s.quest.name}»`} loading="lazy"/><figcaption>ОБРАЗ ДЕКОРАЦИИ</figcaption></figure>)}</div>
+   <div class="broadcast-content" data-broadcast-pane="place" hidden><h3><GraphicText text={horrorSettings[s.slug].place}/></h3><p><GraphicText text={horrorSettings[s.slug].description}/></p><h3><GraphicText text={horrorSettings[s.slug].actor}/></h3><p><GraphicText text={horrorSettings[s.slug].format}/></p><p><GraphicText text={horrorSettings[s.slug].performance}/></p><small><GraphicText text="Устройство площадки и роли актёров — часть концепции квеста."/></small></div>
+   <div class="broadcast-frames" data-broadcast-pane="frames" hidden>{s.quest.gallery.map(name=><figure><img src={asset(name+'-thumb')} alt={`Визуализация декорации квеста «${s.quest.name}»`} loading="lazy"/><figcaption>ВИЗУАЛИЗАЦИЯ ДЕКОРАЦИЙ И ПЕРСОНАЖЕЙ</figcaption></figure>)}</div>
    <footer class="broadcast-actions"><a class="broadcast-book" href={href(`iznanka/book/${s.slug}/`)}><GraphicText text="ВЫБРАТЬ СЕАНС"/></a><a href={href(`iznanka/quests/${s.slug}/`)}><GraphicText text="Полная страница квеста"/></a><small><GraphicText text="Демонстрационный квест · запись работает в деморежиме"/></small></footer>
   </article>)}
   </div>

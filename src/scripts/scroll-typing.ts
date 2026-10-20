@@ -8,7 +8,7 @@ export function initScrollTyping(onKeystroke:()=>void=()=>{}){
  if(document.body.dataset.world!=='iznanka')return;
  const html=document.documentElement,query=matchMedia('(prefers-reduced-motion: reduce)');
  const records=new Map<HTMLElement,TextRun>();
- const excluded='script,style,svg,canvas,video,audio,dialog,form,input,textarea,select,a,button,summary,.team-size,.site-header,.graphic-transcript,.graphic-objects,[data-graphic-text],.scroll-type-run,.scroll-type-caret,[aria-live],[role=status],.film-tools,.film-scroll,.passage-skip,[data-passage-caption],.touch-controls,[data-start],[data-restart],[data-replay],[data-stage],[data-team-unavailable]';
+ const excluded='script,style,svg,canvas,video,audio,dialog,form,input,textarea,select,a,button,summary,.team-size,.site-header,.horror-photos,.horror-setting,.graphic-transcript,.graphic-objects,[data-graphic-text],.scroll-type-run,.scroll-type-caret,[aria-live],[role=status],.film-tools,.film-scroll,.passage-skip,[data-passage-caption],.touch-controls,[data-start],[data-restart],[data-replay],[data-stage],[data-team-unavailable]';
  const caret=document.createElement('span');caret.className='scroll-type-caret';caret.setAttribute('aria-hidden','true');caret.hidden=true;document.body.append(caret);
  let frame=0,idle:ReturnType<typeof setTimeout>|undefined,credit=0,lastScroll=-Infinity,previousFrame=0,suspended=false;
  let active:TextRun|undefined,lastY=scrollY,lastX=scrollX;

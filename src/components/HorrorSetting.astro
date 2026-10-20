@@ -1,0 +1,6 @@
+---
+import {horrorSettings} from '../lib/horror-settings';
+import '../styles/horror-photos.css';
+const {slug}=Astro.props as {slug:string};const setting=horrorSettings[slug];
+---
+<section class="horror-setting section-pad" id="location" aria-labelledby="location-title"><div class="horror-setting-heading"><span class="photo-overline">Пространство и персонажи</span><h2 id="location-title">Где вы окажетесь.<br/>Кого встретите.</h2><p>Устройство локации и роли актёров описывают концепцию квеста. Реальная площадка пока не подключена.</p></div><div class="horror-setting-body"><article><span class="photo-overline">Локация</span><h3>{setting.place}</h3><p>{setting.description}</p><ul>{setting.spaces.map(space=><li>{space}</li>)}</ul></article><article><span class="photo-overline">Актёрское участие</span><h3>{setting.actor}</h3><p class="performance-format">{setting.format}</p><p>{setting.performance}</p></article></div></section>
