@@ -16,6 +16,7 @@ import '../styles/worlds.css';
 import '../styles/archive-library.css';
 import '../styles/media-loading.css';
 import '../styles/portal-shared.css';
+import '../styles/entry-controls.css';
 const {title='ИНОЕ — три мира квестов в Перми',description='Выберите квест: хоррор, детектив или семейное приключение. Интерактивный демонстрационный проект.',world,page='home',footer=true,cinema=false}=Astro.props as {title?:string;description?:string;world?:World;page?:string;footer?:boolean;cinema?:boolean};
 ---
 <!doctype html>
@@ -30,7 +31,7 @@ const {title='ИНОЕ — три мира квестов в Перми',descrip
  <Header world={world}/>
  {world==='iznanka'&&<AgeGate/>}
  <div class:list={[{'restricted':world==='iznanka'}]}><main id="main"><slot/></main>{footer&&<Footer world={world}/>}</div>
- <dialog id="preferences" class="preferences" aria-labelledby="prefs-title"><form method="dialog"><button class="dialog-close" aria-label="Закрыть настройки">×</button></form><span class="eyebrow">ВАШ ТЕМП</span><h2 id="prefs-title">Настройки впечатлений</h2><label class="check"><input id="calm-setting" type="checkbox"/> Уменьшить движение</label><label class="check"><input id="surprise-setting" type="checkbox"/> Скример в финале мини-игры «Изнанки»</label><p>Звук включается отдельно. Никаких вспышек и стробоскопов.</p><button id="reset-age" class="text-link">Сбросить согласие 18+</button></dialog>
+ <dialog id="preferences" class="preferences" aria-labelledby="prefs-title"><form method="dialog"><button class="dialog-close" aria-label="Закрыть настройки">×</button></form><span class="eyebrow">ВАШ ТЕМП</span><h2 id="prefs-title">Настройки впечатлений</h2><label class="check"><input id="calm-setting" type="checkbox"/> Уменьшить движение</label><p class="motion-explanation">Этот режим отключает видеопролёты. Можно сразу выбирать квесты.</p><p id="motion-system-note" hidden>Движение уменьшено в системных настройках устройства.</p><label class="check"><input id="surprise-setting" type="checkbox"/> Скример в финале мини-игры «Изнанки»</label><p>Звук включается кнопкой в шапке сайта.</p><button id="reset-age" class="text-link">Сбросить согласие 18+</button></dialog>
  <div class="route-curtain" aria-hidden="true"><span>ИНОЕ</span></div>
  <noscript><div class="no-script">Для интерактивных сцен и мини-игр нужен JavaScript. <a href={href()}>Вернуться к выбору мира</a>.</div></noscript>
  <script>import '../scripts/app';</script>

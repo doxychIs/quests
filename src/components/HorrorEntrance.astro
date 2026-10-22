@@ -16,7 +16,7 @@ import '../styles/horror-passage.css';
   <h1><GraphicText text="Не" variant="title" flicker/><br/><GraphicText text="оборачивайтесь." variant="blood" flicker/></h1>
   <p class="film-description">За этой дверью ваши страхи обретают форму.<br/> Осталось сделать первый шаг.</p>
  </div>
- <div class="film-tools"><button type="button" data-film-pause aria-pressed="false">Пауза</button><a href="#quests">Выбрать квест</a></div>
+ <div class="film-tools"><button type="button" data-film-pause aria-pressed="false">Пауза</button><a href="#passage">Войти в коридор</a></div>
  <a href="#passage" class="film-scroll"><span>Листайте вниз</span></a>
 </section>
 <section id="passage" class="horror-passage" data-horror-door aria-label="Проход через замок в телевизионную комнату. Прокручивайте, чтобы двигаться.">
@@ -24,6 +24,7 @@ import '../styles/horror-passage.css';
   <section class="passage-room" aria-label="Телевизионная комната"><slot/></section>
   <div class="passage-caption"><span data-passage-caption>Продолжайте листать. Дверь уже открыта.</span></div>
   <a class="passage-skip" href="#quests">К выбору квеста</a>
+  <div class="passage-quiet"><p>Пролёт отключён: уменьшено движение.</p><button type="button" data-enable-passage-motion>Включить пролёт</button></div>
   <SceneLoading/>
  </div>
  <span id="quests" class="room-arrival" aria-hidden="true"></span>

@@ -7,18 +7,19 @@ const stories=quests.filter(q=>q.world==='iznanka');
 <section class="horror-photos section-pad" id="frames" data-photo-gallery aria-labelledby="photo-gallery-title">
  <header class="photo-gallery-heading"><div><span class="photo-overline">Найденная запись / 08 кадров</span><h2 id="photo-gallery-title">Сигнал<br/>ещё идёт.</h2></div><p>Четыре места по ту сторону экрана.<br/>Листайте запись. Попробуйте рассмотреть то, что осталось в кадре.</p></header>
  <div class="photo-tv" role="region" aria-roledescription="карусель" aria-label="Телевизор с галереей локаций" tabindex="0" data-photo-tv>
-  <div class="photo-tv-trim" aria-hidden="true"><span>ИЗНАНКА</span><span>ПРИЁМНИК ИЗОБРАЖЕНИЙ</span></div>
   <div class="photo-tv-body">
+   <img class="photo-tv-photograph" src={href('assets/horror-television-v2.webp')} width="1536" height="1024" alt="" aria-hidden="true" loading="lazy"/>
    <div class="photo-glass">
     <div class="photo-screen-status" aria-hidden="true"><span><i></i> <span data-photo-signal>ЗАПИСЬ</span></span><span data-photo-screen-position>01 / 08</span></div>
     <div class="photo-contact-sheet" data-photo-track>{horrorPhotos.map((photo,i)=>{const quest=stories.find(q=>q.slug===photo.quest)!;return <figure data-photo-card data-photo-quest={photo.quest} hidden={i!==0} aria-label={`Кадр ${i+1}: ${photo.title}`}>
      <a class="reportage-photo" href={asset(photo.image)} data-reportage-open data-photo-title={photo.title} data-photo-story={quest.name} data-photo-link={href(`iznanka/quests/${quest.slug}/#location`)} aria-label={`Увеличить кадр: ${photo.title}. ${quest.name}`}><img src={asset(photo.image)} width="1200" height="900" alt={photo.alt} loading="lazy" decoding="async"/><canvas class="photo-pixels" width="96" height="72" aria-hidden="true"></canvas><span class="photo-enlarge" aria-hidden="true">↗</span></a>
      <figcaption><span>{quest.name}</span><h3>{photo.title}</h3></figcaption>
     </figure>})}</div>
+    <button type="button" class="photo-inline-nav" data-photo-browse="-1" aria-label="Предыдущий снимок на экране" disabled>←</button><button type="button" class="photo-inline-nav" data-photo-browse="1" aria-label="Следующий снимок на экране" disabled>→</button>
     <p class="photo-screen-error" data-photo-screen-error role="status" hidden>Кадр не загрузился.<br/>Попробуйте следующий.</p>
-    <div class="photo-glass-surface" aria-hidden="true"></div>
+    <div class="photo-glass-surface" aria-hidden="true"></div><svg class="photo-glass-wear" viewBox="0 0 1000 720" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#d5e1dd" stroke-width=".7" opacity=".22"><path d="M48 96l65-40m-17 22 52-31M31 194l14-9M858 42l-37 57m-4 5-18 27M901 574l-68 39m-4 5-39 18M73 598l57-12m3-4 31-6M472 371l23-13m201-142 13-17M951 365l-21 18M326 641l-31 9"/></g><g fill="#c2cdc4" opacity=".2"><circle cx="48" cy="210" r="1.2"/><circle cx="172" cy="73" r="1.4"/><circle cx="886" cy="596" r="1.4"/><circle cx="792" cy="645" r=".9"/><circle cx="72" cy="611" r=".8"/><circle cx="940" cy="243" r=".9"/></g></svg>
    </div>
-   <aside class="photo-tv-hardware" aria-hidden="true"><span>НАСТРОЙКА</span><div class="photo-dial"><i></i></div><div class="photo-small-dial"></div><div class="photo-speaker"></div><span class="photo-power"><i></i> СИГНАЛ</span></aside>
+   <img class="photo-tv-surface" src={href('assets/horror-television-v2.webp')} width="1536" height="1024" alt="" aria-hidden="true" loading="lazy"/>
   </div>
   <div class="photo-tv-controls"><div class="photo-transport"><button type="button" data-photo-browse="-1" aria-label="Предыдущий снимок" disabled><span aria-hidden="true">←</span></button><span data-photo-count role="status" aria-live="polite" aria-atomic="true">Кадр 1 из 8</span><button type="button" data-photo-browse="1" aria-label="Следующий снимок" disabled><span aria-hidden="true">→</span></button></div><button class="photo-sharp-button" type="button" data-photo-sharp aria-pressed="false" disabled><span aria-hidden="true">▧</span> Прояснить кадр</button></div>
   <div class="photo-channel-bar"><span aria-hidden="true">КАНАЛЫ</span><div class="photo-filters" role="group" aria-label="Выбрать историю"><button type="button" data-photo-filter="all" aria-pressed="true">Все записи</button>{stories.map((q)=><button type="button" data-photo-filter={q.slug} aria-pressed="false">{q.name}</button>)}</div></div>

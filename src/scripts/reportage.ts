@@ -26,7 +26,6 @@ export function initReportage(){
   const refocus=current!==card&&current.contains(document.activeElement)&&!dialog.open;
   current=card;cards.forEach(c=>c.hidden=c!==card);
   const n=items.indexOf(card)+1;count.textContent=`Кадр ${n} из ${items.length}`;screenPosition.textContent=`${String(n).padStart(2,'0')} / ${String(items.length).padStart(2,'0')}`;
-  tv.style.setProperty('--channel-turn',`${(cards.indexOf(card)*36)-35}deg`);
   tv.classList.remove('is-clear');sharp.setAttribute('aria-pressed','false');sharp.innerHTML='<span aria-hidden="true">▧</span> Прояснить кадр';
   linkFor(card).querySelector<HTMLImageElement>('img')!.loading='eager';status();
   if(refocus)linkFor(card).focus({preventScroll:true});

@@ -14,7 +14,7 @@ const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
 const isCalm=()=>motionQuery.matches||document.documentElement.classList.contains('calm');
 const world=document.body.dataset.world||'hub';
 document.querySelectorAll<HTMLAnchorElement>('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>{const menu=link.closest('details');if(menu)menu.open=false}));
-function gates(){const gate=$<HTMLDialogElement>('#age-gate');const form=$<HTMLFormElement>('#age-form');if(gate&&store.get('gran-adult',true)!=='yes'){document.documentElement.classList.remove('adult');gate.removeAttribute('open');gate.showModal();gate.addEventListener('cancel',e=>{e.preventDefault();location.href=new URL(import.meta.env.BASE_URL,location.origin).href});form?.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const data=new FormData(form);store.set('gran-adult','yes',true);store.set('gran-surprise',data.has('surprise')?'yes':'no',true);if(data.has('calm')){document.documentElement.classList.add('calm');store.set('gran-calm','yes')}document.documentElement.classList.add('adult');gate.close();gate.removeAttribute('open');enableSound(data.has('sound'));$('.world-hero a, .detail-back, .booking-content a')?.focus({preventScroll:true});updateMotion()})}else if(gate){gate.removeAttribute('open');gate.close()}
+function gates(){const gate=$<HTMLDialogElement>('#age-gate');const form=$<HTMLFormElement>('#age-form');if(gate&&store.get('gran-adult',true)!=='yes'){document.documentElement.classList.remove('adult');gate.removeAttribute('open');gate.showModal();gate.addEventListener('cancel',e=>{e.preventDefault();location.href=new URL(import.meta.env.BASE_URL,location.origin).href});form?.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const data=new FormData(form);store.set('gran-adult','yes',true);store.set('gran-surprise',data.has('surprise')?'yes':'no',true);document.documentElement.classList.add('adult');gate.close();gate.removeAttribute('open');if(soundDesired)enableSound(true);$('.world-hero a, .detail-back, .booking-content a')?.focus({preventScroll:true});updateMotion()})}else if(gate){gate.removeAttribute('open');gate.close()}
  if(store.get('gran-adult',true)==='yes')document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.src=im.dataset.safeSrc!);
 }
 const ambience=createSoundscape(world);
@@ -28,8 +28,22 @@ document.addEventListener('pointerdown',resumeSound,{capture:true});document.add
 document.addEventListener('visibilitychange',()=>ambience.set(!document.hidden&&soundDesired&&(world!=='iznanka'||store.get('gran-adult',true)==='yes')));
 addEventListener('pagehide',()=>ambience.stop());addEventListener('pageshow',resumeSound);paintSound();resumeSound();
 const prefs=$<HTMLDialogElement>('#preferences'),calmSetting=$<HTMLInputElement>('#calm-setting'),surprise=$<HTMLInputElement>('#surprise-setting');
-$('.settings-toggle')?.addEventListener('click',()=>{if(calmSetting)calmSetting.checked=isCalm();if(surprise)surprise.checked=store.get('gran-surprise',true)==='yes';prefs?.showModal()});
-calmSetting?.addEventListener('change',()=>{store.set('gran-calm',calmSetting.checked?'yes':'no');document.documentElement.classList.toggle('calm',calmSetting.checked);document.documentElement.classList.toggle('js-motion',!isCalm());updateMotion()});surprise?.addEventListener('change',()=>store.set('gran-surprise',surprise.checked?'yes':'no',true));
+function paintMotion(){
+ const reduced=isCalm(),button=$<HTMLButtonElement>('.motion-toggle');
+ button?.setAttribute('aria-pressed',String(reduced));button?.setAttribute('aria-label',motionQuery.matches?'Движение уменьшено настройкой устройства':reduced?'Включить движение':'Уменьшить движение');
+ if(button){button.disabled=motionQuery.matches;button.title=button.getAttribute('aria-label')!}
+ const label=$('.motion-label');if(label)label.textContent=reduced?'Движение выкл.':'Движение вкл.';
+ if(calmSetting){calmSetting.checked=reduced;calmSetting.disabled=motionQuery.matches}
+ const note=$<HTMLElement>('#motion-system-note');if(note)note.hidden=!motionQuery.matches;
+ const replay=$('[data-enable-passage-motion]');if(replay)replay.textContent=motionQuery.matches?'Настройки движения':'Включить пролёт';
+}
+function setCalm(value:boolean){store.set('gran-calm',value?'yes':'no');document.documentElement.classList.toggle('calm',value);document.documentElement.classList.toggle('js-motion',!isCalm());paintMotion();updateMotion()}
+function openPreferences(){paintMotion();if(surprise)surprise.checked=store.get('gran-surprise',true)==='yes';prefs?.showModal()}
+$('.settings-toggle')?.addEventListener('click',openPreferences);
+$('.motion-toggle')?.addEventListener('click',()=>{if(!motionQuery.matches)setCalm(!document.documentElement.classList.contains('calm'))});
+$('[data-enable-passage-motion]')?.addEventListener('click',()=>{if(motionQuery.matches)openPreferences();else setCalm(false)});
+calmSetting?.addEventListener('change',()=>setCalm(calmSetting.checked));surprise?.addEventListener('change',()=>store.set('gran-surprise',surprise.checked?'yes':'no',true));
+motionQuery.addEventListener('change',paintMotion);paintMotion();
 function clearAge(){enableSound(false);store.remove('gran-adult',true);store.remove('gran-surprise',true);document.documentElement.classList.remove('adult');prefs?.close();if(world==='iznanka')location.reload();document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.removeAttribute('src'))}
 $('#reset-age')?.addEventListener('click',clearAge);$('[data-clear-storage]')?.addEventListener('click',()=>{['gran-calm','gran-sound'].forEach(k=>store.remove(k));clearAge();enableSound(false);document.documentElement.classList.remove('calm');const s=$('#storage-status');if(s)s.textContent='Локальные настройки сброшены.';updateMotion()});
 document.querySelectorAll<HTMLButtonElement>('.back-top').forEach(b=>b.addEventListener('click',()=>window.scrollTo({top:0,behavior:isCalm()?'instant':'smooth'})));

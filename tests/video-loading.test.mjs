@@ -30,6 +30,19 @@ test('Сетевая ошибка допускает повтор; заверш�
  }finally{x.close()}
  const y=environment({fetcher:async()=>({ok:false})});try{const load=y.api.prepareVideo(y.v,true);load.start();await flush();assert.equal(load.state.phase,'error')}finally{y.close()}
 });
+
+test('Пролёт: медленная загрузка с прогрессом продолжается дольше 30 секунд; повтор обходит повреждённый кэш',async()=>{
+ let read,now=0,nextId=0;const timers=new Map(),cache=[];
+ const x=environment({fetcher:async(_url,options)=>{cache.push(options.cache);return{ok:true,headers:new Map([['content-type','video/mp4'],['content-length','8']]),body:{getReader:()=>({read:()=>new Promise(resolve=>read=resolve),cancel:async()=>{}})}}}});
+ try{
+  x.w.setTimeout=(fn,delay)=>{const id=++nextId;timers.set(id,{at:now+delay,fn});return id};x.w.clearTimeout=id=>timers.delete(id);
+  const advance=ms=>{now+=ms;for(const[id,t]of timers)if(t.at<=now){timers.delete(id);t.fn()}};
+  const load=x.api.prepareVideo(x.v,true);load.start();await flush();
+  for(let i=0;i<2;i++){advance(20000);assert.equal(load.state.phase,'loading');read({done:false,value:new Uint8Array(4)});await flush()}
+  advance(20000);assert.equal(load.state.phase,'loading');assert.equal(load.state.bytes,8);read({done:true});await flush();x.ready();assert.equal(load.state.phase,'ready');
+  x.v.dispatchEvent(new x.w.Event('error'));load.retry();await flush();assert.deepEqual(cache,['force-cache','reload']);advance(31000);assert.equal(load.state.phase,'error');
+ }finally{x.close()}
+});
 test('Телефон и экономия трафика выбирают лёгкий файл; без fetch работает нативная загрузка',()=>{
  for(const options of [{small:true},{saveData:true},{}]){const x=environment(options);try{
   const load=x.api.prepareVideo(x.v,true);load.start();assert.equal(x.v.getAttribute('src'),options.small||options.saveData?'/small.mp4':'/film.mp4');assert.equal(x.v.preload,'auto');x.ready();assert.equal(load.state.phase,'ready');
