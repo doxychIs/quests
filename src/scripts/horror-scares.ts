@@ -33,6 +33,8 @@ export function initHorrorScares(){
  document.addEventListener('visibilitychange',()=>{if(document.hidden)closeScare?.()});
  new IntersectionObserver(entries=>{if(!entries.some(e=>e.isIntersecting))closeScare?.()}).observe(game);
  new IntersectionObserver(entries=>{if(!entries.some(e=>e.isIntersecting))closeScare?.()}).observe(scene);
- const toggle=document.querySelector('.sound-toggle');if(toggle)new MutationObserver(()=>{video.muted=toggle.getAttribute('aria-pressed')!=='true'}).observe(toggle,{attributes:true,attributeFilter:['aria-pressed']});
+ const toggle=document.querySelector<HTMLElement>('.sound-toggle');
+ const volume=()=>{video.muted=toggle?.getAttribute('aria-pressed')!=='true';video.volume=Math.max(0,Math.min(.5,Number(toggle?.dataset.audioVolume??.35)))};
+ volume();if(toggle)new MutationObserver(volume).observe(toggle,{attributes:true,attributeFilter:['aria-pressed','data-audio-volume']});
  addEventListener('pagehide',()=>closeScare?.());
 }

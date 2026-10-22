@@ -1,5 +1,6 @@
 import {cinemaTimeline,createFrameScrubber} from '../lib/scroll-cinema';
 import {bindSceneLoading} from './media-loading';
+import {soundCue} from './sound-cues';
 
 export function initWorldCinema(){
  document.querySelectorAll<HTMLElement>('[data-world-cinema]').forEach(scene=>{
@@ -21,6 +22,7 @@ export function initWorldCinema(){
   let opener:HTMLElement|null=null;
   const close=()=>{if(dialog.open)dialog.close()};
   function select(index:number){
+   if(dialog.open&&selected!==(index+previews.length)%previews.length)soundCue('select');
    selected=(index+previews.length)%previews.length;
    previews.forEach((p,i)=>p.hidden=i!==selected);
    dialog.setAttribute('aria-labelledby',`preview-${previews[selected].dataset.worldPreview}`);
@@ -30,7 +32,7 @@ export function initWorldCinema(){
    if(!scene.classList.contains('cinema-arrived'))return;
    event.preventDefault();opener=link;
    select(previews.findIndex(p=>p.dataset.worldPreview===link.dataset.worldQuest));
-   if(!dialog.open)dialog.showModal();
+   if(!dialog.open){dialog.showModal();soundCue('open')}
   }));
   dialog.querySelector('[data-world-close]')!.addEventListener('click',close);
   dialog.addEventListener('cancel',event=>{event.preventDefault();close()});

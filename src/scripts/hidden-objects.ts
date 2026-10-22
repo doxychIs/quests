@@ -1,4 +1,5 @@
 import {hiddenObjects} from '../lib/hidden-objects';
+import {soundCue} from './sound-cues';
 
 export function initHiddenObjects(root:HTMLElement){
  if(root.dataset.ready)return;root.dataset.ready='yes';
@@ -32,7 +33,7 @@ export function initHiddenObjects(root:HTMLElement){
    region.classList.remove('is-hinted');region.classList.add('is-found');
    region.setAttribute('aria-disabled','true');region.setAttribute('tabindex','-1');
    status.textContent=`Найдено: ${hiddenObjects[current].name.toLowerCase()}.`;
-   current++;render();
+   current++;render();soundCue(current===hiddenObjects.length?'complete':'found');
   }else status.textContent='Пока не то. Присмотритесь к деталям — спешить некуда.';
  }
  picture.addEventListener('click',event=>{

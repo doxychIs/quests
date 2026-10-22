@@ -11,15 +11,15 @@ html body[data-world=iznanka] .photo-gallery-heading h2{font-size:clamp(23px,3.2
 .photo-tv-body{position:relative;isolation:isolate;width:100%;aspect-ratio:3/2;filter:drop-shadow(0 20px 30px #0008)}
 .photo-tv-photograph,.photo-tv-surface{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;clip-path:polygon(2% 2%,98% 2%,98% 92%,94% 94%,94% 98%,6% 98%,6% 94%,2% 94%);pointer-events:none;user-select:none}
 .photo-tv-photograph{z-index:0;filter:brightness(.86) saturate(.25) contrast(1.06)}
-.photo-tv-surface{z-index:6;mix-blend-mode:screen;opacity:.33;filter:brightness(.65) saturate(.15)}
-.photo-tuner{position:absolute;left:85%;top:10.5%;width:11%;aspect-ratio:1;z-index:8;border:0;padding:0;background:none;border-radius:50%;cursor:ns-resize;touch-action:manipulation;outline-offset:3px}
-.photo-tuner:before{content:'';position:absolute;inset:-5px;border-radius:50%}.photo-tuner:focus-visible{outline:2px solid #c0d1c6}.photo-tuner:hover{box-shadow:0 0 0 1px #a4b6a888,0 0 20px #8fb09a24}
-.photo-tuner-face{position:absolute;inset:5%;overflow:hidden;border-radius:50%;transform:rotate(var(--tuner-angle,0deg));transition:transform .18s ease-out;pointer-events:none}
-.photo-tuner-face img{position:absolute;width:1010.101%;max-width:none;height:auto;left:-864.141%;top:-76.263%;filter:brightness(.92) saturate(.25) contrast(1.06);user-select:none;pointer-events:none}
-.photo-tuner-guide{position:absolute;left:85%;top:2%;width:12%;z-index:8;text-align:center;color:#c5cec4;font-size:clamp(6px,.7vw,10px);line-height:1.7;pointer-events:none}.photo-tap-guide{display:none}
-.photo-tuner-instructions{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.photo-tv-surface{z-index:6;mix-blend-mode:screen;opacity:.33;filter:brightness(.65) saturate(.15);clip-path:inset(11.6% 21.8% 18.8% 9.5% round 4%)}
+/* Ось (1395,214), диск 126 px; зона нажатия 180 px в исходной фотографии. */
+.photo-tuner{position:absolute;left:84.9609375%;top:12.109375%;width:11.71875%;aspect-ratio:1;z-index:8;border:0;padding:0;background:none;border-radius:50%;cursor:ns-resize;touch-action:manipulation;outline-offset:1px}
+.photo-tuner:before{content:'';position:absolute;inset:-5px;border-radius:50%}.photo-tuner:focus-visible{outline:1px dashed #c0d1c6}
+.photo-tuner-face{position:absolute;inset:15%;overflow:hidden;border-radius:50%;transform:rotate(var(--tuner-angle,0deg));transition:transform .16s ease-out;pointer-events:none;filter:brightness(.86) saturate(.25) contrast(1.06)}
+.photo-tuner-face svg{display:block;width:100%;height:100%;overflow:hidden;user-select:none;pointer-events:none}
+.photo-tuner-guide{display:flex;align-items:center;justify-content:flex-end;gap:16px;margin:0 4% 14px;padding:9px 0;color:#acb9af;font-size:9px;line-height:1.9}.photo-tuner-guide>span:last-child{font-size:20px;color:#cfdbcd}.photo-tap-guide{display:none}
 @media(hover:none),(pointer:coarse){.photo-wheel-guide{display:none}.photo-tap-guide{display:block}.photo-tuner{cursor:pointer}}
-@media(max-width:500px){.photo-wheel-guide{font-size:5px}.photo-tap-guide{font-size:6px}}
+@media(max-width:500px){.photo-tuner-guide{font-size:7px;margin:0 25px 10px;gap:12px;justify-content:space-between;max-width:340px}}
 @media(prefers-reduced-motion:reduce){.photo-tuner-face{transition:none}}.calm .photo-tuner-face{transition:none}
 .photo-glass{position:absolute;left:9.5%;top:11.6%;width:68.7%;height:69.6%;isolation:isolate;overflow:hidden;border-radius:7% / 8%;background:#070d0d;box-shadow:inset 0 0 25px 10px #000b;container-type:inline-size}
 .photo-contact-sheet,.photo-contact-sheet figure{position:absolute;inset:0;margin:0;min-width:0}

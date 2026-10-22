@@ -1,4 +1,5 @@
 import {giftNames,invitationSVG} from '../lib/gift-invitation';
+import {soundCue} from './sound-cues';
 export function initGift(){
  const form=document.querySelector<HTMLFormElement>('#gift-form');if(!form)return;
  const select=form.querySelector<HTMLSelectElement>('[name=world]')!;
@@ -17,5 +18,6 @@ export function initGift(){
   const url=URL.createObjectURL(new Blob([invitationSVG(values())],{type:'image/svg+xml;charset=utf-8'})),link=document.createElement('a');
   link.href=url;link.download='GRAN-priglashenie.svg';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   document.querySelector('#gift-status')!.textContent='Приглашение сохранено. Его можно открыть в браузере и распечатать.';
+  soundCue('complete');
  });
 }

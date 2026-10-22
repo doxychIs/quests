@@ -1,4 +1,5 @@
 import {initHiddenObjects} from './hidden-objects';
+import {soundCue} from './sound-cues';
 import {playHorrorScare} from './horror-scares';
 import {createVisibleLoop} from './visible-loop';
 import {Maze,mazePath,mazeCheckpoints,distance} from '../lib/maze';
@@ -7,7 +8,7 @@ const $=<T extends Element=HTMLElement>(s:string,p:ParentNode=document)=>p.query
 const calm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('calm');
 function canvasSetup(root:HTMLElement){const canvas=$<HTMLCanvasElement>('canvas',root);const dpr=Math.min(devicePixelRatio||1,2);canvas.width=1000*dpr;canvas.height=460*dpr;const ctx=canvas.getContext('2d')!;ctx.setTransform(dpr,0,0,dpr,0,0);return{canvas,ctx}}
 function controls(root:HTMLElement,canvas:HTMLCanvasElement){const keys=new Set<string>();const allowed=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','KeyW','KeyA','KeyS','KeyD'];root.addEventListener('keydown',e=>{if(allowed.includes(e.code)){e.preventDefault();keys.add(e.code)}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>keys.clear());root.querySelectorAll<HTMLButtonElement>('[data-key]').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(b.dataset.key!);canvas.focus({preventScroll:true})});const up=()=>keys.delete(b.dataset.key!);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up)});return keys}
-function result(root:HTMLElement){const r=$<HTMLElement>('.game-result',root);r.hidden=false;r.tabIndex=-1;r.focus({preventScroll:true});return r}
+function result(root:HTMLElement){const r=$<HTMLElement>('.game-result',root);r.hidden=false;r.tabIndex=-1;r.focus({preventScroll:true});soundCue('complete');return r}
 export function initGames(){
  document.querySelectorAll<HTMLElement>('[data-game]').forEach(root=>{if(root.dataset.game==='maze')maze(root);if(root.dataset.game==='parkour')parkour(root);if(root.dataset.game==='hidden-object')initHiddenObjects(root)})
 }

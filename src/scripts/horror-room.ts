@@ -1,3 +1,4 @@
+import {soundCue} from './sound-cues';
 import {roomScreens,roomSize,screenHomography,projectScreen,roundedScreenPath,type RoomScreen,type ScreenPoint} from '../lib/crt-room';
 import {tvReadingCamera} from '../lib/tv-reading';
 import {AnalogSignalRenderer} from '../lib/analog-signal';
@@ -158,7 +159,7 @@ export function initHorrorRoom(){
   (lastFocus as HTMLElement|null)?.focus?.({preventScroll:true});
  }
  function enter(a:SVGAElement){
-  if(!permitted()||!panel.hidden)return;lastFocus=document.activeElement;select(a.dataset.roomScreen!);showProgram(a.dataset.questSlug!);
+  if(!permitted()||!panel.hidden)return;lastFocus=document.activeElement;select(a.dataset.roomScreen!);showProgram(a.dataset.questSlug!);soundCue('open');
  }
  function activate(e:MouseEvent,a:SVGAElement){if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button>0)return;e.preventDefault();void enter(a)}
  for(const a of anchors){a.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')select(a.dataset.roomScreen!)});a.addEventListener('focus',()=>select(a.dataset.roomScreen!));a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button>0)return;if(e.detail>0&&matchMedia('(pointer:coarse)').matches&&touchArmed!==a.dataset.roomScreen){e.preventDefault();touchArmed=a.dataset.roomScreen!;select(touchArmed);return}activate(e,a)})}
@@ -171,7 +172,7 @@ export function initHorrorRoom(){
  root.querySelector('[data-broadcast-close]')?.addEventListener('click',()=>closeProgram());
  new IntersectionObserver(entries=>{panelVisible=entries.some(entry=>entry.isIntersecting);syncGrain()},{threshold:0}).observe(panel);
  viewport.addEventListener('wheel',e=>{if(!panel.hidden&&!panel.contains(e.target as Node))e.preventDefault()},{passive:false});
- root.querySelectorAll<HTMLButtonElement>('[data-broadcast-tab]').forEach(button=>button.addEventListener('click',()=>{const program=button.closest<HTMLElement>('[data-broadcast-program]')!;program.querySelectorAll('[data-broadcast-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));program.querySelectorAll<HTMLElement>('[data-broadcast-pane]').forEach(p=>p.hidden=p.dataset.broadcastPane!==button.dataset.broadcastTab)}));
+ root.querySelectorAll<HTMLButtonElement>('[data-broadcast-tab]').forEach(button=>button.addEventListener('click',()=>{if(button.getAttribute('aria-pressed')!=='true')soundCue('tuner');const program=button.closest<HTMLElement>('[data-broadcast-program]')!;program.querySelectorAll('[data-broadcast-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));program.querySelectorAll<HTMLElement>('[data-broadcast-pane]').forEach(p=>p.hidden=p.dataset.broadcastPane!==button.dataset.broadcastTab)}));
  addEventListener('popstate',()=>{const slug=location.hash.startsWith('#tv-')?location.hash.slice(4):'';if(slug&&permitted())showProgram(slug,false);else closeProgram(false)});
  addEventListener('keydown',e=>{if(e.key==='Escape'){if(!panel.hidden){e.preventDefault();closeProgram()}else if(root.classList.contains('is-enlarged'))enlarge.click()}});
  document.addEventListener('horror:room-state',()=>{if(!root.closest('[data-horror-door]')?.classList.contains('room-open')&&!panel.hidden)closeProgram(false);synchronize()});

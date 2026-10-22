@@ -1,3 +1,4 @@
+import {soundCue} from './sound-cues';
 export function initReportage(){
  const root=document.querySelector<HTMLElement>('[data-photo-gallery]');if(!root||root.dataset.photoReady)return;
  root.dataset.photoReady='true';
@@ -25,6 +26,7 @@ export function initReportage(){
  }
  function show(card:HTMLElement){
   const refocus=current!==card&&current.contains(document.activeElement)&&!dialog.open;
+  if(current!==card)soundCue('tuner');
   current=card;cards.forEach(c=>c.hidden=c!==card);
   const n=items.indexOf(card)+1;count.textContent=`Кадр ${n} из ${items.length}`;screenPosition.textContent=`${String(n).padStart(2,'0')} / ${String(items.length).padStart(2,'0')}`;
   tuner.style.setProperty('--tuner-angle',`${tunerAngle}deg`);
@@ -42,7 +44,7 @@ export function initReportage(){
   link.addEventListener('click',event=>{
    if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
    event.preventDefault();if(performance.now()<ignoreClickUntil)return;
-   opener=link;renderDialog();dialog.showModal();
+   opener=link;renderDialog();dialog.showModal();soundCue('open');
   });
  });
  filters.forEach(button=>button.addEventListener('click',()=>{
