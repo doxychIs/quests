@@ -37,7 +37,7 @@ function paintMotion(){
  const note=$<HTMLElement>('#motion-system-note');if(note)note.hidden=!motionQuery.matches;
  const replay=$('[data-enable-passage-motion]');if(replay)replay.textContent=motionQuery.matches?'Настройки движения':'Включить пролёт';
 }
-function setCalm(value:boolean){store.set('gran-calm',value?'yes':'no');document.documentElement.classList.toggle('calm',value);document.documentElement.classList.toggle('js-motion',!isCalm());paintMotion();updateMotion()}
+function setCalm(value:boolean){store.set('gran-motion-choice',value?'reduced':'full');document.documentElement.classList.toggle('calm',value);document.documentElement.classList.toggle('js-motion',!isCalm());paintMotion();updateMotion()}
 function openPreferences(){paintMotion();if(surprise)surprise.checked=store.get('gran-surprise',true)==='yes';prefs?.showModal()}
 $('.settings-toggle')?.addEventListener('click',openPreferences);
 $('.motion-toggle')?.addEventListener('click',()=>{if(!motionQuery.matches)setCalm(!document.documentElement.classList.contains('calm'))});
@@ -45,7 +45,7 @@ $('[data-enable-passage-motion]')?.addEventListener('click',()=>{if(motionQuery.
 calmSetting?.addEventListener('change',()=>setCalm(calmSetting.checked));surprise?.addEventListener('change',()=>store.set('gran-surprise',surprise.checked?'yes':'no',true));
 motionQuery.addEventListener('change',paintMotion);paintMotion();
 function clearAge(){enableSound(false);store.remove('gran-adult',true);store.remove('gran-surprise',true);document.documentElement.classList.remove('adult');prefs?.close();if(world==='iznanka')location.reload();document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.removeAttribute('src'))}
-$('#reset-age')?.addEventListener('click',clearAge);$('[data-clear-storage]')?.addEventListener('click',()=>{['gran-calm','gran-sound'].forEach(k=>store.remove(k));clearAge();enableSound(false);document.documentElement.classList.remove('calm');const s=$('#storage-status');if(s)s.textContent='Локальные настройки сброшены.';updateMotion()});
+$('#reset-age')?.addEventListener('click',clearAge);$('[data-clear-storage]')?.addEventListener('click',()=>{['gran-calm','gran-motion-choice','gran-sound'].forEach(k=>store.remove(k));clearAge();enableSound(false);document.documentElement.classList.remove('calm');paintMotion();const s=$('#storage-status');if(s)s.textContent='Локальные настройки сброшены.';updateMotion()});
 document.querySelectorAll<HTMLButtonElement>('.back-top').forEach(b=>b.addEventListener('click',()=>window.scrollTo({top:0,behavior:isCalm()?'instant':'smooth'})));
 /* Прокрутка управляет отдельными физическими слоями, без перехвата скролла. */
 let scheduled=false;const immersion=$<HTMLElement>('[data-immersion]'),hero=$<HTMLElement>('[data-depth]');

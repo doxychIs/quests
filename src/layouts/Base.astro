@@ -23,7 +23,7 @@ const {title='ИНОЕ — три мира квестов в Перми',descrip
 <html lang="ru">
 <head>
  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content={world==='ostrov'?'#075b6a':world==='arhiv'?'#243a31':world?'#101111':'#eeece6'}/><meta name="color-scheme" content={world==='iznanka'?'dark':'light'}/><title>{title}</title><link rel="icon" type="image/svg+xml" href={href('favicon.svg')}/>
- <script is:inline>try{sessionStorage.removeItem('gran-enter-horror');if(sessionStorage.getItem('gran-adult')==='yes')document.documentElement.classList.add('adult');if(localStorage.getItem('gran-calm')==='yes')document.documentElement.classList.add('calm')}catch{}</script>
+ <script is:inline>try{sessionStorage.removeItem('gran-enter-horror');if(sessionStorage.getItem('gran-adult')==='yes')document.documentElement.classList.add('adult');localStorage.removeItem('gran-calm');if(localStorage.getItem('gran-motion-choice')==='reduced')document.documentElement.classList.add('calm')}catch{}</script>
 </head>
 <body data-world={world||'hub'} data-page={!world?page:undefined} data-cinema={cinema?'horror':undefined} style={world==='iznanka'?`--horror-wall:url("${href('assets/horror-wall-v2.webp')}")`:undefined}>
  {world==='iznanka'&&<GlyphDefinitions/>}

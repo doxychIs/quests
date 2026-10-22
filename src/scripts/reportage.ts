@@ -3,9 +3,10 @@ export function initReportage(){
  root.dataset.photoReady='true';
  const cards=[...root.querySelectorAll<HTMLElement>('[data-photo-card]')],filters=[...root.querySelectorAll<HTMLButtonElement>('[data-photo-filter]')];
  const tv=root.querySelector<HTMLElement>('[data-photo-tv]')!,track=root.querySelector<HTMLElement>('[data-photo-track]')!,sharp=root.querySelector<HTMLButtonElement>('[data-photo-sharp]')!;
+ const tuner=root.querySelector<HTMLButtonElement>('[data-photo-tuner]')!;
  const dialog=root.querySelector<HTMLDialogElement>('[data-photo-dialog]')!,image=root.querySelector<HTMLImageElement>('[data-photo-large]')!,caption=root.querySelector<HTMLElement>('[data-photo-caption]')!,position=root.querySelector<HTMLElement>('[data-photo-position]')!,questLink=root.querySelector<HTMLAnchorElement>('[data-photo-quest-link]')!,error=root.querySelector<HTMLElement>('[data-photo-error]')!;
  const count=root.querySelector<HTMLElement>('[data-photo-count]')!,screenPosition=root.querySelector<HTMLElement>('[data-photo-screen-position]')!,signal=root.querySelector<HTMLElement>('[data-photo-signal]')!,screenError=root.querySelector<HTMLElement>('[data-photo-screen-error]')!;
- let items=cards,current=cards[0],opener:HTMLAnchorElement|null=null,ignoreClickUntil=0;
+ let items=cards,current=cards[0],opener:HTMLAnchorElement|null=null,ignoreClickUntil=0,tunerAngle=0;
  const linkFor=(card:HTMLElement)=>card.querySelector<HTMLAnchorElement>('[data-reportage-open]')!;
  function status(){
   const img=linkFor(current).querySelector<HTMLImageElement>('img')!;
@@ -26,12 +27,13 @@ export function initReportage(){
   const refocus=current!==card&&current.contains(document.activeElement)&&!dialog.open;
   current=card;cards.forEach(c=>c.hidden=c!==card);
   const n=items.indexOf(card)+1;count.textContent=`Кадр ${n} из ${items.length}`;screenPosition.textContent=`${String(n).padStart(2,'0')} / ${String(items.length).padStart(2,'0')}`;
+  tuner.style.setProperty('--tuner-angle',`${tunerAngle}deg`);
   tv.classList.remove('is-clear');sharp.setAttribute('aria-pressed','false');sharp.innerHTML='<span aria-hidden="true">▧</span> Прояснить кадр';
   linkFor(card).querySelector<HTMLImageElement>('img')!.loading='eager';status();
   if(refocus)linkFor(card).focus({preventScroll:true});
   if(dialog.open)renderDialog();
  }
- function step(delta:number){if(!items.length)return;show(items[(items.indexOf(current)+delta+items.length)%items.length]);}
+ function step(delta:number){if(!items.length)return;tunerAngle+=delta*36;show(items[(items.indexOf(current)+delta+items.length)%items.length]);}
  cards.forEach(card=>{
   const link=linkFor(card),img=link.querySelector<HTMLImageElement>('img')!;
   img.addEventListener('load',()=>{delete card.dataset.photoFailed;pixelate(card);});
@@ -45,8 +47,22 @@ export function initReportage(){
  });
  filters.forEach(button=>button.addEventListener('click',()=>{
   const filter=button.dataset.photoFilter;filters.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-  items=cards.filter(card=>filter==='all'||card.dataset.photoQuest===filter);if(items.length)show(items[0]);
+  items=cards.filter(card=>filter==='all'||card.dataset.photoQuest===filter);if(items.length){tunerAngle=cards.indexOf(items[0])*36;show(items[0]);}
  }));
+ tuner.disabled=false;tuner.addEventListener('click',()=>step(1));
+ let wheelTotal=0,wheelDirection=0,wheelAt=0,wheelLock=0;
+ tuner.addEventListener('wheel',event=>{
+  if(event.ctrlKey||!event.deltaY||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
+  event.preventDefault();const now=performance.now();if(now<wheelLock)return;
+  const pixels=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1),direction=Math.sign(pixels);
+  if(now-wheelAt>250||direction!==wheelDirection)wheelTotal=0;
+  wheelDirection=direction;wheelAt=now;wheelTotal+=pixels;
+  if(Math.abs(wheelTotal)>=40){step(direction);wheelTotal=0;wheelLock=now+160;}
+ },{passive:false});
+ tuner.addEventListener('pointerenter',()=>{
+  if((navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData)return;
+  for(const delta of [-1,1])linkFor(items[(items.indexOf(current)+delta+items.length)%items.length]).querySelector<HTMLImageElement>('img')!.loading='eager';
+ });
  root.querySelectorAll<HTMLButtonElement>('[data-photo-browse]').forEach(button=>{button.disabled=false;button.addEventListener('click',()=>step(Number(button.dataset.photoBrowse)));});
  sharp.disabled=false;sharp.addEventListener('click',()=>{
   const clear=tv.classList.toggle('is-clear');sharp.setAttribute('aria-pressed',String(clear));sharp.innerHTML=clear?'<span aria-hidden="true">▦</span> Вернуть пиксели':'<span aria-hidden="true">▧</span> Прояснить кадр';

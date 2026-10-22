@@ -3,6 +3,22 @@ import assert from 'node:assert/strict';
 import {setupDOM} from './dom-harness.mjs';
 import {horrorPhotos,horrorSettings} from '../src/lib/horror-settings.ts';
 
+test('Ручка ТВ: колёсико листает в обе стороны, серия событий не пролистывает всё; вне ручки прокрутка свободна',()=>{
+ const x=setupDOM('iznanka',{adult:true});try{
+  const root=x.d.querySelector('[data-photo-gallery]'),tuner=root.querySelector('[data-photo-tuner]'),count=root.querySelector('[data-photo-count]');let now=1000;x.w.performance.now=()=>now;
+  const wheel=(target,options={})=>{const event=new x.w.WheelEvent('wheel',{deltaY:100,bubbles:true,cancelable:true,...options});target.dispatchEvent(event);return event};
+  assert.equal(tuner.disabled,false);assert.ok(x.d.getElementById(tuner.getAttribute('aria-describedby')));
+  assert.equal(wheel(tuner).defaultPrevented,true);assert.match(count.textContent,/2 из 8/);assert.equal(tuner.style.getPropertyValue('--tuner-angle'),'36deg');
+  wheel(tuner);assert.match(count.textContent,/2 из 8/);
+  now+=200;wheel(tuner,{deltaY:-100});assert.match(count.textContent,/1 из 8/);assert.equal(tuner.style.getPropertyValue('--tuner-angle'),'0deg');
+  now+=200;wheel(tuner,{deltaY:3,deltaMode:1});assert.match(count.textContent,/2 из 8/);
+  now+=200;assert.equal(wheel(tuner,{ctrlKey:true}).defaultPrevented,false);assert.match(count.textContent,/2 из 8/);
+  assert.equal(wheel(root).defaultPrevented,false);assert.match(count.textContent,/2 из 8/);
+  tuner.click();assert.match(count.textContent,/3 из 8/);tuner.dispatchEvent(new x.w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));assert.match(count.textContent,/2 из 8/);
+  root.querySelector('[data-photo-filter="lesnik"]').click();now+=200;wheel(tuner,{deltaY:-100});assert.match(count.textContent,/2 из 2/);assert.match(root.querySelector('[data-photo-card]:not([hidden]) img').src,/forest-actor/);assert.deepEqual(x.errors,[]);
+ }finally{x.close()}
+});
+
 test('Телевизор: переключение каналов и кадров, увеличение и возврат фокуса',()=>{
  const x=setupDOM('iznanka',{adult:true});try{
   const root=x.d.querySelector('[data-photo-gallery]'),dialog=root.querySelector('[data-photo-dialog]'),active=()=>root.querySelector('[data-photo-card]:not([hidden])');
