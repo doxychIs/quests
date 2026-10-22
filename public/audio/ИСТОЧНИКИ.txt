@@ -1,0 +1,44 @@
+Звуковое оформление «ИНОЕ»
+
+Все перечисленные исходные записи опубликованы под CC0 1.0:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+archive-satie.mp3
+Эрик Сати, «Гимнопедия №1». Исполнение: Teknopazzo.
+https://commons.wikimedia.org/wiki/File:Gymnopedie_No._1..ogg
+Обработка: фильтрация частот ниже 35 и выше 10000 Гц, уменьшение уровня,
+плавное начало и окончание, кодирование в MP3 96 кбит/с. Полное произведение.
+
+island-surf.mp3
+Calm ocean waves — SamsterBirdies.
+https://freesound.org/people/SamsterBirdies/sounds/578524/
+Фрагмент 25–59 с; стык сведён перекрытием 2 с; получен цикл 32 с.
+
+archive-page.wav, archive-open.wav, island-map.wav
+Page Turn (1) — OwlStorm / Ashe Kirk / Owlish Media.
+https://freesound.org/people/OwlStorm/sounds/151220/
+Изменён уровень; для карты изменена скорость; в открытие книги добавлено дерево.
+
+archive-open.wav
+Objects_WoodCreak_1.wav — SilentStrikeZ.
+https://freesound.org/people/SilentStrikeZ/sounds/389645/
+Фрагмент 5,65–6,48 с, сведение с шелестом страницы, плавные края.
+
+tv-channel.wav
+TV - Turned on and off — Huminaatio.
+https://freesound.org/people/Huminaatio/sounds/159345/
+Фрагмент 4,04–4,22 с, уменьшение уровня; добавлен короткий щелчок переключателя.
+
+ui-touch.wav, tv-dial.wav, tv-channel.wav, island-map.wav
+UI Audio — Kenney.
+https://kenney.nl/assets/ui-audio
+Использованы click2, switch15 и switch8. Изменён уровень и сведены слои.
+
+archive-relic.wav, island-discovery.wav, island-finish.wav
+Bell. — SamsterBirdies.
+https://freesound.org/people/SamsterBirdies/sounds/486088/
+Первый удар укорочен; изменена высота. Финал — три тихих слоя с разной высотой.
+
+Общее: WAV 44,1 кГц / 16 бит / моно, максимум амплитуды 0,7.
+Нормализация, маски краёв и сведение выполнены для сайта.
+Эффекты кэшируются после включения звука. Музыка и море передаются потоком.

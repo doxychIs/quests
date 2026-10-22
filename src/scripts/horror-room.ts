@@ -159,7 +159,7 @@ export function initHorrorRoom(){
   (lastFocus as HTMLElement|null)?.focus?.({preventScroll:true});
  }
  function enter(a:SVGAElement){
-  if(!permitted()||!panel.hidden)return;lastFocus=document.activeElement;select(a.dataset.roomScreen!);showProgram(a.dataset.questSlug!);soundCue('open');
+  if(!permitted()||!panel.hidden)return;lastFocus=document.activeElement;select(a.dataset.roomScreen!);showProgram(a.dataset.questSlug!);soundCue('channel');
  }
  function activate(e:MouseEvent,a:SVGAElement){if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button>0)return;e.preventDefault();void enter(a)}
  for(const a of anchors){a.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')select(a.dataset.roomScreen!)});a.addEventListener('focus',()=>select(a.dataset.roomScreen!));a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button>0)return;if(e.detail>0&&matchMedia('(pointer:coarse)').matches&&touchArmed!==a.dataset.roomScreen){e.preventDefault();touchArmed=a.dataset.roomScreen!;select(touchArmed);return}activate(e,a)})}

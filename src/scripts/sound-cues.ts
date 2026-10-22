@@ -1,4 +1,4 @@
-export type SoundCue='tuner'|'open'|'close'|'select'|'found'|'complete';
+export type SoundCue='tuner'|'channel'|'open'|'close'|'select'|'found'|'complete';
 
 /** События от подтверждённых действий; наведение и прокрутка страницы беззвучны. */
 export function soundCue(cue:SoundCue){

@@ -18,7 +18,8 @@ document.querySelectorAll<HTMLAnchorElement>('.mobile-menu a').forEach(link=>lin
 function gates(){const gate=$<HTMLDialogElement>('#age-gate');const form=$<HTMLFormElement>('#age-form');if(gate&&store.get('gran-adult',true)!=='yes'){document.documentElement.classList.remove('adult');gate.removeAttribute('open');gate.showModal();gate.addEventListener('cancel',e=>{e.preventDefault();location.href=new URL(import.meta.env.BASE_URL,location.origin).href});form?.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const data=new FormData(form);store.set('gran-adult','yes',true);store.set('gran-surprise',data.has('surprise')?'yes':'no',true);document.documentElement.classList.add('adult');gate.close();gate.removeAttribute('open');if(soundDesired)enableSound(true);$('.world-hero a, .detail-back, .booking-content a')?.focus({preventScroll:true});updateMotion()})}else if(gate){gate.removeAttribute('open');gate.close()}
  if(store.get('gran-adult',true)==='yes')document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.src=im.dataset.safeSrc!);
 }
-const ambience=createSoundscape(world);
+const ambience=createSoundscape(world,import.meta.env.BASE_URL);
+const musicInput=$<HTMLInputElement>('#music-setting');let musicOn=store.get('gran-music')!=='no';ambience.setMusic(musicOn);if(musicInput){musicInput.checked=musicOn;musicInput.addEventListener('change',()=>{musicOn=musicInput.checked;store.set('gran-music',musicOn?'yes':'no');ambience.setMusic(musicOn)})}
 let soundDesired=store.get('gran-sound')==='yes';
 const savedVolume=Number(store.get('gran-volume')??35);let soundVolume=Number.isFinite(savedVolume)?Math.max(0,Math.min(100,savedVolume)):35;
 ambience.setVolume(soundVolume/100);if(soundVolume===0)soundDesired=false;
@@ -51,7 +52,7 @@ $('[data-enable-passage-motion]')?.addEventListener('click',()=>{if(motionQuery.
 calmSetting?.addEventListener('change',()=>setCalm(calmSetting.checked));surprise?.addEventListener('change',()=>store.set('gran-surprise',surprise.checked?'yes':'no',true));
 motionQuery.addEventListener('change',paintMotion);paintMotion();
 function clearAge(){enableSound(false);store.remove('gran-adult',true);store.remove('gran-surprise',true);document.documentElement.classList.remove('adult');prefs?.close();if(world==='iznanka')location.reload();document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.removeAttribute('src'))}
-$('#reset-age')?.addEventListener('click',clearAge);$('[data-clear-storage]')?.addEventListener('click',()=>{['gran-calm','gran-motion-choice','gran-sound','gran-volume'].forEach(k=>store.remove(k));soundVolume=35;ambience.setVolume(.35);clearAge();enableSound(false);document.documentElement.classList.remove('calm');paintMotion();const s=$('#storage-status');if(s)s.textContent='Локальные настройки сброшены.';updateMotion()});
+$('#reset-age')?.addEventListener('click',clearAge);$('[data-clear-storage]')?.addEventListener('click',()=>{['gran-calm','gran-motion-choice','gran-sound','gran-volume','gran-music'].forEach(k=>store.remove(k));soundVolume=35;ambience.setVolume(.35);musicOn=true;ambience.setMusic(true);if(musicInput)musicInput.checked=true;clearAge();enableSound(false);document.documentElement.classList.remove('calm');paintMotion();const s=$('#storage-status');if(s)s.textContent='Локальные настройки сброшены.';updateMotion()});
 document.querySelectorAll<HTMLButtonElement>('.back-top').forEach(b=>b.addEventListener('click',()=>window.scrollTo({top:0,behavior:isCalm()?'instant':'smooth'})));
 /* Прокрутка управляет отдельными физическими слоями, без перехвата скролла. */
 let scheduled=false;const immersion=$<HTMLElement>('[data-immersion]'),hero=$<HTMLElement>('[data-depth]');
