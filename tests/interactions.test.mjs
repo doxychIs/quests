@@ -8,27 +8,30 @@ test('Системное уменьшение движения сохраняе�
 test('Хоррор: без возраста вход не открывается; добровольное согласие локально',()=>{const x=setup('iznanka');try{const f=x.d.querySelector('#age-form'),gate=x.d.querySelector('#age-gate');assert.equal(gate.open,true);f.dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.d.documentElement.classList.contains('adult'),false);f.elements.adult.checked=true;f.dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.w.sessionStorage.getItem('gran-adult'),'yes');assert.equal(x.w.sessionStorage.getItem('gran-surprise'),'no');assert.equal(x.d.documentElement.classList.contains('adult'),true);assert.equal(gate.open,false);assert.deepEqual(x.errors,[])}finally{x.close()}});
 test('Запись: выбор квеста и времени сохраняется в подтверждении без отправки',()=>{const x=setup('arhiv/book/poslednee-pismo');try{const f=x.d.querySelector('#booking-form');f.elements.time.value='15:00';f.elements.players.value='3';f.elements.name.value='Иван';f.elements.phone.value='+7 900 123-45-67';f.elements.consent.checked=true;assert.equal(f.reportValidity(),true);f.dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(f.hidden,true);const result=x.d.querySelector('#booking-result');assert.equal(result.hidden,false);assert.match(result.textContent,/Последнее письмо/);assert.match(result.textContent,/15:00 · Пермь/);assert.match(result.textContent,/3 чел./);assert.match(result.textContent,/не отправлена/);assert.equal(x.w.localStorage.length,0);x.d.querySelector('[data-edit-booking]').click();assert.equal(f.hidden,false);assert.equal(f.elements.time.value,'15:00');assert.deepEqual(x.errors,[])}finally{x.close()}});
 test('Запись: неполный номер не принимается',()=>{const x=setup('ostrov/book/serdtse-zimy');try{const f=x.d.querySelector('#booking-form');f.elements.time.value='11:00';f.elements.name.value='Анна';f.elements.phone.value='1234567890';f.elements.consent.checked=true;f.elements.phone.value='+7 ((( ))) -';f.dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(f.hidden,false);assert.equal(f.elements.phone.validity.customError,true)}finally{x.close()}});
-test('Архив: поиск по очереди, неверный предмет, подсказка, увеличение, клавиатура и повтор',()=>{
+test('Архив: шесть случайных сцен и целей, защита при загрузке, подсказка, клавиатура и повтор',async()=>{
  const x=setup('arhiv');try{
-  const game=x.d.querySelector('[data-game=hidden-object]'),name=game.querySelector('[data-object-name]');
-  const items=[...game.querySelectorAll('[data-find-object]')];
+  const game=x.d.querySelector('[data-game=hidden-object]'),image=game.querySelector('[data-object-image]');
+  const items=[...game.querySelectorAll('[data-find-object]')],seenScenes=new Set(),seenTargets=new Set();
   const click=e=>e.dispatchEvent(new x.w.MouseEvent('click',{bubbles:true}));
-  assert.equal(name.textContent,'Карманные часы');
-  click(items[3]);assert.match(game.querySelector('[data-object-status]').textContent,/Пока не то/);
-  assert.equal(name.textContent,'Карманные часы');
-  game.querySelector('[data-object-hint]').click();assert.equal(items[0].classList.contains('is-hinted'),true);
+  assert.equal(game.classList.contains('is-loading'),true);const firstTarget=game.dataset.target;
+  click(items.find(i=>i.dataset.findObject===firstTarget));assert.equal(game.dataset.target,firstTarget);
+  image.dispatchEvent(new x.w.Event('load'));
+  click(items.find(i=>i.dataset.findObject!==firstTarget));assert.match(game.querySelector('[data-object-status]').textContent,/Пока не то/);
+  game.querySelector('[data-object-hint]').click();assert.equal(game.querySelector('.is-hinted').dataset.findObject,firstTarget);
   game.querySelector('[data-object-zoom]').click();assert.equal(game.querySelector('[data-object-picture]').classList.contains('is-enlarged'),true);
-  items[0].dispatchEvent(new x.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
-  assert.equal(name.textContent,'Синяя чернильница');assert.equal(items[0].classList.contains('is-found'),true);
-  click(items[0]);assert.equal(name.textContent,'Синяя чернильница');
-  for(const item of items.slice(1))click(item);
-  assert.equal(game.dataset.finished,'yes');assert.equal(game.querySelector('[data-object-finish]').hidden,false);
-  assert.equal(game.querySelector('[data-object-hint]').disabled,true);
-  game.querySelector('[data-object-reset]').click();assert.equal(name.textContent,'Карманные часы');
+  for(let n=0;n<6;n++){
+   image.dispatchEvent(new x.w.Event('load'));seenScenes.add(game.dataset.scene);seenTargets.add(game.dataset.target);
+   const item=items.find(i=>i.dataset.findObject===game.dataset.target);
+   item.dispatchEvent(new x.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+   assert.equal(item.classList.contains('is-found'),true);click(item);
+   await new Promise(resolve=>setTimeout(resolve,680));
+  }
+  assert.equal(seenScenes.size,6);assert.equal(seenTargets.size,6);assert.equal(game.dataset.finished,'yes');
+  assert.equal(game.querySelector('[data-object-finish]').hidden,false);assert.equal(game.querySelector('[data-object-hint]').disabled,true);
+  const last=game.dataset.scene;game.querySelector('[data-object-reset]').click();assert.notEqual(game.dataset.scene,last);
   assert.equal(game.dataset.finished,'no');assert.equal(game.querySelector('[data-object-finish]').hidden,true);
   assert.equal(game.querySelector('[data-object-picture]').classList.contains('is-enlarged'),false);
-  assert.equal(items.some(p=>p.classList.contains('is-found')||p.classList.contains('is-hinted')),false);
-  assert.deepEqual(x.errors,[]);
+  assert.equal(items.some(p=>p.classList.contains('is-found')||p.classList.contains('is-hinted')),false);assert.deepEqual(x.errors,[]);
  }finally{x.close()}
 });
 test('Подарок: безопасное обновление текста и реальный SVG-экспорт',()=>{const x=setup('certificates');try{const f=x.d.querySelector('#gift-form');f.elements.recipient.value='<тест>&';f.elements.world.value='ostrov';f.elements.message.value='Попутного ветра!';f.dispatchEvent(new x.w.Event('input',{bubbles:true}));assert.equal(x.d.querySelector('[data-recipient]').textContent,'<тест>&');assert.equal(x.d.querySelector('[data-recipient]').children.length,0);f.dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.w.lastBlob.type,'image/svg+xml;charset=utf-8');assert.equal(x.w.lastDownload,'GRAN-priglashenie.svg');assert.match(x.d.querySelector('#gift-status').textContent,/сохранено/);assert.deepEqual(x.errors,[])}finally{x.close()}});

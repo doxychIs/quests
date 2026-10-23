@@ -1,15 +1,16 @@
 ---
 import {href} from '../../lib/data';
-import {hiddenObjects} from '../../lib/hidden-objects';
+import {hiddenObjects,archiveScenes} from '../../lib/hidden-objects';
 import '../../styles/inner.css';
 import '../../styles/hidden-objects.css';
 ---
 <div class="hidden-object-game" data-game="hidden-object">
+ <div class="hidden-object-scene"><span>Из записей хранителя</span><span data-object-scene>{archiveScenes[0].title}</span></div>
  <div class="hidden-object-viewport" data-object-viewport tabindex="0" aria-label="Стол хранителя. Увеличенную картинку можно листать пальцем или клавишами стрелок.">
   <div class="hidden-object-picture" data-object-picture>
-   <img src={href('assets/archive-hidden-objects.webp')} width="1536" height="1024" loading="lazy" alt="Старый библиотечный стол: десятки вещей среди книг, писем, карт и шкатулок. Найдите предмет, название которого написано под картинкой."/>
+   <img data-object-image src={href('assets/archive-search-desk.webp')} width="1536" height="1024" loading="lazy" alt={archiveScenes[0].alt}/>
    <svg viewBox="0 0 1536 1024" role="group" aria-label="Предметы на столе" data-object-map>
-    {hiddenObjects.map(item=><polygon points={item.points} data-find-object={item.id} role="button" tabindex="0" aria-label={item.name} aria-disabled="false"/>)}
+    {hiddenObjects.map(item=><polygon points={archiveScenes[0].areas[item.id]} data-find-object={item.id} role="button" tabindex="0" aria-label={item.name} aria-disabled="false"/>)}
    </svg>
   </div>
  </div>

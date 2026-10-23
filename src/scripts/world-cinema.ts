@@ -17,26 +17,35 @@ export function initWorldCinema(){
   const enlarge=scene.querySelector<HTMLButtonElement>('[data-cinema-enlarge]')!;
   const dialog=scene.querySelector<HTMLDialogElement>('[data-world-dialog]')!;
   const previews=[...dialog.querySelectorAll<HTMLElement>('[data-world-preview]')];
-  const links=scene.querySelectorAll<HTMLElement>('[data-world-quest]');
+  const links=document.querySelectorAll<HTMLElement>('[data-world-quest]');
+  const mapPoints=[...dialog.querySelectorAll<HTMLButtonElement>('[data-map-point]')];
   let frame=0,failed=false,suspended=false,inspecting=false,selected=0;
   let opener:HTMLElement|null=null;
+  const astral=(active:boolean)=>{if(scene.dataset.cinemaWorld==='arhiv')document.dispatchEvent(new CustomEvent('gran-astral',{detail:active}))};
   const close=()=>{if(dialog.open)dialog.close()};
   function select(index:number){
    if(dialog.open&&selected!==(index+previews.length)%previews.length)soundCue('select');
    selected=(index+previews.length)%previews.length;
    previews.forEach((p,i)=>p.hidden=i!==selected);
+   mapPoints.forEach((p,i)=>p.setAttribute('aria-pressed',String(i===selected)));
    dialog.setAttribute('aria-labelledby',`preview-${previews[selected].dataset.worldPreview}`);
    dialog.querySelector<HTMLElement>('[data-world-position]')!.textContent=`${selected+1} / ${previews.length}`;
   }
   links.forEach(link=>link.addEventListener('click',event=>{
-   if(!scene.classList.contains('cinema-arrived'))return;
+   if(event instanceof MouseEvent&&(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0))return;
+   if(scene.contains(link)&&!scene.classList.contains('cinema-arrived'))return;
+   const index=previews.findIndex(p=>p.dataset.worldPreview===link.dataset.worldQuest);if(index<0)return;
    event.preventDefault();opener=link;
-   select(previews.findIndex(p=>p.dataset.worldPreview===link.dataset.worldQuest));
-   if(!dialog.open){dialog.showModal();soundCue('open')}
+   select(index);
+   if(!dialog.open){dialog.showModal();document.documentElement.classList.add('world-dialog-open');soundCue('open');astral(true)}
   }));
+  mapPoints.forEach((point,i)=>{
+   point.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')select(i)});
+   point.addEventListener('focus',()=>select(i));point.addEventListener('click',()=>select(i));
+  });
   dialog.querySelector('[data-world-close]')!.addEventListener('click',close);
   dialog.addEventListener('cancel',event=>{event.preventDefault();close()});
-  dialog.addEventListener('close',()=>{opener?.focus({preventScroll:true});opener=null});
+  dialog.addEventListener('close',()=>{document.documentElement.classList.remove('world-dialog-open');astral(false);opener?.focus({preventScroll:true});opener=null});
   dialog.addEventListener('click',event=>{
    if(event.target!==dialog)return;
    const r=dialog.getBoundingClientRect();
@@ -61,7 +70,7 @@ export function initWorldCinema(){
    scene.classList.toggle('cinema-failed',failed);
    const arrived=quiet||failed||state.room;
    scene.classList.toggle('cinema-arrived',arrived);
-   if(!arrived){close();inspecting=false;scene.classList.remove('cinema-inspect');enlarge.setAttribute('aria-pressed','false');enlarge.textContent='Рассмотреть ближе ⤢'}
+   if(!arrived){if(opener&&scene.contains(opener))close();inspecting=false;scene.classList.remove('cinema-inspect');enlarge.setAttribute('aria-pressed','false');enlarge.textContent='Рассмотреть ближе ⤢'}
    // Тот же переход cover → fit, что в «Изнанке». Чёрные поля исходника
    // АРХИВА выходят за границу экрана только во время движения камеры.
    const cover=Math.max(innerWidth,innerHeight*(scene.dataset.cinemaWorld==='arhiv'?1280/586:16/9));

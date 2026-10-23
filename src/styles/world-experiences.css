@@ -1,0 +1,200 @@
+/* The two worlds share controls, not their scene composition. */
+.world-dialog-open{overflow:hidden}
+.world-fieldnotes{position:relative;display:grid;grid-template-columns:.85fr 1.4fr;gap:35px 7vw;padding:110px 7vw 75px;isolation:isolate;overflow:clip}
+.world-fieldnotes [hidden]{display:none!important}
+.fieldnotes-heading{align-self:center;position:relative;z-index:1}
+.fieldnotes-overline{display:block;margin-bottom:25px}
+.fieldnotes-heading h2{font-size:clamp(40px,4.5vw,76px);line-height:1.06;letter-spacing:-.05em}
+.fieldnotes-heading h2 em{font-weight:inherit}
+.fieldnotes-heading>p{max-width:380px;margin-top:26px;font-size:15px;line-height:1.7}
+.fieldnotes-stage{position:relative;min-width:0;padding:30px 6% 0}
+.fieldnote-sheet{position:relative;z-index:1;margin:0;transform:rotate(-2deg);animation:fieldnote-arrive .45s ease-out both}
+.fieldnote-number{display:block;margin-bottom:12px;text-align:right}
+.fieldnote-photo{display:block;position:relative;overflow:hidden;aspect-ratio:3/2}
+.fieldnote-photo img{width:100%;height:100%;object-fit:cover;transition:filter .8s,transform .9s}
+.fieldnote-photo-action{position:absolute;bottom:18px;left:22px;color:#fff6de;text-shadow:0 2px 12px #000;z-index:1}
+.fieldnote-photo:after{content:'';position:absolute;inset:50% 0 0;background:linear-gradient(transparent,#0b1b1d99);pointer-events:none}
+.fieldnote-photo:hover img,.fieldnote-photo:focus-visible img{transform:scale(1.035)}
+.fieldnote-sheet figcaption{padding:18px 4px}
+.fieldnote-sheet h3{font-size:26px;line-height:1.15}
+.fieldnote-sheet figcaption p{margin-top:9px}
+.fieldnotes-orbit{position:absolute;inset:-5% -8%;pointer-events:none;z-index:0}
+.fieldnotes-orbit svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:.65;opacity:.28}
+.fieldnotes-controls{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px}
+.fieldnotes-controls button{width:54px;min-height:48px;border-bottom:1px solid currentColor;font-size:25px}
+.fieldnotes-controls span{font-size:15px;min-width:48px;text-align:center}
+.fieldnotes-index{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:24px}
+.fieldnotes-index button{text-align:left;padding:15px 0;border-top:1px solid currentColor;opacity:.55;min-height:55px;font-size:14px;line-height:1.4}
+.fieldnotes-index button[aria-pressed=true],.fieldnotes-index button:hover{opacity:1}
+.fieldnotes-index button>span{display:block;margin-bottom:10px;font-size:12px}
+body[data-world=arhiv] .fieldnotes-arhiv{background:#cbb998 var(--notebook-sheet) center/cover;color:#3d3022;padding-bottom:100px}
+body[data-world=arhiv] .fieldnotes-heading{transform:rotate(-2deg)}
+body[data-world=arhiv] .fieldnotes-overline{font-size:23px;color:#73563d}
+body[data-world=arhiv] .fieldnotes-heading h2{font:400 clamp(48px,5.4vw,86px)/.98 var(--sans)}
+body[data-world=arhiv] .fieldnotes-heading p{font:400 25px/1.5 var(--sans);max-width:390px}
+body[data-world=arhiv] .fieldnote-photo{border:9px solid #37352e;box-shadow:0 0 0 1px #9d8253,8px 16px 25px #49301e55}
+body[data-world=arhiv] .fieldnote-photo img{filter:sepia(.35) saturate(.6) brightness(.78)}
+body[data-world=arhiv] .fieldnote-photo:hover img,body[data-world=arhiv] .fieldnote-photo:focus-visible img{filter:sepia(.1) saturate(.9) brightness(1)}
+body[data-world=arhiv] .fieldnote-photo-action{font-size:24px}
+body[data-world=arhiv] .fieldnote-number{font:400 24px/1.2 var(--sans);color:#7d5037}
+body[data-world=arhiv] .fieldnote-sheet h3{font:400 37px/1.1 var(--sans)}
+body[data-world=arhiv] .fieldnote-sheet figcaption p{font-size:23px;transform:rotate(1deg)}
+body[data-world=arhiv] .fieldnotes-index button{font:400 26px/1.2 var(--sans)}
+body[data-world=arhiv] .fieldnotes-index button>span{font-size:20px}
+body[data-world=arhiv] .fieldnotes-controls span{font:400 23px/1 var(--sans)}
+.fieldnotes-ostrov{background:#ead5aa;color:#294d45;border-block:1px solid #aa8b574d}
+.fieldnotes-ostrov .fieldnotes-overline{font:600 12px/1.4 var(--adventure);letter-spacing:.08em;color:#9d492f}
+.fieldnotes-ostrov h2{font:700 clamp(37px,4vw,65px)/1.14 var(--adventure)}
+.fieldnotes-ostrov h2 em{display:inline-block;transform:rotate(-3deg);color:#a3462d;font-style:normal}
+.fieldnotes-ostrov .fieldnote-sheet{background:#fff8e7;padding:14px 14px 0;box-shadow:4px 12px 18px #75644040;transform:rotate(3deg)}
+.fieldnotes-ostrov .fieldnote-sheet:before{content:'';position:absolute;top:-17px;left:35%;width:110px;height:32px;background:#bba1688c;transform:rotate(-8deg);z-index:3;clip-path:polygon(2% 5%,97% 0,100% 95%,0 100%)}
+.fieldnotes-ostrov .fieldnote-number{font:500 11px/1.2 var(--adventure);color:#8a6b45}
+.fieldnotes-ostrov .fieldnote-sheet h3{font-size:25px;letter-spacing:-.04em}
+.fieldnotes-ostrov .fieldnote-sheet figcaption p{font:400 23px/1.2 Caveat,cursive}
+.fieldnotes-ostrov .fieldnote-photo-action{font:600 12px/1.3 var(--adventure)}
+.fieldnotes-ostrov .fieldnotes-orbit{color:#a5673b;inset:-8% -13%}
+.fieldnotes-ostrov .fieldnotes-orbit path{stroke-width:2;stroke-dasharray:5 6}
+/* A drawing, not a simulated replacement for the cinematic footage. */
+.expedition-map-art{display:block;width:100%;height:auto;aspect-ratio:1000/650;background:#e5ce9c var(--map-paper) center/cover}
+.map-sea{fill:#e4cd9b;opacity:.6}
+.map-grid{stroke:#866c3e;stroke-width:1;opacity:.2}
+.map-waves{stroke:#65847d;stroke-width:1.5;opacity:.42}
+.map-land path{stroke:#776747;stroke-width:2;stroke-linejoin:round;paint-order:stroke;filter:drop-shadow(0 3px 0 #7c694e25)}
+.land-jungle{fill:#9eae76}.land-ice{fill:#becbc1}.land-stone{fill:#bcb08c}.land-fire{fill:#c58e6c}
+.map-contours{stroke:#726a4655;stroke-width:1;stroke-dasharray:3 4}
+.map-route{stroke:#ab5337;stroke-width:2;stroke-dasharray:6 8;opacity:.8}
+.map-forest{fill:#728b58;stroke:#4e6b49;stroke-width:1.3}
+.map-mountains{stroke:#627e86;stroke-width:2;fill:#dee2cd}
+.map-ruins{stroke:#796b50;stroke-width:2;fill:#b1a17b}
+.map-volcano{stroke:#7e4b38;stroke-width:2;fill:#b77754}
+.map-compass{stroke:#77623e;stroke-width:1.2;fill:#d5b578}
+.map-compass text{fill:#796345;stroke:none;text-anchor:middle;font:20px Caveat,cursive}
+.map-ship{stroke:#7a6848;stroke-width:2;fill:#d2b47b}
+.map-note{fill:#806541;font:27px Caveat,cursive}
+.map-edition{fill:#7e6d4c;font:9px Manrope,sans-serif;letter-spacing:2px}
+/* Island route selection: clear markers and a single compact field note. */
+html body[data-world=ostrov] .quest-dialog-ostrov{inset:0;margin:auto;width:min(1260px,94vw);max-width:94vw;max-height:94svh;border-radius:3px;border:1px solid #b39760;background:#eee0bc;color:#264b43;box-shadow:0 35px 100px #0a2f3ec7;padding:0 25px 15px;transform:none}
+html body[data-world=ostrov] .quest-dialog-ostrov::backdrop{background:#102f38bc;backdrop-filter:blur(5px)}
+html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-close{background:#eee0bc;padding:12px 0;font-size:12px;border-color:#9072474d}
+.island-map-heading{padding:25px 0 10px}
+.island-map-heading>span{font:400 23px/1 Caveat,cursive;color:#98633c}
+.island-map-heading h2{font-size:clamp(25px,3vw,42px);margin:8px 0}
+.island-map-heading p{font:400 12px/1.6 Manrope,sans-serif}
+.island-map-layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:24px;align-items:center}
+.island-quest-map{position:relative;min-width:0;width:100%;max-width:max(420px,calc(144.6svh - 438px));justify-self:center;border:1px solid #bba16c}
+.island-map-points{position:absolute;inset:0}
+.island-map-points button{position:absolute;left:var(--point-x);top:var(--point-y);transform:translate(-50%,-50%);width:130px;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:55px}
+.island-map-points button>i{font:700 15px/36px var(--adventure);font-style:normal;width:36px;height:36px;border-radius:50%;background:#f8eac1;color:#674931;border:2px solid #87683e;box-shadow:0 2px 0 #624d32,0 0 0 5px #eee0b777;transition:background .2s,transform .2s}
+.island-map-points button>span{background:#f5e7c9ed;padding:5px 8px;border:1px solid #ac8d59;font:700 10px/1.25 var(--adventure);max-width:130px;transform:rotate(-4deg);box-shadow:0 3px 8px #7d674b25}
+.island-map-points button[aria-pressed=true]>i,.island-map-points button:hover>i{background:#a6462e;color:#fff3d1;transform:translateY(-3px)}
+.quest-dialog-ostrov .quest-preview-stack{align-self:stretch;display:flex;align-items:center}
+.quest-dialog-ostrov .quest-preview-stack article{width:100%;border-left:1px solid #9a805049;padding-left:22px}
+html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-image{height:155px;border:6px solid #fff6dd;transform:rotate(2deg);box-shadow:3px 5px 12px #63512e22}
+html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-copy{padding:20px 0 0}
+html body[data-world=ostrov] .quest-dialog-ostrov h3{font-size:26px;line-height:1.15;color:#244b43}
+html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-copy>p{font-size:12px;line-height:1.7}
+.quest-dialog-ostrov .quest-dialog-switch{padding:15px 0 0}
+/* The astral space is contained in the modal; the library page stays intact. */
+html body[data-world=arhiv] .quest-dialog-arhiv{inset:0;margin:0;width:100vw;max-width:100vw;height:100svh;max-height:100svh;background:#0b1113;color:#e0d4bb;border:0;border-radius:0;padding:0 5vw;transform:none;isolation:isolate;box-shadow:none}
+html body[data-world=arhiv] .quest-dialog-arhiv::backdrop{background:#06090a}
+html body[data-world=arhiv] .quest-dialog-arhiv[open]{animation:astral-enter .8s ease-out both}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-close{background:#0b1113ed;border-color:#a99b7540;color:#c4b899;font:400 23px/1.3 var(--sans);padding:15px 0;z-index:5}
+.quest-dialog-arhiv .quest-preview-stack{min-height:calc(100svh - 160px);display:grid;place-items:center}
+.quest-dialog-arhiv [data-world-preview]{position:relative;width:100%;min-height:calc(100svh - 160px);display:grid;place-items:center;padding:20px 0;isolation:isolate}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-image{position:absolute;inset:4% 5%;height:auto;z-index:-2;overflow:hidden;pointer-events:none;mask-image:radial-gradient(ellipse at center,#000 10%,transparent 70%)}
+.quest-dialog-arhiv .quest-dialog-image img{filter:brightness(.2) saturate(.3) blur(2px);opacity:.65}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-copy{position:relative;width:min(600px,90%);text-align:center;padding:20px 0;animation:astral-float 13s ease-in-out infinite;z-index:1}
+html body[data-world=arhiv] .quest-dialog-arhiv :is(h3,p,dt,dd,.quest-dialog-details,.quest-dialog-book,.quest-dialog-genre,.quest-dialog-switch span,.quest-dialog-switch button){color:#e0d4bb;font-family:var(--sans)}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-genre{font-size:22px;color:#9d9e8b}
+html body[data-world=arhiv] .quest-dialog-arhiv h3{font:400 clamp(48px,6vw,92px)/1.04 var(--sans);margin:24px -30px}
+html body[data-world=arhiv] .quest-dialog-arhiv p{font:400 27px/1.5 var(--sans);text-shadow:0 2px 20px #000}
+html body[data-world=arhiv] .quest-dialog-arhiv dl{margin:30px auto 20px;max-width:490px;border-color:#b0a77f33}
+html body[data-world=arhiv] .quest-dialog-arhiv dt{font-size:20px;color:#9d9e8b}
+html body[data-world=arhiv] .quest-dialog-arhiv dd{font-size:27px}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-details{max-width:450px;margin:auto;border-color:#a9a17c4d;justify-content:center;gap:30px;font-size:26px}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-book{font-size:23px;color:#a8af9b}
+.quest-dialog-arhiv .astral-ghost{position:absolute;z-index:-1;left:15%;right:15%;top:15%;color:#bdc1ab;opacity:.085;font:400 clamp(80px,12vw,180px)/.95 Marck,cursive;text-align:center;filter:blur(1px);transform:rotate(-8deg);animation:astral-ghost 19s ease-in-out infinite;pointer-events:none;user-select:none}
+.astral-ghost span{display:block;font:400 38px/1.3 Marck,cursive;margin-top:35px}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-switch{position:relative;z-index:3;max-width:600px;margin:auto;padding:10px 0 20px}
+html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-switch button{border-color:#a9a17c4d}
+/* A detector that follows input, with no perpetual game loop. */
+.treasure-hunt{max-width:1200px;margin:auto;color:#294b41}
+.treasure-log{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:12px 0 20px;font:500 12px/1.5 var(--adventure)}
+.treasure-log b{font-weight:700}
+.treasure-log button{min-height:44px;border-bottom:1px solid #80684166}
+.treasure-board{position:relative;border:1px solid #aa8b57;box-shadow:6px 10px 0 #ba9d6840;isolation:isolate;outline-offset:5px}
+.treasure-board.is-searching{touch-action:none;cursor:none}
+.treasure-board .map-note,.treasure-board .map-edition{opacity:.7}
+.treasure-welcome{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;background:#e7d6abde;backdrop-filter:blur(2px);cursor:default;z-index:3}
+.treasure-hunt [hidden]{display:none!important}
+.treasure-welcome>span{font:400 30px/1.3 Caveat,cursive;color:#a24b30;transform:rotate(-4deg)}
+body[data-world=ostrov] .treasure-welcome h3{font-size:clamp(26px,3.5vw,48px);line-height:1.15;margin:16px 0}
+.treasure-welcome p{font-size:14px;line-height:1.6;max-width:320px;margin-bottom:26px}
+.treasure-welcome button,.detector-actions button:first-child,.treasure-finish>a{padding:15px 24px;min-height:48px;background:#27594b;color:#fff1d2;border-radius:3px;font:700 12px/1.4 var(--adventure);box-shadow:0 3px 0 #173a32}
+.metal-detector{position:absolute;left:50%;top:65%;width:70px;height:36px;transform:translate(-50%,-50%);z-index:2;pointer-events:none;filter:drop-shadow(3px 5px 2px #46391d55)}
+.detector-coil{position:absolute;inset:0;border:5px solid #3a4842;border-radius:50%;box-shadow:inset 0 0 0 2px #b8b79a,0 0 0 1px #a7a38c;background:#69a9a111}
+.detector-coil:before{content:'';position:absolute;inset:40% -1px auto;border-top:4px solid #3a4842;transform:rotate(25deg)}
+.detector-shaft{position:absolute;bottom:17px;left:34px;width:7px;height:90px;background:#777d6e;border:1px solid #3d4d42;transform:rotate(28deg);transform-origin:bottom}
+.detector-grip{position:absolute;bottom:92px;left:67px;width:17px;height:35px;background:#345447;border:3px solid #263c32;transform:rotate(28deg);border-radius:5px}
+[data-signal=warm] .detector-coil{box-shadow:0 0 0 7px #c7973733,inset 0 0 0 2px #c99d46}
+[data-signal=hot] .detector-coil{box-shadow:0 0 0 10px #bb5b3b40,inset 0 0 0 2px #db6c3b;background:#f1a14844}
+.treasure-marks{position:absolute;inset:0;pointer-events:none}
+.treasure-marks>span{position:absolute;transform:translate(-50%,-50%);font-size:35px;color:#a0462d;text-shadow:0 2px 0 #fff2ce}
+.treasure-hint{position:absolute;width:24%;aspect-ratio:1.54;border:3px dashed #a8583d;border-radius:50%;transform:translate(-50%,-50%);background:#f1dfaa33;pointer-events:none}
+.detector-dashboard{display:flex;justify-content:space-between;gap:30px;padding:28px 0 12px}
+.detector-dashboard>div:first-child{flex:1}
+.detector-label{font:700 11px/1.5 var(--adventure)}
+.detector-dashboard meter{display:block;width:min(350px,100%);height:16px;margin:10px 0;accent-color:#a85932}
+.detector-dashboard p{font-size:14px;line-height:1.5;min-height:42px;max-width:450px}
+.detector-actions{display:flex;flex-direction:column;align-items:stretch;gap:9px;min-width:215px}
+.detector-actions button{min-height:44px;font:600 12px/1.5 var(--adventure)}
+.detector-actions button:disabled{opacity:.5;cursor:default}
+.detector-actions [data-treasure-next]{color:#ac4b2e;border-bottom:1px solid currentColor}
+.treasure-instructions{font-size:12px;line-height:1.8;max-width:800px;color:#527065}
+.treasure-finish{margin-top:30px;padding:30px 0;border-top:1px dashed #9e865a;text-align:center}
+.treasure-finish h3{font-size:34px;margin-bottom:18px}
+.treasure-finish p{font-size:14px;margin:0 auto 22px;max-width:450px}
+.treasure-finish>a,.treasure-finish>button{display:inline-block;margin:10px;font-size:12px;min-height:44px}
+.hidden-object-scene{display:flex;justify-content:space-between;gap:20px;margin-bottom:15px;font:400 22px/1.3 Marck,cursive;color:#7a5336}
+.hidden-object-game.is-loading [data-object-map]{pointer-events:none;visibility:hidden}
+.hidden-object-game.is-loading [data-object-image]{opacity:.55}
+.hidden-object-game [data-object-image]{transition:opacity .25s}
+@keyframes fieldnote-arrive{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@keyframes astral-enter{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:blur(0)}}
+@keyframes astral-float{0%,100%{transform:translate(-4px,0) rotate(-.45deg)}33%{transform:translate(7px,-8px) rotate(.6deg)}68%{transform:translate(-7px,6px) rotate(-.25deg)}}
+@keyframes astral-ghost{0%,100%{translate:-15px 10px;rotate:-5deg}45%{translate:18px -13px;rotate:3deg}75%{translate:-5px -4px;rotate:-1deg}}
+@media(max-width:1000px){.world-fieldnotes{gap:30px 4vw;padding-inline:5vw}.island-map-layout{grid-template-columns:1fr 265px;gap:18px}.island-map-points button{width:100px}.island-map-points button>span{font-size:8px}.quest-dialog-ostrov .quest-preview-stack article{padding-left:16px}html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-image{height:125px}}
+@media(max-width:760px){
+ .world-fieldnotes{grid-template-columns:1fr;padding:70px 7vw 45px;gap:25px}
+ .fieldnotes-heading>p{max-width:100%;font-size:14px}.fieldnotes-heading h2{font-size:42px}.fieldnotes-overline{margin-bottom:18px}
+ .fieldnotes-stage{padding:20px 2% 0;margin-bottom:8px}.fieldnotes-index{grid-template-columns:1fr 1fr;gap:8px 25px;margin-top:15px}
+ .fieldnotes-index button{font-size:12px;padding-block:10px}.fieldnotes-index button>span{margin-bottom:6px}
+ .fieldnotes-ostrov .fieldnote-sheet h3{font-size:22px}.fieldnotes-ostrov .fieldnote-sheet figcaption p{font-size:21px}
+ body[data-world=arhiv] .fieldnotes-heading h2{font-size:54px}body[data-world=arhiv] .fieldnotes-heading p{font-size:23px}
+ body[data-world=arhiv] .fieldnotes-index button{font-size:23px}body[data-world=arhiv] .fieldnote-sheet h3{font-size:33px}body[data-world=arhiv] .fieldnote-sheet figcaption p{font-size:21px}
+ html body[data-world=ostrov] .quest-dialog-ostrov{width:100%;max-width:100%;max-height:100svh;height:100svh;padding:0 18px 15px;margin:0;border:0}
+ .island-map-heading{padding:15px 0 12px}.island-map-heading h2{font-size:26px}.island-map-heading>span{font-size:21px}
+ .island-map-layout{grid-template-columns:1fr;gap:22px}.island-quest-map{max-width:none}.island-map-points button{width:92px}.island-map-points button>i{width:30px;height:30px;line-height:27px;font-size:12px}.island-map-points button>span{font-size:8px;padding:4px 5px;max-width:96px}
+ .quest-dialog-ostrov .quest-preview-stack article{border-left:0;border-top:1px solid #9a805049;padding:20px 0 0;display:grid;grid-template-columns:105px minmax(0,1fr);gap:18px}
+ html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-image{height:140px;border-width:4px;position:sticky;top:62px}
+ html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-copy{padding:0}
+ html body[data-world=ostrov] .quest-dialog-ostrov h3{font-size:23px;margin:8px 0 12px}
+ html body[data-world=ostrov] .quest-dialog-ostrov .quest-dialog-copy>p{font-size:11px}
+ .quest-dialog-ostrov dl{gap:8px;margin:15px 0;padding:9px 0}.quest-dialog-ostrov dt{font-size:9px}.quest-dialog-ostrov dd{font-size:11px}
+ html body[data-world=arhiv] .quest-dialog-arhiv{padding:0 7vw}
+ .quest-dialog-arhiv [data-world-preview]{min-height:calc(100svh - 160px);padding:30px 0}
+ html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-copy{width:100%}
+ html body[data-world=arhiv] .quest-dialog-arhiv h3{font-size:52px;margin:22px -8px}
+ html body[data-world=arhiv] .quest-dialog-arhiv p{font-size:23px}
+ .quest-dialog-arhiv .astral-ghost{left:0;right:0;top:8%;font-size:80px}.astral-ghost span{font-size:28px}
+ html body[data-world=arhiv] .quest-dialog-arhiv dt{font-size:18px}html body[data-world=arhiv] .quest-dialog-arhiv dd{font-size:23px}
+ html body[data-world=arhiv] .quest-dialog-arhiv .quest-dialog-details{font-size:23px}
+ .treasure-log{font-size:10px;align-items:start;gap:12px}.treasure-log>span{max-width:160px}.treasure-log b{display:block;margin-top:4px}.treasure-log button{font-size:10px}
+ .treasure-board{box-shadow:3px 6px 0 #ba9d6840;overflow:hidden}
+ .treasure-welcome{padding:15px}.treasure-welcome>span{font-size:22px}body[data-world=ostrov] .treasure-welcome h3{font-size:25px;margin:10px 0}.treasure-welcome p{font-size:11px;max-width:250px;margin-bottom:13px}.treasure-welcome button{min-height:44px;padding:11px 18px;font-size:11px}
+ .detector-dashboard{flex-direction:column;gap:10px;padding-top:22px}.detector-dashboard p{min-height:0}.detector-actions{flex-direction:row;flex-wrap:wrap;gap:8px 18px;justify-content:space-between}.detector-actions button{font-size:10px}.detector-actions button:first-child{padding:12px 16px}.treasure-instructions{font-size:11px;margin-top:15px}
+ .metal-detector{width:45px;height:26px}.detector-shaft{height:55px;bottom:14px;left:21px;width:5px}.detector-grip{bottom:59px;left:39px;height:23px;width:13px}.detector-coil{border-width:4px}
+ .treasure-finish h3{font-size:26px}.hidden-object-scene{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){.world-fieldnotes *,.quest-dialog-arhiv *,.quest-dialog-arhiv[open],.island-map-points *{animation:none!important;transition:none!important}}
+.calm .world-fieldnotes *,.calm .quest-dialog-arhiv *,.calm .quest-dialog-arhiv[open],.calm .island-map-points *{animation:none!important;transition:none!important}

@@ -9,13 +9,14 @@ import Games from '../../components/Games.astro';
 import HorrorAtmosphere from '../../components/HorrorAtmosphere.astro';
 import HorrorAfterword from '../../components/HorrorAfterword.astro';
 import HorrorPhotos from '../../components/HorrorPhotos.astro';
+import WorldGallery from '../../components/WorldGallery.astro';
 import {worlds,worldKeys,href,type World} from '../../lib/data';
 export function getStaticPaths(){return worldKeys.map(world=>({params:{world}}))}
 const world=Astro.params.world as World;const w=worlds[world];
 ---
 <Base world={world} cinema={world==='iznanka'} title={`ИНОЕ / ${w.name} — ${w.subtitle}. Пермь`}>
  {world==='iznanka'?<HorrorEntrance><QuestGallery world={world}/></HorrorEntrance>:<>
- <WorldHero world={world}/><WorldCinema world={world}/>
+ <WorldHero world={world}/><WorldCinema world={world}/><WorldGallery world={world}/>
  </>}
  {world==='iznanka'&&<HorrorAtmosphere/>}
  {world==='iznanka'&&<HorrorPhotos/>}

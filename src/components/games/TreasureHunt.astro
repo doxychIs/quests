@@ -1,0 +1,18 @@
+---
+import IslandMap from '../IslandMap.astro';
+import {href} from '../../lib/data';
+import '../../styles/world-experiences.css';
+---
+<div class="treasure-hunt" data-game="treasure-hunt">
+ <div class="treasure-log"><span>Бортовой журнал · <b data-treasure-round>Находка 1 / 4</b></span><button type="button" data-treasure-reset>Новая экспедиция ↺</button></div>
+ <div class="treasure-board" data-treasure-board tabindex="0" role="group" aria-label="Область поиска сокровищ" aria-describedby="treasure-instructions">
+  <IslandMap/>
+  <div class="treasure-hint" data-treasure-hint hidden aria-hidden="true"></div>
+  <div class="treasure-marks" data-treasure-marks aria-hidden="true"></div>
+  <div class="metal-detector" data-detector hidden aria-hidden="true"><span class="detector-coil"></span><span class="detector-shaft"></span><span class="detector-grip"></span></div>
+  <div class="treasure-welcome" data-treasure-welcome><span>Под песком что-то есть…</span><h3>Берите металлоискатель!</h3><p>Четыре находки. Четыре новых места при каждой игре.</p><button type="button" data-treasure-start>Начать поиски →</button></div>
+ </div>
+ <div class="detector-dashboard"><div><span class="detector-label">Сигнал металлоискателя</span><meter data-detector-meter min="0" max="100" value="0" aria-label="Близость сокровища">0%</meter><p data-treasure-status role="status" aria-live="polite">Включите прибор и отправляйтесь на поиски.</p></div><div class="detector-actions"><button type="button" data-treasure-dig disabled>Проверить место ↓</button><button type="button" data-treasure-next hidden>К следующей находке →</button><button type="button" data-treasure-help disabled>Наметить район</button></div></div>
+ <p id="treasure-instructions" class="treasure-instructions">Ведите прибор по карте мышью или пальцем. Чем ближе клад, тем сильнее сигнал. Нажмите на карту или «Проверить место», чтобы копнуть. С клавиатуры: стрелки — двигаться, Enter — проверить.</p>
+ <div class="treasure-finish" data-treasure-finish hidden><h3>Вот это улов, команда!</h3><p>Все четыре находки в рюкзаке. А настоящее приключение ждёт на островах.</p><a href={href('ostrov/quests/kamennyy-labirint/')}>Выбрать приключение ↗</a><button type="button" data-treasure-replay>Спрятать сокровища заново ↺</button></div>
+</div>

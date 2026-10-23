@@ -19,6 +19,8 @@ function gates(){const gate=$<HTMLDialogElement>('#age-gate');const form=$<HTMLF
  if(store.get('gran-adult',true)==='yes')document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.src=im.dataset.safeSrc!);
 }
 const ambience=createSoundscape(world,import.meta.env.BASE_URL);
+document.addEventListener('gran-astral',event=>ambience.setAstral((event as CustomEvent).detail===true));
+document.addEventListener('gran-detector',event=>{const strength=(event as CustomEvent).detail;if(typeof strength==='number'&&Number.isFinite(strength))ambience.scan(strength)});
 const musicInput=$<HTMLInputElement>('#music-setting');let musicOn=store.get('gran-music')!=='no';ambience.setMusic(musicOn);if(musicInput){musicInput.checked=musicOn;musicInput.addEventListener('change',()=>{musicOn=musicInput.checked;store.set('gran-music',musicOn?'yes':'no');ambience.setMusic(musicOn)})}
 let soundDesired=store.get('gran-sound')==='yes';
 const savedVolume=Number(store.get('gran-volume')??35);let soundVolume=Number.isFinite(savedVolume)?Math.max(0,Math.min(100,savedVolume)):35;

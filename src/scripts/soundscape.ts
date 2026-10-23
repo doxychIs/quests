@@ -5,11 +5,13 @@ export function createSoundscape(world:string,base='/'){
  let enabled=false,keyBuffer:AudioBuffer|null=null,keyFilter:BiquadFilterNode|null=null,lastKey=-Infinity;
  let level=.35,noiseBuffer:AudioBuffer|null=null,suspendTimer:ReturnType<typeof setTimeout>|null=null;
  const lastCue=new Map<SoundCue,number>();let lastEffect=-Infinity;
- let recordings:ReturnType<typeof createRecordedAudio>=null,music=true;
+ let recordings:ReturnType<typeof createRecordedAudio>=null,music=true,astral=false,astralFilter:BiquadFilterNode|null=null,lastScan=-Infinity;
  function build(){
   if(context&&context.state!=='closed')return;
   context=new AudioContext();context.onstatechange=()=>document.dispatchEvent(new CustomEvent('gran-audio-state'));const ctx=context;volume=ctx.createGain();volume.gain.value=0;
-  if(typeof ctx.createDynamicsCompressor==='function'){const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-5;limiter.knee.value=4;limiter.ratio.value=6;limiter.attack.value=.003;limiter.release.value=.16;volume.connect(limiter).connect(ctx.destination)}else volume.connect(ctx.destination);
+  let output:AudioNode=volume;
+  if(world==='arhiv'){astralFilter=ctx.createBiquadFilter();astralFilter.type='lowpass';astralFilter.frequency.value=astral?750:20000;astralFilter.Q.value=.3;volume.connect(astralFilter);output=astralFilter}
+  if(typeof ctx.createDynamicsCompressor==='function'){const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-5;limiter.knee.value=4;limiter.ratio.value=6;limiter.attack.value=.003;limiter.release.value=.16;output.connect(limiter).connect(ctx.destination)}else output.connect(ctx.destination);
   recordings=createRecordedAudio(ctx,volume,world,base);
   noiseBuffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.22),ctx.sampleRate);
   const effectNoise=noiseBuffer.getChannelData(0);for(let i=0;i<effectNoise.length;i++)effectNoise[i]=Math.random()*2-1;
@@ -39,7 +41,7 @@ export function createSoundscape(world:string,base='/'){
  function set(on:boolean){
   const wasEnabled=enabled;enabled=on;if(suspendTimer)clearTimeout(suspendTimer);suspendTimer=null;
   try{
-   if(on){build();if(context!.state!=='running')void context!.resume().catch(()=>{});if(!wasEnabled||volume!.gain.value===0)volume!.gain.setTargetAtTime(level,context!.currentTime,.18);recordings?.setActive(true,music)}
+   if(on){build();if(context!.state!=='running')void context!.resume().catch(()=>{});if(!wasEnabled||volume!.gain.value===0)volume!.gain.setTargetAtTime(level*(astral?.64:1),context!.currentTime,.18);recordings?.setActive(true,music)}
    else if(context&&volume&&context.state!=='closed'){
     recordings?.setActive(false,music);
     volume.gain.setTargetAtTime(0,context.currentTime,.035);
@@ -47,7 +49,9 @@ export function createSoundscape(world:string,base='/'){
    }
   }catch{}
  }
- function setVolume(value:number){level=Math.max(0,Math.min(1,Number.isFinite(value)?value:.35));if(enabled&&context&&volume)volume.gain.setTargetAtTime(level,context.currentTime,.08)}
+ function setVolume(value:number){level=Math.max(0,Math.min(1,Number.isFinite(value)?value:.35));if(enabled&&context&&volume)volume.gain.setTargetAtTime(level*(astral?.64:1),context.currentTime,.08)}
+ function setAstral(on:boolean){if(world!=='arhiv')return;astral=on;if(context&&astralFilter){astralFilter.frequency.setTargetAtTime(on?750:20000,context.currentTime,.35);if(enabled)volume!.gain.setTargetAtTime(level*(on?.64:1),context.currentTime,.3)}}
+ function scan(strength:number){if(world!=='ostrov'||!enabled||document.hidden||level===0||context?.state!=='running')return;const n=Math.max(0,Math.min(1,strength)),now=context.currentTime;if(now-lastScan<.18)return;lastScan=now;tone(280+n*520,.014+n*.008,.055)}
  function setMusic(on:boolean){music=on;recordings?.setActive(enabled,music)}
  function tone(frequency:number,amplitude:number,duration:number,delay=0){
   const ctx=context!,osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime+delay;
@@ -79,6 +83,6 @@ export function createSoundscape(world:string,base='/'){
   const tap=context.createBufferSource(),gain=context.createGain();tap.buffer=keyBuffer;tap.playbackRate.value=.9+Math.random()*.18;
   gain.gain.value=.025+Math.random()*.008;tap.connect(gain).connect(keyFilter);tap.onended=()=>{tap.disconnect();gain.disconnect();};tap.start();
  }
- function stop(){enabled=false;if(suspendTimer)clearTimeout(suspendTimer);suspendTimer=null;recordings?.stop();recordings=null;if(context)void context.close().catch(()=>{});context=null;volume=null;keyBuffer=null;keyFilter=null;noiseBuffer=null;lastKey=-Infinity;lastEffect=-Infinity;lastCue.clear();}
- return{set,stop,type,cue,setVolume,setMusic,state:()=>context?.state||'closed'};
+ function stop(){enabled=false;if(suspendTimer)clearTimeout(suspendTimer);suspendTimer=null;recordings?.stop();recordings=null;if(context)void context.close().catch(()=>{});context=null;volume=null;keyBuffer=null;keyFilter=null;astralFilter=null;noiseBuffer=null;lastKey=-Infinity;lastScan=-Infinity;lastEffect=-Infinity;lastCue.clear();}
+ return{set,stop,type,cue,setVolume,setMusic,setAstral,scan,state:()=>context?.state||'closed'};
 }

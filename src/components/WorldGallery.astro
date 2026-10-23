@@ -1,0 +1,21 @@
+---
+import {quests,asset,href} from '../lib/data';
+import '../styles/world-experiences.css';
+const {world}=Astro.props as {world:'arhiv'|'ostrov'};
+const archive=world==='arhiv',list=quests.filter(q=>q.world===world);
+const notes=archive?['Слова проступают только в тишине.','Время здесь помнит больше нас.','Между строк кто-то оставил дверь.','У каждого отражения своя память.']:['Проверено: тропа умеет прятаться.','В рюкзак — варежки. В команду — смелых.','Ищем ход, которого нет на плане.','Горячий маршрут. Хладнокровная команда.'];
+---
+<section id="fieldnotes" class:list={['world-fieldnotes',`fieldnotes-${world}`]} data-world-gallery aria-label={archive?'Листы из архива':'Дневник островной экспедиции'}>
+ <header class="fieldnotes-heading"><span class="fieldnotes-overline">{archive?'Из записей хранителя':'Из походного дневника'}</span><h2>{archive?<>У этих историй<br/><em>есть изнанка.</em></>:<>Четыре повода<br/><em>свернуть с тропы.</em></>}</h2><p>{archive?'Картина — всего лишь тонкая граница. Коснитесь её, чтобы услышать историю с другой стороны.':'Листайте наши находки. Откройте карту, выберите маршрут — и собирайте свою команду.'}</p></header>
+ <div class="fieldnotes-stage">
+  <div class="fieldnotes-orbit" aria-hidden="true">{archive?<svg viewBox="0 0 500 500"><circle cx="250" cy="250" r="210"/><circle cx="250" cy="250" r="190"/><path d="M250 40L373 420 50 185H450L127 420Z"/><path d="M0 250H500M250 0V500"/></svg>:<svg viewBox="0 0 500 500"><path d="M30 290C100 60 450 460 445 130S190 30 130 190"/><circle cx="130" cy="190" r="13"/><path d="M430 110l30 38m-34 0 37 -38"/></svg>}</div>
+  {list.map((q,i)=><figure class="fieldnote-sheet" data-gallery-slide hidden={i!==0}>
+   <span class="fieldnote-number" aria-hidden="true">{archive?`Лист ${String(i+1).padStart(2,'0')}`:`Отметка ${String(i+1).padStart(2,'0')}`}</span>
+   <a class="fieldnote-photo" href={href(`${world}/quests/${q.slug}/`)} data-world-quest={q.slug} data-gallery-entry aria-label={archive?`Войти в историю «${q.name}»`:`Открыть карту: «${q.name}»`}><img src={asset(q.image)} alt={archive?`Живописный образ квеста «${q.name}»`:`Пейзаж маршрута «${q.name}»`} width="1536" height="1024" loading="lazy"/><span class="fieldnote-photo-action">{archive?'За грань картины ↗':'Развернуть карту ↗'}</span></a>
+   <figcaption><h3>{q.name}</h3><p>{notes[i]}</p></figcaption>
+  </figure>)}
+  <div class="fieldnotes-controls"><button type="button" data-gallery-step="-1" aria-label="Предыдущий снимок">←</button><span data-gallery-count aria-live="polite">1 / 4</span><button type="button" data-gallery-step="1" aria-label="Следующий снимок">→</button></div>
+ </div>
+ <nav class="fieldnotes-index" aria-label="Выбрать лист галереи">{list.map((q,i)=><button type="button" data-gallery-pick={i} aria-pressed={i===0}><span aria-hidden="true">{String(i+1).padStart(2,'0')}</span>{q.name}</button>)}</nav>
+</section>
+<script>import {initWorldGalleries} from '../scripts/world-gallery';initWorldGalleries();</script>

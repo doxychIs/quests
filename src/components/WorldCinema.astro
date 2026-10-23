@@ -3,6 +3,8 @@ import {href,asset,quests} from '../lib/data';
 import {worldMedia,islandIdentities,archivePaintings} from '../lib/world-media';
 import '../styles/world-room.css';
 import SceneLoading from './SceneLoading.astro';
+import IslandMap from './IslandMap.astro';
+import '../styles/world-experiences.css';
 const {world}=Astro.props as {world:'arhiv'|'ostrov'};
 const archive=world==='arhiv';
 const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
@@ -33,15 +35,21 @@ const media=worldMedia[world].cinema,list=quests.filter(q=>q.world===world);
   <nav class="cinema-quest-index" data-cinema-reveal inert aria-label={archive?'Истории в картинах':'Маршруты экспедиции'}>{list.map((q,i)=><a href={href(`${world}/quests/${q.slug}/`)} data-world-quest={q.slug}><span aria-hidden="true">{String(i+1).padStart(2,'0')}</span> {q.name}</a>)}</nav>
   <SceneLoading/>
   <dialog class:list={['world-quest-dialog',`quest-dialog-${world}`]} data-world-dialog aria-label="Краткая информация о квесте">
-   <button type="button" class="quest-dialog-close" data-world-close aria-label="Закрыть информацию о квесте" autofocus>Закрыть <span aria-hidden="true">×</span></button>
+   <button type="button" class="quest-dialog-close" data-world-close aria-label="Закрыть информацию о квесте" autofocus>{archive?'Вернуться в библиотеку':'Свернуть карту'} <span aria-hidden="true">×</span></button>
+   {!archive&&<header class="island-map-heading"><span>Карта первой экспедиции</span><h2>Куда держим курс?</h2><p>Выберите отметку, прочитайте заметку и откройте маршрут.</p></header>}
+   <div class:list={['quest-portals',{'island-map-layout':!archive}]}>
+   {!archive&&<div class="island-quest-map"><IslandMap/><nav class="island-map-points" aria-label="Отметки на карте">{list.map((q,i)=><button type="button" data-map-point={i} style={`--point-x:${[25,48,64,82][i]}%;--point-y:${[48,30,55,39][i]}%`} aria-pressed="false" aria-controls={`preview-card-${q.slug}`}><i aria-hidden="true">{i+1}</i><span>{q.name}</span></button>)}</nav></div>}
+   <div class="quest-preview-stack">
    {list.map((q,i)=><article data-world-preview={q.slug} hidden>
+    {archive&&<div class="astral-ghost" aria-hidden="true">{q.name}<span>{q.synopsis}</span></div>}
     <div class="quest-dialog-image"><img src={asset(q.image)} alt={archive?`Образ истории «${q.name}»`:`Пейзаж приключения «${q.name}»`} width="1536" height="1024" loading="lazy"/></div>
-    <div class="quest-dialog-copy"><span class="quest-dialog-genre">{archive?`Дело ${q.index} · ${q.genre}`:islandIdentities[i].place}</span><h3 id={`preview-${q.slug}`}>{q.name}</h3><p>{q.synopsis}</p>
+    <div class="quest-dialog-copy" id={`preview-card-${q.slug}`}><span class="quest-dialog-genre">{archive?`По ту сторону · ${q.genre}`:islandIdentities[i].place}</span><h3 id={`preview-${q.slug}`}>{q.name}</h3><p>{q.synopsis}</p>
      <dl><div><dt>Возраст</dt><dd>{q.age}</dd></div><div><dt>Время</dt><dd>{q.duration} мин</dd></div><div><dt>Команда</dt><dd>{q.players[0]}–{q.players[1]} чел.</dd></div></dl>
      <a class="quest-dialog-details" href={href(`${world}/quests/${q.slug}/`)}>Вся история и подробности <span aria-hidden="true">↗</span></a>
      <a class="quest-dialog-book" href={href(`${world}/book/${q.slug}/`)}>Выбрать время →</a>
     </div>
    </article>)}
+   </div></div>
    <div class="quest-dialog-switch"><button type="button" data-world-step="-1" aria-label="Предыдущий квест">←</button><span data-world-position></span><button type="button" data-world-step="1" aria-label="Следующий квест">→</button></div>
   </dialog>
  </div>
