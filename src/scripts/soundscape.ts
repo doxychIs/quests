@@ -51,7 +51,7 @@ export function createSoundscape(world:string,base='/'){
  }
  function setVolume(value:number){level=Math.max(0,Math.min(1,Number.isFinite(value)?value:.35));if(enabled&&context&&volume)volume.gain.setTargetAtTime(level*(astral?.64:1),context.currentTime,.08)}
  function setAstral(on:boolean){if(world!=='arhiv')return;astral=on;if(context&&astralFilter){astralFilter.frequency.setTargetAtTime(on?750:20000,context.currentTime,.35);if(enabled)volume!.gain.setTargetAtTime(level*(on?.64:1),context.currentTime,.3)}}
- function scan(strength:number){if(world!=='ostrov'||!enabled||document.hidden||level===0||context?.state!=='running')return;const n=Math.max(0,Math.min(1,strength)),now=context.currentTime;if(now-lastScan<.18)return;lastScan=now;tone(280+n*520,.014+n*.008,.055)}
+ function scan(strength:number){if(world!=='ostrov'||!enabled||document.hidden||level===0||context?.state!=='running')return;const n=Math.max(0,Math.min(1,strength)),now=context.currentTime;if(now-lastScan<.18)return;lastScan=now;tone(280+n*520,.09+n*.05,.085)}
  function setMusic(on:boolean){music=on;recordings?.setActive(enabled,music)}
  function tone(frequency:number,amplitude:number,duration:number,delay=0){
   const ctx=context!,osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime+delay;
