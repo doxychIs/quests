@@ -14,6 +14,21 @@ Calm ocean waves — SamsterBirdies.
 https://freesound.org/people/SamsterBirdies/sounds/578524/
 Фрагмент 25–59 с; стык сведён перекрытием 2 с; получен цикл 32 с.
 
+island-ukulele.mp3
+ukewave.wav — yourliver. Авторская композиция и живое исполнение на укулеле.
+https://freesound.org/people/yourliver/sounds/238076/
+Публичная запись высокого качества, CC0. Полная мелодия 32 с.
+Обработка: фильтрация ниже 60 и выше 11000 Гц, выравнивание громкости,
+мягкие края, MP3 128 кбит/с, стерео. Море играет отдельным тихим слоем.
+
+horror-music-box.mp3
+Creepy_Music_Box.mp3 — 13NHarri. Запись старой музыкальной шкатулки.
+https://freesound.org/people/13NHarri/sounds/385953/
+Публичная запись высокого качества, CC0. Полная композиция около 2 минут.
+Обработка: фильтрация ниже 85 и выше 7200 Гц, мягкое сжатие пиков,
+выравнивание громкости, плавное начало и окончание, MP3 128 кбит/с, стерео.
+Включается вместе с общим звуком после подтверждения возраста.
+
 archive-page.wav, archive-open.wav, island-map.wav
 Page Turn (1) — OwlStorm / Ashe Kirk / Owlish Media.
 https://freesound.org/people/OwlStorm/sounds/151220/
