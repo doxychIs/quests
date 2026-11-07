@@ -1,21 +1,50 @@
-/* The entrance is deliberately typographic. The worlds keep their own art direction. */
+/* A single word becomes the navigation mark; the three doors reveal their own worlds. */
 .hub-intro,.hub-worlds,.hub-about,.hub-gift-simple,.hub-questions{max-width:1600px;margin-inline:auto;padding-inline:var(--hub-pad)}
-.hub-intro{padding-top:clamp(65px,9vw,150px);padding-bottom:clamp(110px,12vw,200px)}
+html body[data-world=hub] .hub-header{position:sticky;top:0;z-index:50}
+.hub-header[data-hub-home=true] [data-logo-target]{visibility:hidden}
+.hub-intro{height:calc(100svh - 96px);min-height:400px;display:grid;place-items:center;position:relative}
+html body[data-world=hub] .hub-logo-home{position:relative;width:max-content;max-width:100%;margin:0;font:800 clamp(80px,22vw,320px)/1.12 var(--sans);font-kerning:none;letter-spacing:-.07em}
+.hub-logo-placeholder{visibility:hidden;white-space:nowrap}
+.hub-logo-object{position:absolute;top:0;left:0;display:inline-flex;width:max-content;color:inherit;transform-origin:0 0;white-space:nowrap;isolation:isolate}
+[data-logo-ready=true] .hub-logo-object{position:fixed;z-index:70;transform:translate3d(var(--logo-x),var(--logo-y),0) scale(var(--logo-scale));will-change:transform}
+.hub-logo-letter{position:relative;display:block}
+.hub-logo-metric{visibility:hidden}
+.hub-logo-slice{position:absolute;top:0;left:0;transition:transform .65s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.hub-logo-slice:nth-of-type(2){clip-path:inset(0 0 66% 0)}
+.hub-logo-slice:nth-of-type(3){clip-path:inset(34% 0 31% 0)}
+.hub-logo-slice:nth-of-type(4){clip-path:inset(69% 0 0 0)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(odd) .hub-logo-slice:nth-of-type(2){transform:translate(-.085em,-.03em) skewX(-7deg)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(even) .hub-logo-slice:nth-of-type(2){transform:translate(.06em,-.025em) skewX(5deg)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(odd) .hub-logo-slice:nth-of-type(3){transform:translate(.07em,.015em)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(even) .hub-logo-slice:nth-of-type(3){transform:translate(-.09em,-.01em)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(odd) .hub-logo-slice:nth-of-type(4){transform:translate(-.035em,.035em) skewX(4deg)}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-letter:nth-child(even) .hub-logo-slice:nth-of-type(4){transform:translate(.065em,.035em) skewX(-5deg)}
+.hub-logo-object:focus-visible{outline:1px solid currentColor;outline-offset:.08em}
+.hub-worlds{padding-top:70px;padding-bottom:0;scroll-margin-top:28px}
+.hub-world-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.hub-world{position:relative;display:block;height:clamp(300px,34vw,480px);overflow:hidden;background:#101010;color:#e9e9e9;isolation:isolate;min-width:0}
+.hub-world-cover,.hub-world-preview{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:transform .85s cubic-bezier(.22,1,.36,1),opacity .65s;pointer-events:none}
+.hub-world-cover{z-index:2;background:#101010;font:500 clamp(23px,3.15vw,50px)/1.2 var(--sans);letter-spacing:-.055em}
+.hub-world-preview{z-index:1;transform:translateX(101%);background:#102026;overflow:hidden}
+.hub-world.is-current .hub-world-cover,.hub-world:focus-visible .hub-world-cover{transform:translateX(-38%);opacity:0}
+.hub-world.is-current .hub-world-preview,.hub-world:focus-visible .hub-world-preview{transform:translateX(0)}
+.hub-world-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hub-world-preview:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#071013c9,transparent 65%)}
+.hub-world-preview-title{position:relative;z-index:1;margin-top:auto;margin-bottom:38px;color:#eee}
+.hub-world-iznanka .hub-preview-scene{object-position:52% center;image-rendering:pixelated}
+html body[data-world=hub] .hub-world-iznanka .hub-world-preview-title{font:400 clamp(17px,2.05vw,32px)/1.8 HorrorPixel,monospace;color:#b9b9ae;letter-spacing:0}
+.hub-world-arhiv .hub-world-preview{background:#cbb998}
+.hub-world-arhiv .hub-preview-paper{object-fit:cover}
+.hub-world-arhiv .hub-preview-library{inset:11% 5% auto auto;width:82%;height:56%;filter:grayscale(1) sepia(.12);transform:rotate(5deg);border:10px solid #d9c9a6;box-shadow:0 5px 12px #35220e40;object-position:58% center}
+.hub-world-arhiv .hub-world-preview:after{display:none}
+html body[data-world=hub] .hub-world-arhiv .hub-world-preview-title{font:400 clamp(64px,7vw,112px)/1.2 Marck,'Segoe Script',cursive;color:#30271b;letter-spacing:-.025em;transform:rotate(-3deg);margin-bottom:25px}
+.hub-world-ostrov .hub-preview-scene{object-position:75% center}
+.hub-world-ostrov .hub-world-preview:after{background:linear-gradient(0deg,#063a43ba,transparent 65%)}
+html body[data-world=hub] .hub-world-ostrov .hub-world-preview-title{font:700 clamp(35px,4.2vw,68px)/1.2 Comfortaa,sans-serif;color:#fff3d2;letter-spacing:-.05em}
+.hub-world:focus-visible{outline-offset:6px}
 .hub-location{font-size:13px;line-height:1.6;color:var(--muted)}
-.hub-intro h1{font:500 clamp(72px,11.8vw,190px)/.94 var(--sans);letter-spacing:-.075em;margin:36px 0 48px;max-width:1100px}
-.hub-intro-bottom{display:flex;align-items:end;justify-content:space-between;gap:32px}
-.hub-intro-bottom p{font-size:clamp(15px,1.25vw,19px);line-height:1.7;color:var(--muted)}
 .hub-action{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;min-height:50px;padding:14px 24px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600;white-space:nowrap;transition:opacity .2s}
 .hub-action:hover{opacity:.78}
-.hub-section-heading{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:55px}
-.hub-section-heading h2,.hub-questions>h2{font-size:clamp(32px,4vw,56px);letter-spacing:-.055em;font-weight:500}
-.hub-section-heading>p{font-size:14px;color:var(--muted)}
-.hub-world-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,4vw,64px)}
-.hub-world{padding:28px 0;display:flex;flex-direction:column;min-width:0;position:relative}
-.hub-world-meta,.hub-world-bottom{display:flex;justify-content:space-between;gap:16px;font-size:12px;color:var(--muted)}
-.hub-world h3{font:500 clamp(29px,3.6vw,58px)/1.12 var(--sans);letter-spacing:-.055em;margin:35px 0 22px;transition:opacity .2s}
-.hub-world>p{color:var(--muted);font-size:15px;line-height:1.8;max-width:32ch;flex:1}
-.hub-world-bottom{margin-top:40px}.hub-world-bottom>span{color:var(--ink);font-weight:600}.hub-world:hover h3{opacity:.58}
 .hub-about{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,8vw,140px);padding-block:clamp(120px,14vw,220px)}
 .hub-about h2,.hub-gift-simple h2{font:500 clamp(38px,5.2vw,82px)/1.08 var(--sans);letter-spacing:-.06em}
 .hub-about>div p,.hub-gift-simple>div>p{font-size:16px;line-height:1.85;color:var(--muted);max-width:48ch;margin-bottom:22px}
@@ -23,9 +52,31 @@
 .hub-gift-simple{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,8vw,140px);padding-bottom:clamp(120px,14vw,220px);align-items:end}
 .hub-gift-simple .hub-location{font-size:12px;margin-bottom:24px}.hub-gift-simple .hub-action{margin-top:6px}
 .hub-questions{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,8vw,140px);padding-bottom:120px}
+.hub-questions>h2{font-size:clamp(32px,4vw,56px);letter-spacing:-.055em;font-weight:500}
 .hub-questions details{margin-bottom:30px}.hub-questions summary{font-size:17px;font-weight:500;cursor:pointer;list-style:none;padding:8px 0}.hub-questions summary::-webkit-details-marker{display:none}
 .hub-questions summary:hover{color:var(--muted)}.hub-questions details[open] summary{margin-bottom:12px}.hub-questions details p{font-size:15px;color:var(--muted);line-height:1.8}
-@media(max-width:760px){.hub-intro{padding-top:64px;padding-bottom:100px}.hub-intro h1{font-size:clamp(61px,12.5vw,96px);margin:32px 0}.hub-intro-bottom{align-items:start;flex-direction:column;gap:28px}.hub-intro-bottom p br{display:none}.hub-section-heading{align-items:start;flex-direction:column;gap:14px;margin-bottom:20px}.hub-world-list{grid-template-columns:1fr;gap:30px}.hub-world h3{font-size:48px;margin-block:20px 14px}.hub-world-bottom{margin-top:24px}.hub-world>p{max-width:40ch}.hub-world{padding-block:22px}.hub-about,.hub-gift-simple,.hub-questions{grid-template-columns:1fr;gap:32px}.hub-about{padding-block:100px}.hub-gift-simple{padding-bottom:100px}.hub-questions{padding-bottom:70px}.hub-section-heading>p{min-height:23px}.hub-gift-simple .hub-location{max-width:28ch}}
 body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font-size:clamp(38px,5.2vw,82px);line-height:1.08}
 .hub-about>*,.hub-gift-simple>*,.hub-questions>*{min-width:0}
-@media(max-width:760px){body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font-size:clamp(30px,8.5vw,48px)}body[data-world=hub] .hub-section-heading h2,body[data-world=hub] .hub-questions>h2{font-size:clamp(29px,8vw,42px)}}
+@media(max-width:760px){
+ .hub-intro{height:calc(100svh - 80px);min-height:360px}
+ html body[data-world=hub] .hub-logo-home{font-size:clamp(80px,22vw,170px)}
+ .hub-world-list{grid-template-columns:1fr;gap:18px}.hub-worlds{padding-top:40px}
+ .hub-world{height:340px}.hub-world-cover{font-size:38px}
+ html body[data-world=hub] .hub-world-iznanka .hub-world-preview-title{font-size:24px}
+ html body[data-world=hub] .hub-world-arhiv .hub-world-preview-title{font-size:90px}
+ html body[data-world=hub] .hub-world-ostrov .hub-world-preview-title{font-size:52px}
+ .hub-about,.hub-gift-simple,.hub-questions{grid-template-columns:1fr;gap:32px}.hub-about{padding-block:100px}.hub-gift-simple{padding-bottom:100px}.hub-questions{padding-bottom:70px}.hub-gift-simple .hub-location{max-width:28ch}
+ body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font-size:clamp(30px,8.5vw,48px)}body[data-world=hub] .hub-questions>h2{font-size:clamp(29px,8vw,42px)}
+}
+@media(hover:none){.hub-world-cover{display:none}.hub-world-preview{transform:none}}
+@media(prefers-reduced-motion:reduce){.hub-logo-slice,.hub-world-cover,.hub-world-preview{transition:none!important}.hub-logo-object .hub-logo-slice{transform:none!important}}
+.calm .hub-logo-slice,.calm .hub-world-cover,.calm .hub-world-preview{transition:none!important}.calm .hub-logo-object .hub-logo-slice{transform:none!important}
+/* The intact glyph is a single surface: sliced copies appear only while splitting. */
+.hub-logo-metric{visibility:visible;opacity:1;transition:opacity .12s .45s}
+.hub-logo-slice{opacity:0;transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .12s .45s}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-metric{opacity:0;transition-delay:0s}
+.hub-logo-object:is(:hover,:focus-visible) .hub-logo-slice{opacity:1;transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .1s}
+@media(prefers-reduced-motion:reduce){.hub-logo-metric{opacity:1!important;transition:none}.hub-logo-slice{opacity:0!important}}
+.calm .hub-logo-metric{opacity:1!important;transition:none}.calm .hub-logo-slice{opacity:0!important}
+/* Crop browser-page chrome from the captured corridor while retaining its actual scene. */
+.hub-world-iznanka .hub-preview-scene{transform:scale(1.3)}

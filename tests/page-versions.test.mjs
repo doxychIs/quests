@@ -35,6 +35,6 @@ test('Две версии хоррора связаны настоящими с�
 test('Общие страницы: без стрелок, нумерации разделов и декоративных иллюстраций',()=>{
  for(const route of ['','about','contacts','certificates','rules','privacy']){const x=setupDOM(route);try{
   assert.doesNotMatch(x.d.querySelector('main').textContent,/[↗↘↙←→↑↓]|Глава \d|0[12345] \/ /);
-  assert.equal(x.d.querySelector('main img,.section-index'),null);assert.deepEqual(x.errors,[]);
+  assert.equal(x.d.querySelector('main img:not(.hub-world-preview img),.section-index'),null);assert.deepEqual(x.errors,[]);
  }finally{x.close()}}
 });

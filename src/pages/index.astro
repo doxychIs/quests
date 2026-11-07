@@ -1,24 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
-import {worlds,href,worldKeys,quests} from '../lib/data';
+import {worlds,href,worldKeys} from '../lib/data';
 import '../styles/hub.css';
-const descriptions={iznanka:'Для тех, кто хочет почувствовать больше.',arhiv:'Для тех, кто замечает больше остальных.',ostrov:'Для маленьких исследователей и их взрослых.'};
-const genres={iznanka:'Хоррор и перформанс',arhiv:'Детективы и загадки',ostrov:'Семейные приключения'};
+const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остров'};
 ---
 <Base>
- <section class="hub-intro" aria-labelledby="hub-title">
-  <p class="hub-location">Квесты в реальности · Пермь</p>
-  <h1 id="hub-title">Выйти из<br/>обычного.</h1>
-  <div class="hub-intro-bottom"><p>Одна команда. Час внутри другой реальности.<br/> Выберите, какой будет ваша.</p><a class="hub-action" href="#worlds">Выбрать квест</a></div>
+ <section class="hub-intro" data-hub-hero aria-labelledby="hub-title">
+  <h1 id="hub-title" class="hub-logo-home" aria-label="ИНОЕ"><span class="hub-logo-placeholder" aria-hidden="true">ИНОЕ</span><a class="hub-logo-object" data-hub-logo href={href()} aria-label="ИНОЕ — главная">{[...'ИНОЕ'].map(letter=><span class="hub-logo-letter" aria-hidden="true"><span class="hub-logo-metric">{letter}</span><span class="hub-logo-slice">{letter}</span><span class="hub-logo-slice">{letter}</span><span class="hub-logo-slice">{letter}</span></span>)}</a></h1>
  </section>
- <section class="hub-worlds" id="worlds" data-world-selector data-active-world="arhiv" aria-labelledby="worlds-title">
-  <div class="hub-section-heading"><h2 id="worlds-title">Три настроения.</h2><p data-selector-caption>{descriptions.arhiv}</p></div>
+ <section class="hub-worlds" id="worlds" data-world-selector aria-label="Выбрать мир квестов">
   <nav class="hub-world-list" aria-label="Три мира квестов">
-   {worldKeys.map(w=><a class={`hub-world hub-world-${w}`} href={href(w+'/')} data-world-zone={w} data-world-caption={descriptions[w]}>
-    <span class="hub-world-meta">{genres[w]}<span>{worlds[w].age}</span></span>
-    <h3>{worlds[w].name}</h3>
-    <p>{w==='iznanka'?'Заброшенная палата. Четыре квеста. То, что остаётся за кадром.':w==='arhiv'?'Чужие письма, незаконченные дела и детали, которые всё меняют.':'Приключения для детей и взрослых. Загадки проще решать вместе.'}</p>
-    <span class="hub-world-bottom">{quests.filter(q=>q.world===w).length} квеста<span>Открыть</span></span>
+   {worldKeys.map(w=><a class={`hub-world hub-world-${w}`} href={href(w+'/')} data-world-zone={w} aria-label={`${previewNames[w]} — открыть квесты`}>
+    <span class="hub-world-cover" aria-hidden="true">{worlds[w].name}</span>
+    <span class="hub-world-preview" aria-hidden="true">
+     {w==='arhiv'?<><img class="hub-preview-paper" src={href('assets/archive-paper.webp')} alt="" width="1440" height="1024" loading="lazy"/><img class="hub-preview-library" src={href('assets/archive-hero-poster.webp')} alt="" width="1280" height="720" loading="lazy"/></>:<img class="hub-preview-scene" src={href(w==='iznanka'?'assets/hub-preview-iznanka.png':'assets/island-hero-poster.webp')} alt="" width={w==='iznanka'?1265:1280} height={w==='iznanka'?712:720} loading="lazy"/>}
+     <span class="hub-world-preview-title">{previewNames[w]}</span>
+    </span>
    </a>)}
   </nav>
  </section>
@@ -32,5 +29,5 @@ const genres={iznanka:'Хоррор и перформанс',arhiv:'Детект
   <details><summary>Можно с детьми?</summary><p>Для семейных команд есть «Остров», от 6 лет. «Архив» — от 14 лет, отдельные квесты от 16. «Изнанка» — только 18+.</p></details>
   <details><summary>Можно забронировать игру?</summary><p>Сейчас это демонстрационный проект: можно изучить квесты и проверить форму записи. Реальные сеансы и оплата пока не подключены.</p></details>
  </div></section>
- <script>import {initWorldSelector} from '../scripts/world-selector';initWorldSelector();</script>
+ <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';initWorldSelector();initHubHero();</script>
 </Base>

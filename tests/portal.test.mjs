@@ -4,13 +4,16 @@ import {JSDOM} from 'jsdom';
 import {setupDOM} from './dom-harness.mjs';
 import {invitationSVG,giftNames} from '../src/lib/gift-invitation.ts';
 
-test('Главная: выбор мира с клавиатуры меняет подсказку, фокус не подтверждает согласие 18+',()=>{
+test('Главная: превью миров открываются фокусом и наведением, уход закрывает их; согласие 18+ не меняется',()=>{
  const x=setupDOM('');try{
   const root=x.d.querySelector('[data-world-selector]');
   const worlds=[...root.querySelectorAll('[data-world-zone]')];assert.equal(worlds.length,3);
-  worlds[2].dispatchEvent(new x.w.Event('focus'));
-  assert.equal(root.dataset.activeWorld,'ostrov');assert.match(root.querySelector('[data-selector-caption]').textContent,/маленьких исследователей/);
-  worlds[0].dispatchEvent(new x.w.Event('focus'));assert.equal(root.dataset.activeWorld,'iznanka');assert.match(root.querySelector('[data-selector-caption]').textContent,/почувствовать больше/);
+  assert.equal(root.dataset.activeWorld,'');assert.equal(root.querySelector('[data-selector-caption]'),null);
+  worlds[2].focus();assert.equal(root.dataset.activeWorld,'ostrov');assert.ok(worlds[2].classList.contains('is-current'));
+  worlds[0].focus();assert.equal(root.dataset.activeWorld,'iznanka');assert.equal(root.querySelectorAll('.is-current').length,1);
+  worlds[0].blur();assert.equal(root.dataset.activeWorld,'');
+  worlds[1].dispatchEvent(new x.w.Event('pointerenter'));assert.equal(root.dataset.activeWorld,'arhiv');
+  worlds[1].dispatchEvent(new x.w.Event('pointerleave'));assert.equal(root.dataset.activeWorld,'');
   assert.equal(x.d.documentElement.classList.contains('adult'),false);assert.equal(x.w.sessionStorage.getItem('gran-adult'),null);assert.deepEqual(x.errors,[]);
  }finally{x.close()}
 });

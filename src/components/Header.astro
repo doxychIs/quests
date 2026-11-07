@@ -4,9 +4,10 @@ import HorrorLogo from './HorrorLogo.astro';
 const {world}=Astro.props as {world?:World};
 const current=(path:string)=>Astro.url.pathname===href(path)?'page':undefined;
 const information=Astro.url.pathname.endsWith('/iznanka/information/');
+const hubHome=!world&&Astro.url.pathname===href();
 ---
-{!world?<header class="site-header hub-header">
- <a class="hub-wordmark" href={href()} aria-label="ИНОЕ — главная">ИНОЕ</a>
+{!world?<header class="site-header hub-header" data-hub-home={hubHome?'true':undefined}>
+ <a class="hub-wordmark" data-logo-target={hubHome?'':undefined} href={href()} aria-label="ИНОЕ — главная">ИНОЕ</a>
  <nav class="desktop-nav" aria-label="Основная навигация"><a href={href()+'#worlds'}>Квесты</a><a href={href('about/')}>О проекте</a><a href={href('certificates/')}>Приглашения</a><a href={href('contacts/')}>Контакты</a></nav>
  <div class="header-tools"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Включить светлую тему" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span data-theme-label>Светлая тема</span></button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()+'#worlds'}>Квесты</a><a href={href('about/')}>О проекте</a><a href={href('certificates/')}>Приглашения</a><a href={href('contacts/')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
 </header>:<>
