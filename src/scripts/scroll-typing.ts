@@ -5,7 +5,7 @@ type TextRun={
 
 /** Scroll supplies the keystrokes. There is no autoplay clock or offscreen typing loop. */
 export function initScrollTyping(onKeystroke:()=>void=()=>{}){
- if(document.body.dataset.world!=='iznanka')return;
+ if(document.body.dataset.world!=='iznanka'||document.body.dataset.roomExperience==='true'||document.body.dataset.horrorInformation==='true')return;
  const html=document.documentElement,query=matchMedia('(prefers-reduced-motion: reduce)');
  const records=new Map<HTMLElement,TextRun>();
  const excluded='script,style,svg,canvas,video,audio,dialog,form,input,textarea,select,a,button,summary,.team-size,.site-header,.horror-photos,.horror-setting,.graphic-transcript,.graphic-objects,[data-graphic-text],.scroll-type-run,.scroll-type-caret,[aria-live],[role=status],.film-tools,.film-scroll,.passage-skip,[data-passage-caption],.touch-controls,[data-start],[data-restart],[data-replay],[data-stage],[data-team-unavailable]';
@@ -137,6 +137,7 @@ export function initScrollTyping(onKeystroke:()=>void=()=>{}){
  new MutationObserver(sync).observe(html,{attributes:true,attributeFilter:['class']});
  query.addEventListener('change',sync);document.addEventListener('visibilitychange',stop);
  window.addEventListener('scroll',scroll,{passive:true,capture:true});
+ document.addEventListener('horror:investigation-frame',()=>positionCaret(!!frame));
  window.addEventListener('resize',()=>{lastY=scrollY;lastX=scrollX;stop();});
  // A focused or hovered control is readable immediately, including before the first scroll.
  function revealControl(event:Event){

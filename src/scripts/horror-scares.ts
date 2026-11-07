@@ -10,10 +10,10 @@ export function playHorrorScare(game:HTMLElement){
  if(!video.getAttribute('src'))video.src=video.dataset.src!;
  try{video.currentTime=0}catch{}
  scene.hidden=false;scene.focus({preventScroll:true});
- scene.scrollIntoView({block:'center',behavior:'instant'});
+ if(!scene.closest('[data-room-surface]'))scene.scrollIntoView({block:'center',behavior:'instant'});
  video.muted=document.querySelector('.sound-toggle')?.getAttribute('aria-pressed')!=='true';
  const loading=setTimeout(()=>{if(video.readyState<2)closeScare?.()},12000);
- video.play().then(()=>{clearTimeout(loading);if(!scene.hidden)scene.scrollIntoView({block:'center',behavior:'instant'})}).catch(()=>{clearTimeout(loading);closeScare?.()});
+ video.play().then(()=>{clearTimeout(loading);if(!scene.hidden&&!scene.closest('[data-room-surface]'))scene.scrollIntoView({block:'center',behavior:'instant'})}).catch(()=>{clearTimeout(loading);closeScare?.()});
  return true;
 }
 export function initHorrorScares(){

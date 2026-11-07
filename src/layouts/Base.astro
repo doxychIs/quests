@@ -17,30 +17,31 @@ import '../styles/archive-library.css';
 import '../styles/media-loading.css';
 import '../styles/portal-shared.css';
 import '../styles/entry-controls.css';
-const {title='ИНОЕ — три мира квестов в Перми',description='Выберите квест: хоррор, детектив или семейное приключение. Интерактивный демонстрационный проект.',world,page='home',footer=true,cinema=false}=Astro.props as {title?:string;description?:string;world?:World;page?:string;footer?:boolean;cinema?:boolean};
+import '../styles/hub-theme.css';
+const {title='ИНОЕ — три мира квестов в Перми',description='Выберите квест: хоррор, детектив или семейное приключение. Интерактивный демонстрационный проект.',world,page='home',footer=true,cinema=false,immersive=false}=Astro.props as {title?:string;description?:string;world?:World;page?:string;footer?:boolean;cinema?:boolean;immersive?:boolean};
 ---
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-site-theme={!world?'dark':undefined}>
 <head>
- <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content={world==='ostrov'?'#075b6a':world==='arhiv'?'#243a31':world?'#101111':'#eeece6'}/><meta name="color-scheme" content={world==='iznanka'?'dark':'light'}/><title>{title}</title><link rel="icon" type="image/svg+xml" href={href('favicon.svg')}/>
- <script is:inline>try{sessionStorage.removeItem('gran-enter-horror');if(sessionStorage.getItem('gran-adult')==='yes')document.documentElement.classList.add('adult');localStorage.removeItem('gran-calm');if(localStorage.getItem('gran-motion-choice')==='reduced')document.documentElement.classList.add('calm')}catch{}</script>
+ <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content={world==='ostrov'?'#075b6a':world==='arhiv'?'#243a31':world?'#101111':'#101010'}/><meta name="color-scheme" content={!world||world==='iznanka'?'dark':'light'}/><title>{title}</title><link rel="icon" type="image/svg+xml" href={href('favicon.svg')}/>
+ <script is:inline>try{sessionStorage.removeItem('gran-enter-horror');if(sessionStorage.getItem('gran-adult')==='yes')document.documentElement.classList.add('adult');localStorage.removeItem('gran-calm');if(localStorage.getItem('gran-motion-choice')==='reduced')document.documentElement.classList.add('calm')}catch{}if(document.documentElement.hasAttribute('data-site-theme')){let theme='dark';try{if(localStorage.getItem('inoe-theme')==='light')theme='light'}catch{}document.documentElement.dataset.siteTheme=theme;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme==='light'?'#fafafa':'#101010');document.querySelector('meta[name="color-scheme"]')?.setAttribute('content',theme)}</script>
 </head>
-<body data-world={world||'hub'} data-page={!world?page:undefined} data-cinema={cinema?'horror':undefined} style={world==='iznanka'?`--horror-wall:url("${href('assets/horror-wall-v2.webp')}")`:undefined}>
+<body data-world={world||'hub'} data-page={!world?page:undefined} data-horror-information={page==='horror-information'?'true':undefined} data-cinema={cinema?'horror':undefined} data-room-experience={immersive?'true':undefined} style={world==='iznanka'?`--horror-wall:url("${href('assets/horror-wall-v2.webp')}")`:undefined}>
  {world==='iznanka'&&<GlyphDefinitions/>}
  <a href="#main" class="skip-link">Перейти к содержимому</a>
- <Header world={world}/>
+ {!immersive&&<Header world={world}/>}
  {world==='iznanka'&&<AgeGate/>}
  <div class:list={[{'restricted':world==='iznanka'}]}><main id="main"><slot/></main>{footer&&<Footer world={world}/>}</div>
  <dialog id="preferences" class="preferences" aria-labelledby="prefs-title">
   <form method="dialog"><button class="dialog-close" aria-label="Закрыть настройки">×</button></form>
   <span class="eyebrow">ВАШ ТЕМП</span><h2 id="prefs-title">Настройки впечатлений</h2>
   <label class="check"><input id="calm-setting" type="checkbox"/> Уменьшить движение</label>
-  <p class="motion-explanation">Этот режим отключает видеопролёты. Можно сразу выбирать квесты.</p>
+  <p class="motion-explanation">{immersive?'Этот режим переключает неподвижные ракурсы без движения камеры и мерцания.':'Этот режим отключает видеопролёты. Можно сразу выбирать квесты.'}</p>
   <p id="motion-system-note" hidden>Движение уменьшено в системных настройках устройства.</p>
   <label class="check"><input id="surprise-setting" type="checkbox"/> Скример в финале мини-игры «Изнанки»</label>
   <div class="sound-volume-setting"><label for="sound-volume">Громкость</label><output id="sound-volume-value" for="sound-volume">35%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="35" aria-describedby="sound-description"/></div>
   {world&&<><label class="check"><input id="music-setting" type="checkbox" checked/> {world==='arhiv'?'Фортепианная музыка':world==='ostrov'?'Мелодия укулеле':'Музыкальная шкатулка'}</label><p class="music-credit">{world==='arhiv'?<>Эрик Сати — <a href="https://commons.wikimedia.org/wiki/File:Gymnopedie_No._1..ogg" target="_blank" rel="noopener noreferrer">«Гимнопедия №1»</a></>:world==='ostrov'?<>Укулеле — <a href="https://freesound.org/people/yourliver/sounds/238076/" target="_blank" rel="noopener noreferrer">запись yourliver</a></>:<>Старая шкатулка — <a href="https://freesound.org/people/13NHarri/sounds/385953/" target="_blank" rel="noopener noreferrer">запись 13NHarri</a></>}</p></>}
-  <p id="sound-description">{world==='arhiv'?'Шелест страниц, дерево и тихое фортепиано.':world==='ostrov'?'Тихое море, укулеле, разворот карты и звуки находок.':world==='iznanka'?'Тревожная мелодия шкатулки, гул и щелчки телевизора.':'Короткие эффекты действий и тихий фон.'} Звук включается кнопкой в шапке и затихает, когда вкладка скрыта.</p>
+  <p id="sound-description">{world==='arhiv'?'Шелест страниц, дерево и тихое фортепиано.':world==='ostrov'?'Тихое море, укулеле, разворот карты и звуки находок.':world==='iznanka'?'Тревожная мелодия шкатулки, гул и щелчки телевизора.':'Короткие эффекты действий и тихий фон.'} Звук включается кнопкой «Звук» и затихает, когда вкладка скрыта.</p>
   <button id="reset-age" class="text-link">Сбросить согласие 18+</button>
  </dialog>
  <div class="route-curtain" aria-hidden="true"><span>ИНОЕ</span></div>

@@ -1,30 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {setupDOM} from './dom-harness.mjs';
+const setupRoom=(route,options)=>{const result=setupDOM(route,options);const room=result.d.querySelector('div[data-room-experience]');if(room)result.intersect(room,true);return result;};
+import {quests} from '../src/lib/data.ts';
 
-test('Все телевизоры: названия, сюжет и сведения видны без прокрутки, в том числе после повторного открытия',async()=>{
- for(const slug of ['palata-06','ne-otvechay','poslednyaya-smena','lesnik']){
-  const x=setupDOM('iznanka',{adult:true,nullCanvas:true});try{
-   for(const label of x.d.querySelectorAll('[data-crt-room] [data-scroll-graphic]'))assert.equal(label.dataset.typeState,'complete');
-   const link=x.d.querySelector(`[data-room-screen][data-quest-slug="${slug}"]`);
-   const open=()=>link.dispatchEvent(new x.w.MouseEvent('click',{bubbles:true,cancelable:true}));
-   const program=x.d.querySelector(`[data-broadcast-program="${slug}"]`),panel=x.d.querySelector('[data-broadcast-panel]');
-   for(let attempt=0;attempt<2;attempt++){
-    open();await Promise.resolve();await Promise.resolve();
-    assert.equal(panel.hidden,false);assert.equal(program.hidden,false);
-    assert.ok(program.querySelector('h2 [data-letter]'));
-    assert.ok(program.querySelector('.broadcast-synopsis [data-letter]'));
-    assert.equal(program.querySelectorAll('[data-type-hidden]').length,0,slug);
-    for(const tab of ['info','place','story']){
-     program.querySelector(`[data-broadcast-tab="${tab}"]`).click();
-     const pane=program.querySelector(`[data-broadcast-pane="${tab}"]`);
-     assert.equal(pane.hidden,false);assert.equal(pane.querySelectorAll('[data-type-hidden]').length,0);
-     assert.ok(pane.querySelector('[data-graphic-text][data-type-state="complete"]'));
-    }
-    x.d.querySelector('[data-broadcast-close]').click();await Promise.resolve();
-    assert.equal(panel.hidden,true);
+test('Тексты ТВ читаются сразу, вкладки не зависят от внешней прокрутки, масштаб текста управляется отдельно',()=>{
+ const x=setupRoom('iznanka',{adult:true});try{
+  for(const q of quests.filter(quest=>quest.world==='iznanka')){
+   const surface=x.d.querySelector(`[data-room-quest="${q.slug}"]`);
+   assert.ok(surface.querySelector('h2 [data-graphic-text]'));
+   assert.ok(surface.querySelector('[data-room-pane="story"]').textContent.includes(q.story));
+   assert.ok(surface.querySelector('[data-room-pane="story"]').textContent.includes(q.task));
+   for(const tab of ['details','place','story']){
+    surface.querySelector(`[data-room-tab="${tab}"]`).click();
+    const pane=surface.querySelector(`[data-room-pane="${tab}"]`);
+    assert.equal(pane.hidden,false);
+    assert.equal(pane.querySelectorAll('[data-type-hidden]').length,0);
+    assert.equal(pane.querySelectorAll('.scroll-type-run').length,0,'Интерактивный экран не ждёт прокрутки страницы');
    }
-   assert.deepEqual(x.errors,[]);
-  }finally{x.close()}
- }
+   const readable=surface.querySelector('[data-room-readability]');readable.click();
+   assert.equal(readable.getAttribute('aria-pressed'),'true');assert.ok(surface.classList.contains('room-readable'));
+   readable.click();assert.equal(readable.getAttribute('aria-pressed'),'false');
+  }
+  assert.equal(x.d.querySelectorAll('[data-room-tv-content] [data-type-hidden]').length,0);
+  assert.deepEqual(x.errors,[]);
+ }finally{x.close()}
 });

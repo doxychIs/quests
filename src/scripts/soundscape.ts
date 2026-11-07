@@ -1,10 +1,13 @@
 import type {SoundCue} from './sound-cues';
 import {createRecordedAudio} from './recorded-audio';
+export type RoomAmbience={kind:'light'|'cloth'|'pipe'|'step';strength?:number;pan?:number};
 export function createSoundscape(world:string,base='/'){
  let context:AudioContext|null=null,volume:GainNode|null=null;
  let enabled=false,keyBuffer:AudioBuffer|null=null,keyFilter:BiquadFilterNode|null=null,lastKey=-Infinity;
  let level=.35,noiseBuffer:AudioBuffer|null=null,suspendTimer:ReturnType<typeof setTimeout>|null=null;
  const lastCue=new Map<SoundCue,number>();let lastEffect=-Infinity;
+ let roomNoise:AudioBuffer|null=null,lastRoom=-Infinity;
+ const roomTimes=new Map<RoomAmbience['kind'],number>(),roomVoices=new Set<{source:AudioScheduledSourceNode;release:()=>void}>();
  let recordings:ReturnType<typeof createRecordedAudio>=null,music=true,astral=false,astralFilter:BiquadFilterNode|null=null,lastScan=-Infinity;
  function build(){
   if(context&&context.state!=='closed')return;
@@ -16,6 +19,10 @@ export function createSoundscape(world:string,base='/'){
   noiseBuffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.22),ctx.sampleRate);
   const effectNoise=noiseBuffer.getChannelData(0);for(let i=0;i<effectNoise.length;i++)effectNoise[i]=Math.random()*2-1;
   if(world==='iznanka'){
+   // Более длинная непетлевая подложка: ткань должна затихать, а не обрываться как щелчок UI.
+   roomNoise=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*1.3),ctx.sampleRate);
+   const roomSamples=roomNoise.getChannelData(0);let drift=0;
+   for(let i=0;i<roomSamples.length;i++){const white=Math.random()*2-1;drift=(drift+white*.035)/1.03;roomSamples[i]=white*.7+drift*.7;}
    keyBuffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.036),ctx.sampleRate);
    const samples=keyBuffer.getChannelData(0);
    for(let i=0;i<samples.length;i++){
@@ -44,6 +51,7 @@ export function createSoundscape(world:string,base='/'){
    if(on){build();if(context!.state!=='running')void context!.resume().catch(()=>{});if(!wasEnabled||volume!.gain.value===0)volume!.gain.setTargetAtTime(level*(astral?.64:1),context!.currentTime,.18);recordings?.setActive(true,music)}
    else if(context&&volume&&context.state!=='closed'){
     recordings?.setActive(false,music);
+    clearRoomVoices();
     volume.gain.setTargetAtTime(0,context.currentTime,.035);
     const ctx=context;suspendTimer=setTimeout(()=>{if(!enabled&&ctx.state==='running')void ctx.suspend().catch(()=>{});},180);
    }
@@ -83,6 +91,43 @@ export function createSoundscape(world:string,base='/'){
   const tap=context.createBufferSource(),gain=context.createGain();tap.buffer=keyBuffer;tap.playbackRate.value=.9+Math.random()*.18;
   gain.gain.value=.025+Math.random()*.008;tap.connect(gain).connect(keyFilter);tap.onended=()=>{tap.disconnect();gain.disconnect();};tap.start();
  }
- function stop(){enabled=false;if(suspendTimer)clearTimeout(suspendTimer);suspendTimer=null;recordings?.stop();recordings=null;if(context)void context.close().catch(()=>{});context=null;volume=null;keyBuffer=null;keyFilter=null;astralFilter=null;noiseBuffer=null;lastKey=-Infinity;lastScan=-Infinity;lastEffect=-Infinity;lastCue.clear();}
- return{set,stop,type,cue,setVolume,setMusic,setAstral,scan,state:()=>context?.state||'closed'};
+ function roomVoice(source:AudioScheduledSourceNode,amplitude:number,duration:number,pan:number,attack:number,filter?:BiquadFilterNode){
+  const ctx=context!,gain=ctx.createGain(),now=ctx.currentTime;
+  const panner=typeof ctx.createStereoPanner==='function'?ctx.createStereoPanner():null;
+  if(panner)panner.pan.value=pan;
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(amplitude,now+attack);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  if(filter)source.connect(filter).connect(gain);else source.connect(gain);
+  if(panner)gain.connect(panner).connect(volume!);else gain.connect(volume!);
+  let released=false;
+  const voice={source,release(){if(released)return;released=true;source.onended=null;source.disconnect();filter?.disconnect();gain.disconnect();panner?.disconnect();roomVoices.delete(voice)}};
+  roomVoices.add(voice);source.onended=voice.release;source.start(now);source.stop(now+duration+.015);
+ }
+ function room(event:RoomAmbience){
+  if(world!=='iznanka'||!enabled||document.hidden||level===0||context?.state!=='running'||!roomNoise)return;
+  if(!event||!['light','cloth','pipe','step'].includes(event.kind))return;
+  const now=context.currentTime,kind=event.kind;
+  // Шаги связаны с движением камеры; остальные события редки даже при ошибочном повторном dispatch.
+  if(now-lastRoom<.23||now-(roomTimes.get(kind)??-Infinity)<(kind==='step'?.34:kind==='light'?1.5:2.5)||roomVoices.size>2)return;
+  const strength=Number.isFinite(event.strength)?Math.max(0,Math.min(1,event.strength!)):.7;
+  if(strength===0)return;
+  const pan=Number.isFinite(event.pan)?Math.max(-.85,Math.min(.85,event.pan!)):0;
+  lastRoom=now;roomTimes.set(kind,now);
+  const quiet=.35+.65*strength;
+  const noise=(frequency:number,amplitude:number,duration:number,attack:number,q=.6)=>{
+   const source=context!.createBufferSource(),filter=context!.createBiquadFilter();source.buffer=roomNoise;
+   filter.type='bandpass';filter.frequency.value=frequency;filter.Q.value=q;
+   roomVoice(source,amplitude*quiet,duration,pan,attack,filter);
+  };
+  const metal=(frequency:number,amplitude:number,duration:number)=>{
+   const source=context!.createOscillator();source.type='sine';source.frequency.value=frequency;
+   source.frequency.setTargetAtTime(frequency*.96,now,.09);roomVoice(source,amplitude*quiet,duration,pan,.006);
+  };
+  if(kind==='cloth'){noise(850+Math.random()*400,.032,.82+Math.random()*.24,.08,.48);return}
+  if(kind==='light'){noise(2100+Math.random()*500,.012,.085,.003,1.4);metal(99+Math.random()*4,.014,.24);return}
+  if(kind==='pipe'){const frequency=165+Math.random()*45;metal(frequency,.02,.78);metal(frequency*2.61,.008,.46);return}
+  noise(140+Math.random()*65,.027,.19,.009,.7);metal(54+Math.random()*10,.016,.17);
+ }
+ function clearRoomVoices(){for(const voice of [...roomVoices]){try{voice.source.stop()}catch{}voice.release()}}
+ function stop(){enabled=false;if(suspendTimer)clearTimeout(suspendTimer);suspendTimer=null;clearRoomVoices();recordings?.stop();recordings=null;if(context)void context.close().catch(()=>{});context=null;volume=null;keyBuffer=null;keyFilter=null;astralFilter=null;noiseBuffer=null;roomNoise=null;lastKey=-Infinity;lastScan=-Infinity;lastEffect=-Infinity;lastRoom=-Infinity;lastCue.clear();roomTimes.clear();}
+ return{set,stop,type,cue,room,setVolume,setMusic,setAstral,scan,state:()=>context?.state||'closed'};
 }

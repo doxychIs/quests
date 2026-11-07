@@ -49,7 +49,7 @@ test('Телефон и экономия трафика выбирают лёг�
  }finally{x.close()}}
 });
 test('Заставка: выход доступен до загрузки; готовность закрывает её, спокойный режим не запрашивает видео',()=>{
- for(const route of ['arhiv','ostrov','iznanka']){
+ for(const route of ['arhiv','ostrov']){
   const x=setupDOM(route,{adult:route==='iznanka'});try{
    const dialog=x.d.querySelector('[data-page-loader]');assert.ok(dialog);assert.ok(dialog.querySelector('[data-load-skip]'));
    for(const v of x.d.querySelectorAll('[data-hero-video],[data-horror-film],[data-scroll-film],[data-passage-film]')){Object.defineProperty(v,'readyState',{value:2});v.dispatchEvent(new x.w.Event('loadeddata'))}

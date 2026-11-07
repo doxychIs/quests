@@ -1,0 +1,147 @@
+html body[data-room-experience=true]{background:#070b0c;overflow-x:clip}
+html body[data-room-experience=true] main{padding:0!important}
+.room-experience{position:relative;height:2550svh;min-height:100svh;background:#080c0e;isolation:isolate}
+.room-scroll-anchor{position:absolute;left:0;width:1px;height:1px;pointer-events:none}
+.room-stage{position:sticky;top:0;height:100svh;min-height:320px;overflow:hidden;background:#070c0e}
+.room-stage>[data-room-canvas],.room-poster,.room-camera-vignette,.room-projector{position:absolute;inset:0;width:100%;height:100%}
+.room-stage>[data-room-canvas]{display:block;opacity:0;image-rendering:pixelated}
+.room-poster{object-fit:cover;image-rendering:pixelated;filter:brightness(.43) saturate(.48)}
+[data-room-ready=true] .room-stage>[data-room-canvas]{opacity:1}
+[data-room-ready=true] .room-poster{visibility:hidden}
+.room-camera-vignette{pointer-events:none;box-shadow:inset 0 0 9vw #0005;background:linear-gradient(0deg,#03080b55,transparent 17%,transparent 90%,#03080b22);z-index:1}
+.room-projector{pointer-events:none;z-index:2;overflow:hidden}
+.room-experience[data-room-mode="3d"] .room-tv-content>.room-surface,.room-screen-hit{position:absolute!important;top:0;left:0;transform-origin:0 0;will-change:transform;pointer-events:auto;border-radius:7% / 9%;backface-visibility:hidden}
+.room-experience[data-room-mode="3d"] .room-tv-content>.room-surface{box-shadow:inset 0 0 24px 8px #000b;user-select:text}
+.room-screen-hit{width:960px;height:690px;padding:0;border:0;background:transparent;outline-offset:-20px;cursor:pointer;visibility:hidden;color:#c9c8b1}
+.room-screen-hit>span{position:absolute;inset:auto 35px 35px;font:22px/1.6 var(--pixel);opacity:0;padding:16px;background:#0b110bba;border:1px solid #87937977}
+.room-screen-hit:is(:hover,:focus-visible)>span{opacity:1}
+.room-screen-hit:focus-visible{outline:5px solid #a1b49a}
+.room-utility{position:absolute;left:22px;right:22px;bottom:18px;display:flex;align-items:center;gap:21px;z-index:10;pointer-events:auto;font:11px/1.6 var(--terminal,monospace);color:#95a29b;text-shadow:0 1px 4px #000}
+html body[data-world=iznanka] .room-utility :is(button,a,summary){font:11px/1.6 var(--terminal,monospace);color:#9da99e;min-height:36px;padding:8px 0;background:none;border:0;text-decoration:none;cursor:pointer;letter-spacing:0}
+.room-utility :is(button,a,summary):hover{color:#d3dbc9!important}.room-utility :is(button,a,summary):focus-visible{outline:1px solid #bacab0;outline-offset:4px}
+.room-utility .motion-toggle>span{font:inherit!important}
+.room-utility .sound-label{display:inline!important;font:inherit}
+.room-directory{margin-left:auto;position:relative}.room-directory>summary{list-style:none}.room-directory>summary::-webkit-details-marker{display:none}
+.room-directory nav{position:absolute;bottom:43px;right:0;display:flex;flex-direction:column;min-width:230px;padding:14px 22px;background:#0a110feF;border:1px solid #57685b66;box-shadow:0 10px 40px #0009}
+.room-directory:not([open]) nav{display:none}
+.room-loading{position:absolute;inset:42% 10% auto;z-index:3;text-align:center;font:13px/2 var(--pixel,monospace);color:#bbc6b4;text-shadow:0 2px 5px #000}
+.room-loading button{display:block;margin:20px auto;font:inherit;min-height:44px;padding:8px 15px;border:1px solid #83927a;background:#101a16e6}
+[data-room-ready=true] .room-loading{display:none}
+.room-scroll-guidance{position:absolute;bottom:75px;left:20px;right:20px;z-index:3;text-align:center;font:11px/1.8 var(--terminal,monospace);color:#929e94;pointer-events:none;text-shadow:0 1px 6px #000}
+.room-experience:not([data-room-stage-active=entry]) .room-scroll-guidance{display:none}
+.room-experience:not([data-room-mode=fallback]):not([data-room-ready=true]) .room-tv-content,.room-experience:not([data-room-ready=true]) .room-hit-layer{visibility:hidden}
+/* Functional exception for unavailable WebGL: the very same contents remain usable. */
+.room-experience[data-room-mode=fallback]{height:auto;min-height:100svh;padding-top:80px;background:#080e0c}
+.room-experience[data-room-mode=fallback] .room-stage{position:relative;height:auto;overflow:visible;min-height:100svh;background:none}
+.room-experience[data-room-mode=fallback] :is([data-room-canvas],.room-poster,.room-camera-vignette,.room-hit-layer,.room-loading,.room-scroll-guidance,.room-scroll-anchor){display:none}
+.room-experience[data-room-mode=fallback] .room-utility{position:fixed;top:0;bottom:auto;background:#07100ff5;padding:12px 18px;left:0;right:0}
+.room-experience[data-room-mode=fallback] .room-projector{position:relative;height:auto;overflow:visible;pointer-events:auto}
+.room-experience[data-room-mode=fallback] .room-tv-content>.room-surface{position:relative!important;width:min(960px,calc(100vw - 32px));height:690px;margin:24px auto 60px;transform:none!important;visibility:visible!important;pointer-events:auto}
+.room-noscript{padding:40px;position:relative;background:#0b1511}.room-noscript a{display:block;padding:15px}
+@media(max-width:760px){
+ .room-utility{left:13px;right:13px;bottom:10px;display:grid;grid-template-columns:auto 1fr auto;column-gap:12px;row-gap:0}
+ html body[data-world=iznanka] .room-utility :is(button,a,summary){font-size:10px;min-height:38px}
+ .room-utility>.sound-toggle{justify-self:start}.room-utility>.settings-toggle{justify-self:end}
+ .room-utility>.room-directory{grid-column:1/-1;justify-self:end;margin-left:0}
+ .room-utility>.motion-toggle{display:none}.room-scroll-guidance{bottom:104px;font-size:10px;max-width:270px;margin-inline:auto}
+ .room-experience[data-room-mode=fallback] .room-tv-content>.room-surface{height:min(760px,90svh);padding:20px!important;--screen-text-size:16px;font-size:15px}
+ .room-experience[data-room-mode=fallback] .room-tv-content .room-screen-header h2{font-size:20px!important}
+ .room-experience[data-room-mode=fallback] .room-tv-content :is(button,a){font-size:13px!important;min-height:40px}
+ .room-experience[data-room-mode=fallback] .room-tv-content .room-screen-tabs{gap:4px}
+}
+@media(prefers-reduced-motion:reduce){.room-screen-hit,.room-surface{will-change:auto!important}}
+
+.room-experience[data-room-mode="3d"] .room-tv-content>.room-wall-board,.room-screen-hit[data-room-open="team"]{border-radius:0}
+
+/* The projected DOM is the input/accessibility layer. Its visual content lives
+   in the same PBR texture before lighting and the pixel pass, even while reading. */
+.room-experience[data-room-textures=true] .room-tv-content>.room-surface{opacity:.001!important;box-shadow:none!important}
+.room-experience[data-room-mode="3d"] .room-tv-content>:is(.room-wall-board,.room-info){border-radius:0}
+.room-site-header{position:absolute;top:14px;left:22px;right:22px;z-index:10;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;color:#9caaa4;text-shadow:0 2px 5px #000}
+html body[data-world=iznanka] .room-site-header a{color:#a4b0a9;font:12px/1.6 var(--terminal,monospace);text-decoration:none;letter-spacing:0;min-height:36px;padding:4px 0}
+html body[data-world=iznanka] .room-site-header .room-brand{font-size:20px;color:#9e6466;line-height:1.3}
+.room-brand span{display:block;font-size:9px;line-height:1.8;color:#87988f;margin-top:3px}
+.room-site-header nav{display:flex;gap:24px;align-items:center}
+.room-site-header a:focus-visible{outline:1px solid #9caaa4;outline-offset:5px}
+.room-experience[data-room-mode=fallback] .room-site-header{position:relative;top:auto;left:auto;right:auto;margin:0 20px 30px}
+@media(max-width:760px){.room-site-header{left:13px;right:13px;top:10px;gap:12px}.room-site-header nav{gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:210px}html body[data-world=iznanka] .room-site-header nav a{font-size:9px;min-height:28px}html body[data-world=iznanka] .room-site-header .room-brand{font-size:15px}.room-brand span{font-size:7px}}
+
+@media(max-width:760px){
+ .room-site-header{display:grid;grid-template-columns:1fr;gap:5px}
+ .room-site-header .room-brand span{display:none}
+ .room-site-header nav{display:grid;grid-template-columns:1fr 1fr;max-width:none;width:100%;gap:2px 15px;justify-content:start}
+ html body[data-world=iznanka] .room-site-header nav a{font-size:10px;min-height:28px;padding:3px 0}
+ html body[data-world=iznanka] [data-room-experience][data-room-compact=true] .room-tv-content .room-wall-board h2{font-size:32px}
+}
+/* The lamp switch belongs to the cinema stop; no controls cover the ward. */
+.room-projector-switch{display:none;position:absolute;bottom:78px;right:24px;z-index:11;font:13px/1.5 var(--terminal,monospace);color:#b7bc9f;background:#17211cdd;border:1px solid #727b5f;min-height:44px;padding:10px 17px;cursor:pointer}
+[data-room-mode="3d"][data-room-stage-active=gallery] .room-projector-switch{display:block}
+.room-projector-switch:focus-visible{outline:2px solid #b7bc9f;outline-offset:4px}
+@media(max-width:760px){.room-projector-switch{bottom:101px;right:13px;font-size:12px}.room-site-header nav{grid-template-columns:repeat(3,1fr);gap:2px 8px}}
+/* The projection is a photograph on cloth. Its semantic hit plane has no
+   visible headings, captions or controls in 3D; HTML fallback keeps them. */
+[data-room-mode="3d"] .room-tv-content .room-projection-content{padding:0!important;background:transparent}
+[data-room-mode="3d"] .room-tv-content .room-projection-content>:not(.room-gallery-track){display:none!important}
+[data-room-mode="3d"] .room-tv-content .room-projection-content .room-gallery-track{height:100%;flex:1;background:transparent}
+[data-room-mode="3d"] .room-tv-content .room-projection-content .room-gallery-track figure{height:100%}
+[data-room-mode="3d"] .room-tv-content .room-projection-content :is(figcaption,.room-image-enlarge){display:none!important}
+[data-room-mode="3d"] .room-tv-content .room-projection-content .room-gallery-image{height:100%;flex:1;border:0;padding:0}
+[data-room-mode="3d"] .room-tv-content .room-projection-content[data-room-projector-on=false] .room-gallery-track{display:none}
+.room-film-controls{display:none;position:absolute;bottom:78px;left:24px;z-index:11;align-items:center;gap:16px;font:13px/1.5 var(--terminal,monospace);color:#b7c0b8}
+[data-room-mode="3d"][data-room-stage-active=gallery] .room-film-controls{display:flex}
+html body[data-world=iznanka] .room-film-controls button{font:inherit;color:inherit;background:#101916dc;border:1px solid #64786b88;min-height:44px;padding:9px 16px;cursor:pointer}
+html body[data-world=iznanka] .room-film-controls button:focus-visible{outline:2px solid #c0cabd;outline-offset:3px}
+html body[data-world=iznanka] .room-original-viewer{position:fixed;inset:0;width:min(1380px,96vw);max-width:96vw;height:min(1040px,94svh);max-height:94svh;margin:auto;padding:48px 20px 18px;background:#080b0c;color:#c0c8c2;border:1px solid #657269;overflow:auto;z-index:1000;box-sizing:border-box;filter:none;image-rendering:auto;box-shadow:0 12px 80px #000}
+.room-original-viewer::backdrop{background:#020405ed}
+html body[data-world=iznanka] .room-original-viewer [data-room-original-image]{display:block;width:100%;height:calc(100% - 116px);min-height:150px;max-width:100%;object-fit:contain;filter:none!important;image-rendering:auto!important;opacity:1;mix-blend-mode:normal}
+html body[data-world=iznanka] .room-original-viewer h2{position:absolute;top:16px;left:20px;margin:0;font:14px/1.4 monospace;color:#b8c3bb}
+.room-original-viewer form{position:absolute;top:8px;right:16px}
+html body[data-world=iznanka] .room-original-viewer button{color:#c1cbc4;background:#19231f;border:1px solid #6e8174;padding:9px 16px;font:14px/1.5 monospace;min-height:40px;cursor:pointer}
+html body[data-world=iznanka] .room-original-viewer :is(p,a,small){font:13px/1.6 monospace;letter-spacing:0;text-transform:none;color:#a5b3aa;max-width:none;filter:none}
+.room-original-viewer p{margin:10px 0 5px}.room-original-viewer a{display:inline-block;text-decoration:underline;padding:4px 0}.room-original-viewer small{display:block}
+@media(max-width:760px){.room-film-controls{left:13px;bottom:101px;gap:10px;font-size:11px}.room-film-controls button{padding:8px!important;min-height:42px!important}.room-experience .room-projector-switch{bottom:153px;font-size:11px}.room-original-viewer{padding-inline:10px!important}}
+html body[data-world=iznanka][data-cinema=horror] .maze-game .scare-overlay video{filter:brightness(.9) saturate(.55);object-fit:contain;animation:none}
+/* Room anchors are camera stops, not headings below a conventional fixed header. */
+html:has(body[data-room-experience=true]){scroll-padding-top:0}
+/* The same CRT broadcast remains on the glass when the camera moves closer. */
+.room-broadcast-image{display:none}
+[data-room-mode="3d"][data-room-broadcast-view=image] .room-tv-content .room-quest>:not(.room-broadcast-image){display:none!important}
+[data-room-mode="3d"][data-room-broadcast-view=image] .room-tv-content .room-quest .room-broadcast-image{display:block;position:absolute;inset:0;width:100%;height:100%;padding:0;background:transparent;border:0;cursor:zoom-in}
+.room-broadcast-image .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.room-broadcast-controls{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:12;display:flex;align-items:center;justify-content:center;gap:10px;max-width:calc(100% - 38px)}
+.room-broadcast-controls[hidden]{display:none}
+html body[data-world=iznanka] .room-broadcast-controls :is(a,button){font:12px/1.6 var(--terminal,monospace);color:#adb8aa;background:#101a16e8;border:1px solid #73847166;padding:10px 14px;min-height:44px;white-space:nowrap;cursor:pointer}
+html body[data-world=iznanka] .room-broadcast-controls :is(a,button):focus-visible{outline:2px solid #b3bfa6;outline-offset:3px}
+.room-camera-power{position:absolute;top:76px;right:24px;z-index:12;min-height:44px;padding:9px 14px;border:1px solid #7c897577;background:#152019e6;color:#aebaa7;font:12px/1.6 var(--terminal,monospace);cursor:pointer}
+.room-camera-power[aria-pressed=true]{background:#0d1511c9;color:#8f9c8a;border-color:#56625177}
+.room-experience:not([data-room-ready=true]) .room-camera-power,.room-experience[data-room-mode=fallback] :is(.room-camera-power,.room-camcorder,.room-broadcast-controls){display:none!important}
+.room-camcorder{position:absolute;inset:78px 24px 86px;z-index:8;pointer-events:none;opacity:0;visibility:hidden;color:#9aa99b;filter:drop-shadow(1px 0 #3e9e8d44) drop-shadow(-1px 0 #973d4d33);font:13px/1.5 var(--terminal,monospace)}
+[data-room-camera=true] .room-camcorder{opacity:.86;visibility:visible}
+.room-camcorder>i{position:absolute;width:34px;height:30px;border:1px solid #a5b2a299}
+.room-camcorder>i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.room-camcorder>i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.room-camcorder>i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.room-camcorder>i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.room-camera-rec{position:absolute;top:8px;left:14px;letter-spacing:.04em}.room-camera-rec b{display:inline-block;width:7px;height:7px;background:#a83c46;border-radius:50%;margin-right:6px;box-shadow:0 0 4px #8d28334d}.room-camera-rec small{font:inherit;opacity:.6;margin-left:10px}
+.room-camera-tape{position:absolute;bottom:8px;left:14px;opacity:.65;font-size:10px;letter-spacing:.07em}.room-camera-battery{position:absolute;bottom:8px;right:14px;opacity:.72}
+[data-room-camera=true][data-room-camera-lifting=true] .room-camcorder{animation:room-camera-lift .76s cubic-bezier(.22,.7,.25,1) both}
+@keyframes room-camera-lift{0%{transform:translateY(68vh) rotate(-5deg) scale(1.05);opacity:.15}70%{transform:translateY(-1vh) rotate(.4deg);opacity:.8}100%{transform:none;opacity:.86}}
+@media(max-width:760px){.room-camera-power{top:109px;right:15px;font-size:10px;min-height:36px;padding:7px 9px}.room-camcorder{inset:112px 15px 106px;font-size:11px}.room-camcorder>i{width:23px;height:24px}.room-camera-rec{top:7px;left:10px}.room-camera-rec small{margin-left:4px}.room-camera-tape{font-size:8px;left:9px}.room-broadcast-controls{bottom:105px;display:grid;grid-template-columns:1fr 1fr;width:calc(100% - 40px);gap:6px}html body[data-world=iznanka] .room-broadcast-controls :is(a,button){font-size:10px;min-height:38px;padding:8px;text-align:center}}
+@media(prefers-reduced-motion:reduce){.room-camcorder{animation:none!important}}
+html.calm .room-camcorder{animation:none!important}
+
+/* Keep the active camera control outside the important part of the broadcast. */
+.room-camera-power[aria-pressed=true]{top:51px;min-height:28px;font-size:10px;padding:5px 9px}
+@media(max-width:760px){.room-camera-power[aria-pressed=true]{top:78px;font-size:9px;min-height:27px;padding:5px 8px}}
+/* Tape indicators stay above the film and television controls. */
+.room-camera-tape{top:8px;bottom:auto;left:153px}
+.room-camera-battery{top:8px;bottom:auto}
+@media(max-width:760px){.room-camera-tape{top:8px;bottom:auto;left:124px;font-size:7px}}
+/* Keep the alternative page visible in the header, outside the 3D projection. */
+.room-header-links{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+html body[data-world=iznanka] .room-site-header .room-information-version{font:10px/1.6 var(--terminal,monospace);min-height:30px;padding:4px 10px;border:1px solid #6875706b;border-radius:2px;background:#0b1216b8;color:#a8b4ac}
+@media(max-width:760px){.room-header-links{align-items:flex-end}.room-site-header .room-header-links nav{display:flex;flex-wrap:wrap;width:auto;max-width:230px}.room-site-header .room-header-links{justify-self:end}}
+@media(max-width:420px){.room-site-header{grid-template-columns:1fr}.room-site-header .room-header-links{justify-self:stretch;align-items:stretch}.room-site-header .room-header-links nav{max-width:none;justify-content:space-between}.room-site-header .room-information-version{align-self:flex-end}}
+/* The alternate page and camera must remain separate hit targets on narrow screens. */
+.room-camera-power{top:94px}
+@media(max-width:760px){.room-camera-power{top:152px}}

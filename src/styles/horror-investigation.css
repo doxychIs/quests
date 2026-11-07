@@ -1,0 +1,41 @@
+.horror-investigation{position:relative;isolation:isolate;background:#080d10}
+.investigation-setting{display:none}
+html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] .investigation-setting{display:block;position:sticky;top:0;height:100svh;margin-bottom:-100svh;overflow:hidden;pointer-events:none;z-index:0;background:#080d10}
+.investigation-setting .ward-fallback,.investigation-setting .ward-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.investigation-setting .ward-fallback{object-fit:cover}
+.investigation-setting .ward-canvas{opacity:0}
+.horror-investigation[data-ward-state=ready] .ward-canvas{opacity:1}
+.horror-investigation[data-ward-state=ready] .ward-fallback{visibility:hidden}
+.investigation-shadows{position:absolute;inset:0;background:linear-gradient(90deg,#04090bd9 0,#04090b85 33%,#04090b0d 72%,transparent),linear-gradient(0deg,#03090b77,transparent 25%,transparent 80%,#03090b33);box-shadow:inset 0 0 5vw #0004}
+.investigation-exposure{position:absolute;inset:0;background:#000;opacity:var(--room-exposure,0)}
+.investigation-chapter{position:relative;min-height:calc(var(--chapter-height,100svh) + 52svh);z-index:1}
+.investigation-chapter[data-investigation-chapter=ward]{min-height:calc(var(--chapter-height,100svh) + 100svh)}
+.investigation-chapter.is-tall{min-height:var(--chapter-height,100svh)}
+.investigation-frame{position:sticky;top:0;min-height:100svh;opacity:var(--chapter-opacity,1);transform:translate3d(0,var(--chapter-drift,0px),0)}
+.is-tall>.investigation-frame{position:relative}
+/* Keep the same content, controls and pictures; only their surrounding room changes. */
+html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] :is(.horror-editorial,.horror-photos,.trial-iznanka,.horror-afterword){background:none;min-height:100svh}
+html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] :is(.horror-editorial-photo,.horror-editorial:before,.horror-afterword>img,.horror-afterword:before){visibility:hidden}
+html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] .horror-editorial{align-items:center;overflow:visible}
+html body[data-world=iznanka] .horror-investigation .horror-editorial-copy{max-width:820px;padding-block:80px}
+html body[data-world=iznanka] .horror-investigation .horror-editorial h2{font-size:clamp(30px,4vw,52px);line-height:1.35}
+html body[data-world=iznanka] .horror-investigation .horror-editorial-copy>p{max-width:560px;font-size:14px;line-height:1.95;margin:20px 0 24px}
+html body[data-world=iznanka] .horror-investigation .photo-gallery-heading{border-color:#63716d50}
+html body[data-world=iznanka] .horror-investigation .horror-photos:before{display:none}
+html body[data-world=iznanka] .horror-investigation .photo-tv-body{filter:drop-shadow(0 18px 28px #000a)}
+html body[data-world=iznanka] .horror-investigation .horror-afterword-copy{width:min(100%,790px);padding-block:100px}
+html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] .horror-briefing{min-height:100svh;align-items:center;background:#080d10bf;border-color:#52605b40}
+/* Static motion preference and no-JS fallback retain the original readable blocks. */
+html body[data-world=iznanka] .horror-investigation[data-investigation-static=true] .investigation-setting{display:none}
+.horror-investigation[data-investigation-static=true] .investigation-chapter{min-height:0}
+.horror-investigation[data-investigation-static=true] .investigation-frame{position:relative;min-height:0;transform:none;opacity:1}
+html body[data-world=iznanka] .horror-investigation[data-investigation-static=true] :is(.horror-editorial-photo,.horror-editorial:before,.horror-afterword>img,.horror-afterword:before){visibility:visible}
+@media(max-width:760px){
+ .investigation-chapter{min-height:calc(var(--chapter-height,100svh) + 30svh)}
+ .investigation-shadows{background:linear-gradient(0deg,#03090b55,transparent 38%,#03090b15)}
+ html body[data-world=iznanka] .horror-investigation .horror-editorial-copy{padding:112px 26px 80px}
+ html body[data-world=iznanka] .horror-investigation .horror-editorial-copy>p{font-size:12px;line-height:2.1}
+ html body[data-world=iznanka] .horror-investigation .horror-afterword-copy{padding:88px 24px}
+ html body[data-world=iznanka] .horror-investigation[data-investigation-ready=true] .horror-briefing{background:#080d10df}
+}
+@media(prefers-reduced-motion:reduce){.investigation-setting{display:none!important}.investigation-chapter,.investigation-chapter[data-investigation-chapter=ward]{min-height:0}.investigation-frame{position:relative;transform:none;opacity:1}}

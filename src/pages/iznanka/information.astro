@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import {quests,href} from '../../lib/data';
+import '../../styles/horror-information.css';
+const horrorQuests=quests.filter(q=>q.world==='iznanka');
+---
+<Base world="iznanka" page="horror-information" title="Изнанка — квесты, команда и правила | ИНОЕ" description="Четыре хоррор-квеста: сюжеты, возраст, количество игроков и длительность. Информационная версия Изнанки без 3D.">
+ <section class="story-hero horror-info-hero" aria-labelledby="horror-info-title">
+  <video data-lazy-video data-src={href('assets/horror-hero.mp4?v=20261019')} data-src-mobile={href('assets/horror-hero-mobile.mp4?v=20261019')} poster={href('assets/horror-hero-poster.jpg?v=20261019')} muted loop playsinline preload="none" width="1280" height="720" aria-label="Пустой больничный коридор"></video>
+  <div class="horror-info-intro"><p>Хоррор и перформанс · 18+</p><h1 id="horror-info-title">ИЗНАНКА</h1><p>Четыре квеста о том, что лучше оставить за закрытой дверью.</p><a href="#quests" class="horror-info-button">Выбрать квест</a></div>
+  <button type="button" class="horror-info-video-toggle" data-hero-video-pause aria-pressed="false">Пауза видео</button><span data-hero-video-state role="status"></span>
+  <a class="horror-info-version" href={href('iznanka/')}>Открыть 3D-комнату</a>
+ </section>
+ <section class="horror-info-catalog" id="quests" aria-labelledby="horror-catalog-title"><header><h2 id="horror-catalog-title">Квесты</h2><p>Выберите сюжет и состав команды.</p></header>
+  <div class="horror-info-quests">{horrorQuests.map(q=><article><div class="horror-info-quest-name"><p>{q.genre}</p><h3>{q.name}</h3><p>{q.players.join('–')} игроков · {q.duration} минут · {q.age}</p></div><div class="horror-info-quest-copy"><p>{q.synopsis}</p><p>{q.task}</p><div class="horror-info-quest-links"><a class="horror-info-button" href={href(`iznanka/quests/${q.slug}/`)}>Подробнее о квесте</a><a href={href(`iznanka/book/${q.slug}/`)}>Выбрать сеанс</a></div></div></article>)}</div>
+ </section>
+ <section class="horror-info-practical" id="rules" aria-labelledby="horror-info-rules"><h2 id="horror-info-rules">Перед входом</h2><div><h3>С кем идти</h3><p>«Палата 06» — 2–5 игроков. «Не отвечай» — 2–4. «Последняя смена» — 3–6. «Лесник» — 2–6. Все квесты предназначены для совершеннолетних.</p><h3>Как проходит игра</h3><p>Внимание, разговор с командой и работа с подсказками важнее силы. Можно остановить игру в любой момент. Особенности каждого сценария указаны на его странице.</p><h3>Об этом сайте</h3><p>Это демонстрационный проект. Реальная площадка, сеансы и оплата пока не подключены. Форма записи позволяет проверить выбор квеста и команды.</p><a href={href('rules/')}>Все правила участия</a></div></section>
+</Base>

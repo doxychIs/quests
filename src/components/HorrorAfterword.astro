@@ -7,7 +7,7 @@ const horrorQuests=quests.filter(q=>q.world==='iznanka');
  <img src={asset('horror-forest-v2')} alt="Дверь лесной сторожки открыта в ночной лес" loading="lazy" width="1536" height="1024"/>
  <div class="horror-afterword-copy">
   <h2 id="team-title"><GraphicText text="Соберите" variant="title" flicker/><br/><GraphicText text="команду." variant="blood" flicker/></h2>
-  <p>Выберите число игроков. Ниже — квесты для вашей команды.</p>
+  <p>Вызов оборвался. За дверью остались новые следы. Выберите, с кем пойдёте дальше: ниже — квесты для вашей команды.</p>
   <div class="team-picker" data-team-picker>
    <fieldset class="team-size"><legend>Игроков в команде</legend><div>{[2,3,4,5,6].map(n=><label><input type="radio" name="team-size" value={n} checked={n===4}/><span>{n}</span></label>)}</div></fieldset>
    <p class="team-status" data-team-status role="status" aria-live="polite" aria-atomic="true">Подходят все 4 квеста</p>

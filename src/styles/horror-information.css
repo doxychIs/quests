@@ -1,0 +1,46 @@
+html body[data-horror-information=true]{background:#0c1011;--paper:#0c1011;--ink:#cdd0cb;--muted:#939d98;color:var(--ink);font:400 16px/1.8 var(--sans)}
+html body[data-horror-information=true] :is(h1,h2,h3,p,a,button){filter:none;text-shadow:none;animation:none;letter-spacing:normal}
+html body[data-horror-information=true] .site-header{position:absolute;border:0;background:transparent;z-index:30}
+html body[data-horror-information=true] .horror-info-hero{position:relative;min-height:610px;height:85svh;max-height:980px;display:flex;align-items:center;overflow:hidden;padding:140px var(--pad) 100px;margin:0;isolation:isolate}
+.horror-info-hero>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;filter:saturate(.55) brightness(.63)}
+.horror-info-hero:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#071011c9,transparent),linear-gradient(0deg,#0c1011,transparent 40%)}
+html body[data-horror-information=true] .horror-info-intro{max-width:760px}
+html body[data-horror-information=true] .horror-info-intro h1{font:600 clamp(50px,8.4vw,128px)/1.15 var(--terminal,monospace);color:#bcaaa1;margin:24px 0;letter-spacing:-.035em}
+html body[data-horror-information=true] .horror-info-intro p{font:400 16px/1.8 var(--sans);max-width:43ch;color:#c0c5c0}
+html body[data-horror-information=true] .horror-info-button{display:inline-flex;justify-content:center;align-items:center;min-height:48px;padding:12px 20px;border:1px solid #63726d;font:500 14px/1.6 var(--sans);color:#d0d6d0;background:#0b1717a8;border-radius:3px}
+.horror-info-intro>.horror-info-button{margin-top:30px}
+html body[data-horror-information=true] .horror-info-version{position:absolute;bottom:35px;right:var(--pad);padding:10px 16px;border:1px solid #74807b66;border-radius:3px;font:400 13px/1.6 var(--sans);background:#0c1718b3}
+html body[data-horror-information=true] .horror-info-video-toggle{position:absolute;bottom:35px;left:var(--pad);font:400 12px/1.6 var(--sans);padding:10px 0;color:#aeb8b1;z-index:1}
+html body[data-horror-information=true] [data-hero-video-state]{position:absolute;left:var(--pad);bottom:75px;font:12px/1.5 var(--sans)}
+.horror-info-catalog,.horror-info-practical{padding:90px var(--pad);max-width:1600px;margin-inline:auto}
+html body[data-horror-information=true] h2{font:500 clamp(34px,4vw,58px)/1.15 var(--sans);color:#c4ccc5}
+.horror-info-catalog>header{margin-bottom:65px}.horror-info-catalog>header p{margin-top:18px;color:var(--muted)}
+.horror-info-quests{display:grid;gap:85px}.horror-info-quests article{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(35px,7vw,120px)}
+html body[data-horror-information=true] .horror-info-quest-name h3{font:500 clamp(26px,3vw,42px)/1.2 var(--sans);margin-block:14px 20px;color:#b8968f}
+.horror-info-quest-name p{font-size:13px;color:var(--muted)}
+.horror-info-quest-copy>p{font:400 16px/1.9 var(--sans);color:var(--muted);margin-bottom:18px}
+.horror-info-quest-copy>p:first-child{color:#c1c9c2}
+.horror-info-quest-links{display:flex;align-items:center;flex-wrap:wrap;gap:25px;margin-top:28px;font-size:14px}
+.horror-info-practical{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(35px,7vw,120px);padding-bottom:120px}
+html body[data-horror-information=true] .horror-info-practical h3{font:500 21px/1.5 var(--sans);margin-bottom:12px}
+.horror-info-practical p{margin-bottom:36px;color:var(--muted)}.horror-info-practical a{font-size:14px;text-decoration:underline;text-underline-offset:5px}
+@media(max-width:760px){html body[data-horror-information=true] .horror-info-hero{height:90svh;min-height:620px;padding-top:150px}.horror-info-catalog,.horror-info-practical{padding-block:65px}.horror-info-quests article,.horror-info-practical{grid-template-columns:1fr;gap:24px}.horror-info-quests{gap:65px}.horror-info-catalog>header{margin-bottom:45px}html body[data-horror-information=true] .horror-info-hero .horror-info-version{font-size:11px;bottom:24px}html body[data-horror-information=true] .horror-info-video-toggle{bottom:24px;font-size:11px}}
+/* Pixel letterforms stay, but paragraphs use a denser reading size on this reference page. */
+html body[data-horror-information=true] :is(.horror-info-quest-copy>p,.horror-info-practical p){font-size:12px;line-height:2.25}
+html body[data-horror-information=true] :is(.horror-info-quest-name p,.horror-info-intro p,.horror-info-catalog>header p){font-size:12px;line-height:2}
+html body[data-horror-information=true] .horror-info-quest-links .horror-info-button,html body[data-horror-information=true] .horror-info-quest-links>a{font-size:11px}
+@media(max-width:760px){
+ html body[data-horror-information=true] .site-header{padding-inline:20px;height:80px;gap:12px}
+ html body[data-horror-information=true] .header-tools{gap:12px}
+ html body[data-horror-information=true] .header-tools .motion-toggle{display:none}
+ html body[data-horror-information=true] .site-header .brand-horror>.horror-logo{font-size:18px!important}
+ html body[data-horror-information=true] .horror-info-intro{min-width:0;width:100%;max-width:100%}
+ html body[data-horror-information=true] .horror-info-intro h1{font-size:clamp(30px,9vw,56px)}
+ html body[data-horror-information=true] .horror-info-intro p{font-size:11px;max-width:100%}
+ html body[data-horror-information=true] .horror-info-video-toggle{bottom:78px;font-size:10px}
+ html body[data-horror-information=true] .horror-info-hero .horror-info-version{bottom:24px;font-size:10px;max-width:calc(100% - 44px)}
+ html body[data-horror-information=true] .horror-info-quest-name h3{font-size:25px;overflow-wrap:anywhere}
+ html body[data-horror-information=true] .horror-info-quest-links .horror-info-button{font-size:10px;padding-inline:14px}
+ html body[data-horror-information=true] .horror-info-practical h2{font-size:30px}
+ html body[data-horror-information=true] .footer-bottom{flex-wrap:wrap;gap:20px}
+}

@@ -56,7 +56,7 @@ test('Rare letter failures affect one letter, stop offscreen, and respect calm a
 
 test('Horror graphics remain scoped and initial HTML excludes thousands of hidden letter objects',()=>{
  const horror=fs.readFileSync('dist/iznanka/index.html','utf8');assert.ok(Buffer.byteLength(horror)<350000);
- const dom=new JSDOM(horror);try{assert.ok(dom.window.document.querySelector('.film-copy [data-letter]'));assert.equal(dom.window.document.querySelectorAll('[data-broadcast-program] [data-letter]').length,0);assert.ok(dom.window.document.querySelector('#broadcast-analog-signal'))}finally{dom.window.close()}
+ const dom=new JSDOM(horror);try{assert.ok(dom.window.document.querySelector('[data-room-tv-content] [data-graphic-text]'));assert.equal(dom.window.document.querySelectorAll('[data-room-surface]').length,8);assert.equal(dom.window.document.querySelector('.horror-film,[data-passage-film]'),null)}finally{dom.window.close()}
  for(const route of ['arhiv','ostrov','about'])assert.doesNotMatch(fs.readFileSync(`dist/${route}/index.html`,'utf8'),/data-graphic-text=/);
 });
 
@@ -69,4 +69,3 @@ test('A browser without WebGL retains recognizable source images and cached per-
   const first=renderer.render('wood-floor',source,1,true),second=renderer.render('left-stack',source,1,true);assert.equal(renderer.mode,'canvas');assert.notEqual(first,second);assert.equal(renderer.render('wood-floor',source,2,true),first);assert.equal(first.width,640);assert.ok(calls.some(args=>args[0]===source));assert.ok(filters.every(filter=>!String(filter).includes('blur')));renderer.destroy();
  }finally{w.close()}
 });
-

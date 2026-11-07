@@ -19,11 +19,12 @@ function maze(root:HTMLElement){const {canvas,ctx:c}=canvasSetup(root);const mod
   c.lineJoin='miter';c.lineCap='square';c.beginPath();mazePath.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.lineWidth=48;c.strokeStyle='#7e9aa8';c.shadowColor='#98b6c7';c.shadowBlur=9;c.stroke();c.shadowBlur=0;
   c.fillStyle='#b70d27';c.fillRect(902,309,38,42);
   c.fillStyle='#d7e8f0';c.fillRect(model.pos.x-6,model.pos.y-6,12,12);c.strokeStyle='#dce8ec';c.lineWidth=1;c.strokeRect(model.pos.x-6,model.pos.y-6,12,12);
+  if(root.closest('[data-room-experience]'))document.dispatchEvent(new CustomEvent('room:content-frame'));
 
  }
  const coordinate=(e:PointerEvent)=>{const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*460/r.height}};
  canvas.addEventListener('pointerdown',e=>{if(!running)return;const p=coordinate(e);if(distance(p,model.pos)>35){status.textContent='Коснитесь светлого квадрата, чтобы вести его.';return}dragging=true;canvas.setPointerCapture(e.pointerId);canvas.focus({preventScroll:true});e.preventDefault()});canvas.addEventListener('pointermove',e=>{if(dragging&&running){const p=coordinate(e);apply(p.x,p.y)}});canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
  start.addEventListener('click',()=>{if(finished)reset();running=!running;start.textContent=running?'Пауза':'Продолжить';canvas.focus({preventScroll:true});draw();loop.sync()});$('[data-restart]',root).addEventListener('click',reset);$('[data-replay]',root).addEventListener('click',()=>{reset();start.click()});
  function tick(t:number,dt:number){if(running){const dx=Number(keys.has('ArrowRight')||keys.has('KeyD'))-Number(keys.has('ArrowLeft')||keys.has('KeyA'));const dy=Number(keys.has('ArrowDown')||keys.has('KeyS'))-Number(keys.has('ArrowUp')||keys.has('KeyW'));if(dx||dy){const n=Math.hypot(dx,dy);apply(model.pos.x+dx/n*135*dt,model.pos.y+dy/n*135*dt)}}}
- const loop=createVisibleLoop(root,tick,()=>running);draw();
+ const loop=createVisibleLoop(root,tick,()=>running&&!root.closest('[hidden]'));draw();
 }

@@ -1,0 +1,13 @@
+---
+import {href} from '../lib/data';
+import '../styles/horror-investigation.css';
+---
+<div class="horror-investigation" data-investigation aria-label="Последний обход — расследование в закрытом отделении">
+ <div class="investigation-setting" aria-hidden="true" data-ward-model={href('models/last-round-ward-v1.glb')}>
+  <img class="ward-fallback" src={href('assets/horror-ward-3d-poster.webp')} width="1280" height="720" alt="" loading="lazy" decoding="async"/>
+  <canvas class="ward-canvas" data-ward-canvas></canvas>
+  <div class="investigation-shadows"></div><div class="investigation-exposure"></div>
+ </div>
+ <slot/>
+</div>
+<script>import {initHorrorInvestigation} from '../scripts/horror-investigation';initHorrorInvestigation();</script>

@@ -1,26 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
-import HorrorEntrance from '../../components/HorrorEntrance.astro';
+import HorrorRoomExperience from '../../components/HorrorRoomExperience.astro';
 import WorldHero from '../../components/WorldHero.astro';
 import WorldCinema from '../../components/WorldCinema.astro';
 import WorldAfterword from '../../components/WorldAfterword.astro';
-import QuestGallery from '../../components/QuestGallery.astro';
 import Games from '../../components/Games.astro';
-import HorrorAtmosphere from '../../components/HorrorAtmosphere.astro';
-import HorrorAfterword from '../../components/HorrorAfterword.astro';
-import HorrorPhotos from '../../components/HorrorPhotos.astro';
 import WorldGallery from '../../components/WorldGallery.astro';
 import {worlds,worldKeys,href,type World} from '../../lib/data';
 export function getStaticPaths(){return worldKeys.map(world=>({params:{world}}))}
 const world=Astro.params.world as World;const w=worlds[world];
 ---
-<Base world={world} cinema={world==='iznanka'} title={`ИНОЕ / ${w.name} — ${w.subtitle}. Пермь`}>
- {world==='iznanka'?<HorrorEntrance><QuestGallery world={world}/></HorrorEntrance>:<>
+<Base world={world} cinema={world==='iznanka'} immersive={world==='iznanka'} footer={world!=='iznanka'} title={`ИНОЕ / ${w.name} — ${w.subtitle}. Пермь`}>
+ {world==='iznanka'?<HorrorRoomExperience/>:<>
  <WorldHero world={world}/><WorldCinema world={world}/><WorldGallery world={world}/>
  </>}
- {world==='iznanka'&&<HorrorAtmosphere/>}
- {world==='iznanka'&&<HorrorPhotos/>}
- <section class:list={['trial-section','section-pad',`trial-${world}`]} id="trial"><div class="trial-heading">{world!=='iznanka'&&<span class="section-index">04 / ПОПРОБУЙТЕ СЕБЯ</span>}<h2 class:list={[{reveal:world==='iznanka'}]}>{w.game}</h2><p>{w.gameText}</p></div><Games world={world}/><a href={world==='iznanka'?'#quests':'#experience'} class="skip-trial text-link">{world==='iznanka'?'Вернуться к квестам':'Пропустить испытание ↓'}</a></section>
- {world==='iznanka'&&<HorrorAfterword/>}
+ {world!=='iznanka'&&<section class:list={['trial-section','section-pad',`trial-${world}`]} id="trial"><div class="trial-heading"><span class="section-index">04 / ПОПРОБУЙТЕ СЕБЯ</span><h2>{w.game}</h2><p>{w.gameText}</p></div><Games world={world}/><a href="#experience" class="skip-trial text-link">Пропустить испытание ↓</a></section>}
  {world!=='iznanka'&&<WorldAfterword world={world}/>}
 </Base>

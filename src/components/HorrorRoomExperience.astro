@@ -1,0 +1,42 @@
+---
+import {asset,href,quests} from '../lib/data';
+import {roomStages,roomStations} from '../lib/room-experience';
+import {horrorPhotos} from '../lib/horror-settings';
+import RoomTelevisionContent from './RoomTelevisionContent.astro';
+import '../styles/room-experience.css';
+const horrorQuests=quests.filter(q=>q.world==='iznanka');
+const programs=[
+ {id:'gallery',title:'ПЛЁНКА С ПОСТА',subtitle:'ГАЛЕРЕЯ ЛОКАЦИЙ',image:href('assets/horror-photo-ward-room-v1.webp')},
+ {id:'game',title:'ВНУТРЕННЯЯ СВЯЗЬ',subtitle:'ЛАБИРИНТ / ПАЛАТА 06'},
+ ...horrorQuests.map((q,i)=>({id:`quest_${i}`,title:q.name,subtitle:`${q.duration} МИН / ${q.players.join('–')} ИГРОКОВ`,image:asset(horrorPhotos.find(photo=>photo.quest===q.slug)!.image)})),
+ {id:'info',title:'ЖУРНАЛ ОБХОДОВ',subtitle:'ЖУРНАЛ / ПРАВИЛА'}
+];
+---
+<div class="room-experience" data-room-experience data-room-model={href('models/last-round-ward-v1.glb')} aria-label="Изнанка — исследование заброшенной палаты">
+ {roomStages.map(stage=><span id={stage.hash} class="room-scroll-anchor" data-room-anchor={stage.id} style={`top:${stage.anchor*100}svh`} aria-hidden="true"></span>)}
+ <div class="room-stage" data-room-stage>
+ <header class="room-site-header" role="banner" aria-label="Шапка сайта Изнанка">
+  <a class="room-brand" href={href()}>ИЗНАНКА<span>ИНОЕ · квесты в Перми</span></a>
+  <div class="room-header-links"><nav aria-label="Разделы сайта"><a href="#quests" data-room-go="quests">Квесты</a><a href="#team" data-room-go="team">Команда</a><a href="#frames" data-room-go="gallery">Галерея</a><a href="#footer" data-room-go="info">Информация</a></nav><a class="room-information-version" href={href('iznanka/information/')}>Версия без 3D</a></div>
+ </header>
+
+  <img class="room-poster" src={href('assets/horror-ward-3d-poster.webp')} width="1280" height="720" alt="Заброшенный коридор перед палатой со старыми телевизорами"/>
+  <canvas data-room-canvas aria-hidden="true"></canvas>
+  <div class="room-camera-vignette" aria-hidden="true"></div>
+  <div class="room-camcorder" data-room-camera-hud aria-hidden="true"><i></i><i></i><i></i><i></i><span class="room-camera-rec"><b></b> REC <small>SP</small></span><span class="room-camera-tape">ИЗНАНКА · CH 06</span><span class="room-camera-battery">▰▰▱</span></div>
+  <button type="button" class="room-camera-power" data-room-camera-power aria-pressed="false">Поднять камеру</button>
+  {horrorQuests.map((q,i)=><nav class="room-broadcast-controls" data-room-broadcast-for={`quest_${i}`} aria-label={`Телевизор «${q.name}»`} hidden><button type="button" data-room-broadcast-details aria-pressed="false">Описание</button><a href={href(`iznanka/quests/${q.slug}/`)}>О квесте</a><a href={href(`iznanka/book/${q.slug}/`)}>Сеансы</a><button type="button" data-room-leave>В комнату</button></nav>)}
+  <button type="button" class="room-projector-switch" data-room-projector-power aria-pressed="false">Включить проектор</button>
+  <div class="room-film-controls" aria-label="Плёнка галереи"><button type="button" data-room-film-step="-1" aria-label="Предыдущий кадр">Назад</button><span data-room-film-position role="status" aria-live="polite">1 / 8</span><button type="button" data-room-film-step="1" aria-label="Следующий кадр">Далее</button></div>
+  <dialog class="room-original-viewer" data-room-original-viewer aria-labelledby="room-original-title"><form method="dialog"><button type="submit" aria-label="Закрыть изображение">Закрыть</button></form><h2 id="room-original-title">Кадр галереи</h2><img data-room-original-image alt=""/><p data-room-original-caption></p><a data-room-original-link href="#frames" target="_blank" rel="noopener">Открыть оригинальный файл</a><small>Визуализация декораций, а не фотография действующей площадки.</small></dialog>
+  <div class="room-utility"><a href={href()} aria-label="Покинуть комнату — выбрать другой мир">Выход</a><button class="sound-toggle" aria-pressed="false" aria-label="Включить звук"><span class="sound-label">Звук выкл.</span></button><button class="motion-toggle" aria-pressed="false" aria-label="Уменьшить движение"><span class="motion-label">Движение вкл.</span></button><button class="settings-toggle" aria-label="Настройки впечатлений">Настройки</button><details class="room-directory"><summary>Разделы</summary><nav aria-label="Разделы сайта">{roomStages.map(stage=><a href={`#${stage.hash}`} data-room-go={stage.id}>{stage.label}</a>)}<button type="button" data-room-fallback>Открыть без 3D</button></nav></details></div>
+  <div class="room-projector" data-room-projector><RoomTelevisionContent/>
+   <div class="room-hit-layer">{roomStations.map(station=><button type="button" class="room-screen-hit" data-room-open={station.id} aria-label={station.label}></button>)}</div>
+  </div>
+  <p class="room-loading" data-room-loading role="status">Подготавливаем комнату… <button type="button" data-room-fallback>Открыть без 3D</button></p>
+ </div>
+ <span id="journal" class="room-scroll-anchor" style={`top:${roomStages.find(s=>s.id==='info')!.anchor*100}svh`} aria-hidden="true"></span>
+ <script type="application/json" data-room-programs set:html={JSON.stringify(programs)}/>
+ <noscript><div class="room-noscript"><p>Интерактивной комнате нужен JavaScript. Квесты доступны по прямым ссылкам.</p>{horrorQuests.map(q=><a href={href(`iznanka/quests/${q.slug}/`)}>{q.name}</a>)}</div></noscript>
+</div>
+<script>import {initRoomExperience} from '../scripts/room-experience';initRoomExperience();</script>

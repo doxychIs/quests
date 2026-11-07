@@ -16,6 +16,7 @@ export function setupDOM(route='',options={}){
  w.HTMLAnchorElement.prototype.click=function(){w.lastDownload=this.download};w.URL.createObjectURL=b=>{w.lastBlob=b;return'blob:test'};w.URL.revokeObjectURL=()=>{};
  const NativeObserver=w.MutationObserver;w.MutationObserver=class extends NativeObserver{constructor(fn){super((...args)=>{if(w.document)fn(...args)})}};
  w.queueMicrotask=fn=>Promise.resolve().then(()=>{if(w.document)fn()});
+ if(options.theme)w.localStorage.setItem('inoe-theme',options.theme);
  if(options.adult)w.sessionStorage.setItem('gran-adult','yes');if(options.surprise)w.sessionStorage.setItem('gran-surprise','yes');
  if(options.calm)w.localStorage.setItem('gran-motion-choice','reduced');if(options.legacyCalm)w.localStorage.setItem('gran-calm','yes');
  for(const s of d.querySelectorAll('script:not([type=module])'))if(!s.src)w.eval(s.textContent);

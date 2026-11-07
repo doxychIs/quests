@@ -3,18 +3,18 @@ import {href,type World} from '../lib/data';
 import Detective from './games/Detective.astro';
 import TreasureHunt from './games/TreasureHunt.astro';
 import HorrorScares from './HorrorScares.astro';
-const {world}=Astro.props as {world:World};
+const {world,embedded=false}=Astro.props as {world:World;embedded?:boolean};
 ---
 {world==='iznanka'&&<div class="game-shell maze-game" data-game="maze">
  <div class="tv-cabinet">
-  <img class="tv-photograph" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>
+  {!embedded&&<img class="tv-photograph" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>}
   <div class="tv-bezel"><div class="maze-tv-screen">
    <div class="game-toolbar"><span class="eyebrow">ЭТАП <b data-stage>01 / 03</b></span><button class="text-link" data-restart>Сброс</button></div>
    <canvas width="1000" height="460" tabindex="0" aria-label="Лабиринт. Стрелки или WASD для движения. Можно вести квадрат указателем.">Игра требует поддержки Canvas.</canvas>
    <div class="tv-glass" aria-hidden="true"></div>
    <HorrorScares/>
   </div></div>
-  <img class="tv-surface" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>
+  {!embedded&&<img class="tv-surface" src={href('assets/horror-television-v2.webp')} alt="" aria-hidden="true" loading="lazy" width="1536" height="1024"/>}
 
  </div>
  <div class="game-status-line"><span class="status-dot" aria-hidden="true"></span><span data-status role="status" aria-live="polite">Доведите сигнал до выхода</span></div>

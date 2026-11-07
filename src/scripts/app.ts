@@ -1,4 +1,4 @@
-import {createSoundscape} from './soundscape';
+import {createSoundscape,type RoomAmbience} from './soundscape';
 import {initSoundInteractions,soundCue} from './sound-cues';
 import {initGames} from './games';
 import {initAnimationVisibility,initLazyVideoVisibility} from './motion-visibility';
@@ -9,6 +9,8 @@ import {initWorldMotion} from './world-motion';
 import {initManuscriptWriting} from './manuscript-writing';
 import {initMediaLoading} from './media-loading';
 import {initGift} from './gift';
+import {initHubTheme} from './hub-theme';
+initHubTheme();
 const $=<T extends Element=HTMLElement>(s:string,p:ParentNode=document)=>p.querySelector<T>(s);
 const store={get(k:string,session=false){try{return(session?sessionStorage:localStorage).getItem(k)}catch{return null}},set(k:string,v:string,session=false){try{(session?sessionStorage:localStorage).setItem(k,v)}catch{}},remove(k:string,session=false){try{(session?sessionStorage:localStorage).removeItem(k)}catch{}}};
 const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,6 +21,10 @@ function gates(){const gate=$<HTMLDialogElement>('#age-gate');const form=$<HTMLF
  if(store.get('gran-adult',true)==='yes')document.querySelectorAll<HTMLImageElement>('[data-safe-src]').forEach(im=>im.src=im.dataset.safeSrc!);
 }
 const ambience=createSoundscape(world,import.meta.env.BASE_URL);
+document.addEventListener('room:ambience',event=>{
+ if(world!=='iznanka'||store.get('gran-adult',true)!=='yes')return;
+ ambience.room((event as CustomEvent<RoomAmbience>).detail);
+});
 document.addEventListener('gran-astral',event=>ambience.setAstral((event as CustomEvent).detail===true));
 document.addEventListener('gran-detector',event=>{const strength=(event as CustomEvent).detail;if(typeof strength==='number'&&Number.isFinite(strength))ambience.scan(strength)});
 const musicInput=$<HTMLInputElement>('#music-setting');let musicOn=store.get('gran-music')!=='no';ambience.setMusic(musicOn);if(musicInput){musicInput.checked=musicOn;musicInput.addEventListener('change',()=>{musicOn=musicInput.checked;store.set('gran-music',musicOn?'yes':'no');ambience.setMusic(musicOn)})}
@@ -26,11 +32,11 @@ let soundDesired=store.get('gran-sound')==='yes';
 const savedVolume=Number(store.get('gran-volume')??35);let soundVolume=Number.isFinite(savedVolume)?Math.max(0,Math.min(100,savedVolume)):35;
 ambience.setVolume(soundVolume/100);if(soundVolume===0)soundDesired=false;
 const volumeInput=$<HTMLInputElement>('#sound-volume'),volumeOutput=$<HTMLOutputElement>('#sound-volume-value');
-function paintSound(){const b=$<HTMLButtonElement>('.sound-toggle'),playing=soundDesired&&ambience.state()==='running';b?.setAttribute('aria-pressed',String(playing));b?.setAttribute('aria-label',playing?'Выключить звук':'Включить звук');if(b){b.dataset.audioState=ambience.state();b.dataset.audioVolume=String(soundVolume/100)}const label=$('.sound-label');if(label)label.textContent=playing?'Звук вкл.':soundDesired?'Включить звук':'Звук выкл.';if(volumeInput)volumeInput.value=String(soundVolume);if(volumeOutput)volumeOutput.value=`${soundVolume}%`}
+function paintSound(){const playing=soundDesired&&ambience.state()==='running';document.querySelectorAll<HTMLButtonElement>('.sound-toggle').forEach(b=>{b.setAttribute('aria-pressed',String(playing));b.setAttribute('aria-label',playing?'Выключить звук':'Включить звук');b.dataset.audioState=ambience.state();b.dataset.audioVolume=String(soundVolume/100)});document.querySelectorAll('.sound-label').forEach(label=>label.textContent=playing?'Звук вкл.':soundDesired?'Включить звук':'Звук выкл.');if(volumeInput)volumeInput.value=String(soundVolume);if(volumeOutput)volumeOutput.value=`${soundVolume}%`}
 function enableSound(on:boolean){if(on&&soundVolume===0){soundVolume=35;ambience.setVolume(.35);store.set('gran-volume','35')}soundDesired=on;store.set('gran-sound',on?'yes':'no');ambience.set(on&&(world!=='iznanka'||store.get('gran-adult',true)==='yes'));paintSound()}
 volumeInput?.addEventListener('input',()=>{soundVolume=Number(volumeInput.value);ambience.setVolume(soundVolume/100);store.set('gran-volume',String(soundVolume));if(soundVolume===0)enableSound(false);else paintSound()});
 initSoundInteractions(cue=>ambience.cue(cue));
-$('.sound-toggle')?.addEventListener('click',()=>{if(world==='iznanka'&&store.get('gran-adult',true)!=='yes')return;enableSound(!(soundDesired&&ambience.state()==='running'))});
+document.querySelectorAll('.sound-toggle').forEach(button=>button.addEventListener('click',()=>{if(world==='iznanka'&&store.get('gran-adult',true)!=='yes')return;enableSound(!(soundDesired&&ambience.state()==='running'))}));
 document.addEventListener('gran-audio-state',paintSound);
 const resumeSound=(event?:Event)=>{if(document.hidden||event?.target instanceof Element&&event.target.closest('.sound-toggle'))return;if(soundDesired&&(world!=='iznanka'||store.get('gran-adult',true)==='yes'))ambience.set(true)};
 document.addEventListener('pointerdown',resumeSound,{capture:true});document.addEventListener('keydown',resumeSound,{capture:true});
@@ -38,18 +44,16 @@ document.addEventListener('visibilitychange',()=>ambience.set(!document.hidden&&
 addEventListener('pagehide',()=>ambience.stop());addEventListener('pageshow',resumeSound);paintSound();resumeSound();
 const prefs=$<HTMLDialogElement>('#preferences'),calmSetting=$<HTMLInputElement>('#calm-setting'),surprise=$<HTMLInputElement>('#surprise-setting');
 function paintMotion(){
- const reduced=isCalm(),button=$<HTMLButtonElement>('.motion-toggle');
- button?.setAttribute('aria-pressed',String(reduced));button?.setAttribute('aria-label',motionQuery.matches?'Движение уменьшено настройкой устройства':reduced?'Включить движение':'Уменьшить движение');
- if(button){button.disabled=motionQuery.matches;button.title=button.getAttribute('aria-label')!}
- const label=$('.motion-label');if(label)label.textContent=reduced?'Движение выкл.':'Движение вкл.';
+ const reduced=isCalm();document.querySelectorAll<HTMLButtonElement>('.motion-toggle').forEach(button=>{button.setAttribute('aria-pressed',String(reduced));button.setAttribute('aria-label',motionQuery.matches?'Движение уменьшено настройкой устройства':reduced?'Включить движение':'Уменьшить движение');button.disabled=motionQuery.matches;button.title=button.getAttribute('aria-label')!});
+ document.querySelectorAll('.motion-label').forEach(label=>label.textContent=reduced?'Движение выкл.':'Движение вкл.');
  if(calmSetting){calmSetting.checked=reduced;calmSetting.disabled=motionQuery.matches}
  const note=$<HTMLElement>('#motion-system-note');if(note)note.hidden=!motionQuery.matches;
  const replay=$('[data-enable-passage-motion]');if(replay)replay.textContent=motionQuery.matches?'Настройки движения':'Включить пролёт';
 }
 function setCalm(value:boolean){store.set('gran-motion-choice',value?'reduced':'full');document.documentElement.classList.toggle('calm',value);document.documentElement.classList.toggle('js-motion',!isCalm());paintMotion();updateMotion()}
 function openPreferences(){paintMotion();if(surprise)surprise.checked=store.get('gran-surprise',true)==='yes';prefs?.showModal()}
-$('.settings-toggle')?.addEventListener('click',openPreferences);
-$('.motion-toggle')?.addEventListener('click',()=>{if(!motionQuery.matches)setCalm(!document.documentElement.classList.contains('calm'))});
+document.querySelectorAll('.settings-toggle').forEach(button=>button.addEventListener('click',openPreferences));
+document.querySelectorAll('.motion-toggle').forEach(button=>button.addEventListener('click',()=>{if(!motionQuery.matches)setCalm(!document.documentElement.classList.contains('calm'))}));
 $('[data-enable-passage-motion]')?.addEventListener('click',()=>{if(motionQuery.matches)openPreferences();else setCalm(false)});
 calmSetting?.addEventListener('change',()=>setCalm(calmSetting.checked));surprise?.addEventListener('change',()=>store.set('gran-surprise',surprise.checked?'yes':'no',true));
 motionQuery.addEventListener('change',paintMotion);paintMotion();
