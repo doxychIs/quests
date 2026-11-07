@@ -1,6 +1,6 @@
 /* A single word becomes the navigation mark; the three doors reveal their own worlds. */
 .hub-intro,.hub-worlds,.hub-about,.hub-gift-simple,.hub-questions{max-width:1600px;margin-inline:auto;padding-inline:var(--hub-pad)}
-html body[data-world=hub] .hub-header{position:sticky;top:0;z-index:50}
+html body[data-world=hub] header.site-header.hub-header{position:sticky;top:0;z-index:50}
 .hub-header[data-hub-home=true] [data-logo-target]{visibility:hidden}
 .hub-intro{height:calc(100svh - 96px);min-height:400px;display:grid;place-items:center;position:relative}
 html body[data-world=hub] .hub-logo-home{position:relative;width:max-content;max-width:100%;margin:0;font:800 clamp(80px,22vw,320px)/1.12 var(--sans);font-kerning:none;letter-spacing:-.07em}
