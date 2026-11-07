@@ -24,7 +24,7 @@ const programs=[
   <canvas data-room-canvas aria-hidden="true"></canvas>
   <div class="room-camera-vignette" aria-hidden="true"></div>
   <div class="room-camcorder" data-room-camera-hud aria-hidden="true"><i></i><i></i><i></i><i></i><span class="room-camera-rec"><b></b> REC <small>SP</small></span><span class="room-camera-tape">ИЗНАНКА · CH 06</span><span class="room-camera-battery">▰▰▱</span></div>
-  <button type="button" class="room-camera-power" data-room-camera-power aria-pressed="false">Поднять камеру</button>
+  <button type="button" class="room-camera-power" data-room-camera-power aria-pressed="false">Надеть камеру</button>
   {horrorQuests.map((q,i)=><nav class="room-broadcast-controls" data-room-broadcast-for={`quest_${i}`} aria-label={`Телевизор «${q.name}»`} hidden><button type="button" data-room-broadcast-details aria-pressed="false">Описание</button><a href={href(`iznanka/quests/${q.slug}/`)}>О квесте</a><a href={href(`iznanka/book/${q.slug}/`)}>Сеансы</a><button type="button" data-room-leave>В комнату</button></nav>)}
   <button type="button" class="room-projector-switch" data-room-projector-power aria-pressed="false">Включить проектор</button>
   <div class="room-film-controls" aria-label="Плёнка галереи"><button type="button" data-room-film-step="-1" aria-label="Предыдущий кадр">Назад</button><span data-room-film-position role="status" aria-live="polite">1 / 8</span><button type="button" data-room-film-step="1" aria-label="Следующий кадр">Далее</button></div>

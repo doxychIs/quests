@@ -4,6 +4,7 @@ import {projectionCSS} from '../lib/room-projection';
 import type {createRoomRenderer,ProjectedGlass,RoomScreenLabel} from '../lib/room-renderer';
 import {soundCue} from './sound-cues';
 import {createRoomSurfacePainter} from '../lib/room-surface-painter';
+import {roomCameraWait,roomCameraWearDuration,roomCameraRemoveDuration,roomCameraSignal} from '../lib/room-camera-motion';
 
 export function initRoomExperience(){
  const candidate=document.querySelector<HTMLElement>('div[data-room-experience]');if(!candidate||candidate.dataset.roomInitialized)return;
@@ -18,8 +19,9 @@ export function initRoomExperience(){
  const videoFrames=new Map<HTMLVideoElement,number>();let lastVideoFrame=0;
  let projectorOn=false,projectorTime=0,projectorTimer:ReturnType<typeof setTimeout>|undefined,viewerOpen=false;
  let projectionURL=programs.find(program=>program.id==='gallery')?.image||'';
- let cameraOn=!!location.hash&&!['#atmosphere','#main'].includes(location.hash),cameraAmount=cameraOn?1:0,cameraLift:{from:number;at:number}|undefined,questDetails=false;
- root.dataset.roomCamera=String(cameraOn);root.dataset.roomBroadcastView='image';
+ let cameraOn=false,cameraWear=0,cameraAmount=0,cameraLift:{from:number;to:number;elapsed:number;duration:number;last?:number}|undefined,questDetails=false;
+ let autoCameraPending=true,autoCameraRemaining=roomCameraWait,autoCameraAt=0,autoCameraTimer:ReturnType<typeof setTimeout>|undefined;
+ root.dataset.roomCamera='false';root.dataset.roomCameraView='false';root.dataset.roomCameraPending='true';root.dataset.roomBroadcastView='image';
  let lifeTime=0,lifeTimer:ReturnType<typeof setTimeout>|undefined;
  function syncLife(){
   const run=cameraOn&&cameraAmount>.98&&view?.liveMotion&&permitted()&&!reduced()&&root.dataset.roomMode==='3d'&&(view.needsLifeFrame?.()??(lastPose.position[2]>7||stage==='ward'||stage==='entry'));
@@ -64,14 +66,33 @@ export function initRoomExperience(){
   dispatchActive(id);
   if(!atmosphereAllowed())stopAtmosphere();else atmosphere();
  }
+ function pauseAutoCamera(){
+  if(autoCameraTimer===undefined)return;
+  clearTimeout(autoCameraTimer);autoCameraTimer=undefined;autoCameraRemaining=Math.max(0,autoCameraRemaining-(performance.now()-autoCameraAt));
+ }
+ function syncAutoCamera(){
+  if(!autoCameraPending)return;
+  if(!permitted()||!view||root.dataset.roomReady!=='true'||root.dataset.roomMode!=='3d'){pauseAutoCamera();return;}
+  if(autoCameraTimer!==undefined)return;
+  autoCameraAt=performance.now();
+  autoCameraTimer=setTimeout(()=>{autoCameraTimer=undefined;autoCameraRemaining=0;if(permitted())setCamera(true);else syncAutoCamera();},autoCameraRemaining);
+ }
+ function cameraControls(){
+  root.dataset.roomCamera=String(cameraOn);root.dataset.roomCameraPending=String(autoCameraPending);
+  root.dataset.roomCameraView=String(cameraAmount>.66);
+  root.dataset.roomCameraLifting=String(!!cameraLift&&!reduced());
+  root.querySelectorAll<HTMLButtonElement>('[data-room-camera-power]').forEach(button=>{
+   button.setAttribute('aria-pressed',String(cameraOn));button.textContent=cameraOn?'Убрать камеру':'Надеть камеру';button.disabled=!!cameraLift;
+  });
+ }
  function setCamera(on:boolean){
   if(!html.classList.contains('adult'))return;
-  if(on!==cameraOn){cameraLift={from:cameraAmount,at:performance.now()};cameraOn=on;root.dataset.roomCameraLifting=String(on&&!reduced());}
-  root.dataset.roomCamera=String(on);
-  root.querySelectorAll('[data-room-camera-power]').forEach(button=>{button.setAttribute('aria-pressed',String(on));button.textContent=on?'Опустить камеру':'Поднять камеру';});
+  pauseAutoCamera();autoCameraPending=false;
+  if(on!==cameraOn){cameraLift={from:cameraWear,to:on?1:0,elapsed:0,duration:(on?roomCameraWearDuration:roomCameraRemoveDuration)*Math.abs((on?1:0)-cameraWear),last:performance.now()};cameraOn=on;}
+  cameraControls();
   if(!on)stopAtmosphere();soundCue('tuner');lastRender='';schedule();
  }
- function stop(){if(frame)cancelAnimationFrame(frame);frame=0;previous=0;root.classList.remove('is-camera-moving');}
+ function stop(){if(frame)cancelAnimationFrame(frame);frame=0;previous=0;root.classList.remove('is-camera-moving');if(!permitted()){pauseAutoCamera();if(cameraLift)cameraLift.last=undefined;}root.dataset.roomPaused=String(!permitted());}
  function stopAtmosphere(){clearTimeout(lifeTimer);lifeTimer=undefined;clearTimeout(projectorTimer);projectorTimer=undefined;clearTimeout(pulseTimer);clearTimeout(restoreTimer);pulseTimer=restoreTimer=undefined;pulse=undefined;disturbance=undefined;root.dataset.roomDisturbance='idle';}
  const roomSound=(kind:'light'|'cloth'|'pipe'|'step',strength:number,pan:number)=>{
   if(permitted()&&!reduced())document.dispatchEvent(new CustomEvent('room:ambience',{detail:{kind,strength,pan}}));
@@ -109,7 +130,7 @@ export function initRoomExperience(){
  }
  function fallback(){
   if(root.dataset.roomMode==='fallback')return;
-  failed=true;stop();stopAtmosphere();active=selected=hover=undefined;override=transition=undefined;pendingFocus=pendingReturn=undefined;
+  failed=true;pauseAutoCamera();autoCameraPending=false;cameraLift=undefined;stop();stopAtmosphere();active=selected=hover=undefined;override=transition=undefined;pendingFocus=pendingReturn=undefined;
   root.dataset.roomMode='fallback';root.dataset.roomReady='true';root.removeAttribute('data-room-textures');painter?.dispose();painter=undefined;const oldView=view;view=undefined;oldView?.dispose();
   hits.forEach(hit=>hit.hidden=true);for(const surface of surfaces.values()){surface.hidden=false;surface.inert=false;surface.removeAttribute('aria-hidden');surface.style.removeProperty('transform');}
   dispatchActive('all');root.querySelectorAll<HTMLElement>('[data-room-leave]').forEach(button=>button.hidden=true);
@@ -132,7 +153,7 @@ export function initRoomExperience(){
     // Priming hid all layers; force the first real paint to restore that selection.
     active=undefined;
    }
-   if(projectorOn)view.setProjection?.(projectionURL);lastRender='';paint(performance.now());root.dataset.roomReady='true';atmosphere();
+   if(projectorOn)view.setProjection?.(projectionURL);lastRender='';paint(performance.now());root.dataset.roomReady='true';syncAutoCamera();atmosphere();
   }catch(error){root.dataset.roomError=error instanceof Error?error.message:String(error);fallback();}finally{loading=false;}
  }
  function project(){
@@ -152,7 +173,13 @@ export function initRoomExperience(){
  }
  function paint(time:number){
   if(!permitted()||root.dataset.roomMode==='fallback')return;
-  if(cameraLift){const t=reduced()?1:Math.min(1,(time-cameraLift.at)/760);cameraAmount=cameraLift.from+((cameraOn?1:0)-cameraLift.from)*roomEase(t);if(t===1){cameraLift=undefined;root.dataset.roomCameraLifting='false';atmosphere();}}
+  root.dataset.roomPaused='false';
+  if(cameraLift){
+   if(cameraLift.last!==undefined)cameraLift.elapsed+=Math.max(0,time-cameraLift.last);cameraLift.last=time;
+   const t=reduced()?1:Math.min(1,cameraLift.elapsed/Math.max(1,cameraLift.duration));
+   cameraWear=cameraLift.from+(cameraLift.to-cameraLift.from)*t;cameraAmount=roomCameraSignal(cameraWear);
+   if(t===1){cameraLift=undefined;atmosphere();}cameraControls();
+  }
   const camera=roomCamera(current-top,viewportHeight(),aspect());if(stage!==camera.stage){stage=camera.stage;suppressed=undefined;}
   root.dataset.roomStageActive=stage;root.dataset.roomCompact=String(innerWidth<=760);root.dataset.roomReduced=String(reduced());
   let pose=reduced()?(stage==='entry'?roomOverviewPose(aspect()):roomStagePose(stage,aspect())):camera.pose;
@@ -177,14 +204,14 @@ export function initRoomExperience(){
   if(view){
    const air=roomAtmosphereFrame(disturbance,time);
    const cameraTime=reduced()?0:Math.floor(time/100)/10;
-   const signature=JSON.stringify([pose,active,hover,pulse,air,projectorOn,projectorTime,lifeTime,cameraTime,cameraAmount,questDetails,innerWidth,innerHeight]);
-   const renderState={active,hover,pulse,atmosphere:air,projectorOn,projectorTime,lifeTime,cameraTime,cameraAmount,questDetails,calm:reduced()};
+   const signature=JSON.stringify([pose,active,hover,pulse,air,projectorOn,projectorTime,lifeTime,cameraTime,cameraAmount,cameraWear,questDetails,innerWidth,innerHeight]);
+   const renderState={active,hover,pulse,atmosphere:air,projectorOn,projectorTime,lifeTime,cameraTime,cameraAmount,cameraWear,questDetails,calm:reduced()};
    if(signature!==lastRender){projected=view.render(pose,renderState);lastRender=signature;}
    project();
    const surface=active&&active!=='gallery'&&(!active.startsWith('quest_')||questDetails)&&surfaces.get(active);
    if(surface&&painter){const result=painter.capture(surface);if(result?.changed){view.updateSurface(active!,result.canvas);projected=view.render(pose,renderState);}}
   }
-  syncProjector();syncLife();
+  syncAutoCamera();syncProjector();syncLife();
   document.dispatchEvent(new CustomEvent('horror:investigation-frame'));
  }
  function tick(time:number){
@@ -201,7 +228,6 @@ export function initRoomExperience(){
  }
  function focusStation(id:RoomStationId){
   if(!roomStations.some(s=>s.id===id)||!permitted()||root.dataset.roomMode==='fallback')return;
-  if(!cameraOn)setCamera(true);
   if(id==='door'){navigate('info');return;}
   if(id==='projector'){document.dispatchEvent(new CustomEvent('room:projector-toggle'));return;}
   selected=id;override=undefined;suppressed=undefined;pendingFocus=id;pendingReturn=undefined;transition={from:lastPose,at:performance.now()};setActive(undefined);soundCue('channel');schedule();
@@ -220,7 +246,6 @@ export function initRoomExperience(){
    (destination.id==='entry'?root:element||root).scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
    element?.focus({preventScroll:true});root.querySelector<HTMLDetailsElement>('.room-directory')?.removeAttribute('open');return;
   }
-  if(destination.id!=='entry'&&!cameraOn)setCamera(true);
   selected=undefined;override=undefined;suppressed=undefined;setActive(undefined);
   window.scrollTo({top:top+destination.anchor*viewportHeight(),behavior:reduced()?'instant':'smooth'});
   root.querySelector<HTMLDetailsElement>('.room-directory')?.removeAttribute('open');schedule();
@@ -240,7 +265,7 @@ export function initRoomExperience(){
  });
  root.querySelectorAll<HTMLElement>('[data-room-go]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();navigate(link.dataset.roomGo!);},{signal:events.signal}));
  root.querySelectorAll('[data-room-fallback]').forEach(button=>button.addEventListener('click',fallback,{signal:events.signal}));
- root.querySelectorAll('[data-room-camera-power]').forEach(button=>{button.setAttribute('aria-pressed',String(cameraOn));button.textContent=cameraOn?'Опустить камеру':'Поднять камеру';button.addEventListener('click',()=>setCamera(!cameraOn),{signal:events.signal});});
+ cameraControls();root.querySelectorAll('[data-room-camera-power]').forEach(button=>button.addEventListener('click',()=>setCamera(!cameraOn),{signal:events.signal}));
  root.querySelectorAll('[data-room-broadcast-details]').forEach(button=>button.addEventListener('click',()=>{if(!active?.startsWith('quest_'))return;questDetails=!questDetails;root.dataset.roomBroadcastView=questDetails?'details':'image';button.setAttribute('aria-pressed',String(questDetails));button.textContent=questDetails?'Изображение':'Описание';painter?.invalidate();lastRender='';schedule();},{signal:events.signal}));
  root.querySelectorAll('.room-broadcast-controls [data-room-leave]').forEach(button=>button.addEventListener('click',leave,{signal:events.signal}));
  document.addEventListener('room:leave',leave,{signal:events.signal});document.addEventListener('room:navigate',event=>navigate((event as CustomEvent).detail.id),{signal:events.signal});
@@ -263,5 +288,5 @@ export function initRoomExperience(){
  const hide=()=>{suspended=true;stop();stopAtmosphere();},show=()=>{suspended=false;measure();atmosphere();};
  addEventListener('pagehide',hide,{signal:events.signal});addEventListener('pageshow',show,{signal:events.signal});
  document.fonts?.ready.then(()=>{if(!destroyed)measure();});measure();
- return{destroy(){destroyed=true;stop();stopAtmosphere();for(const [video,id]of videoFrames)video.cancelVideoFrameCallback?.(id);videoFrames.clear();events.abort();io.disconnect();resize.disconnect();mutations.disconnect();query.removeEventListener('change',preferenceChange);painter?.dispose();view?.dispose();}};
+ return{destroy(){destroyed=true;pauseAutoCamera();autoCameraPending=false;stop();stopAtmosphere();for(const [video,id]of videoFrames)video.cancelVideoFrameCallback?.(id);videoFrames.clear();events.abort();io.disconnect();resize.disconnect();mutations.disconnect();query.removeEventListener('change',preferenceChange);painter?.dispose();view?.dispose();}};
 }

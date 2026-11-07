@@ -112,11 +112,13 @@ html:has(body[data-room-experience=true]){scroll-padding-top:0}
 .room-broadcast-controls[hidden]{display:none}
 html body[data-world=iznanka] .room-broadcast-controls :is(a,button){font:12px/1.6 var(--terminal,monospace);color:#adb8aa;background:#101a16e8;border:1px solid #73847166;padding:10px 14px;min-height:44px;white-space:nowrap;cursor:pointer}
 html body[data-world=iznanka] .room-broadcast-controls :is(a,button):focus-visible{outline:2px solid #b3bfa6;outline-offset:3px}
-.room-camera-power{position:absolute;top:76px;right:24px;z-index:12;min-height:44px;padding:9px 14px;border:1px solid #7c897577;background:#152019e6;color:#aebaa7;font:12px/1.6 var(--terminal,monospace);cursor:pointer}
-.room-camera-power[aria-pressed=true]{background:#0d1511c9;color:#8f9c8a;border-color:#56625177}
+.room-camera-power{position:absolute;top:64%;left:50%;transform:translateX(-50%);z-index:12;width:max-content;max-width:calc(100% - 40px);min-height:44px;padding:10px 19px;border:1px solid #9ba99c36;border-radius:3px;background:#0e171c52;color:#bbc4b6c9;font:11px/1.6 var(--terminal,monospace);white-space:nowrap;letter-spacing:.02em;cursor:pointer;opacity:.65;transition:opacity .25s,background .25s,border-color .25s}
+.room-camera-power:hover,.room-camera-power:focus-visible{opacity:1;background:#101b22b3;border-color:#a0b2a577}
+.room-camera-power:focus-visible{outline:2px solid #b3bfa6;outline-offset:4px}
+.room-experience[data-room-camera-pending=true] .room-camera-power,.room-camera-power:disabled{opacity:0;visibility:hidden;pointer-events:none}
 .room-experience:not([data-room-ready=true]) .room-camera-power,.room-experience[data-room-mode=fallback] :is(.room-camera-power,.room-camcorder,.room-broadcast-controls){display:none!important}
 .room-camcorder{position:absolute;inset:78px 24px 86px;z-index:8;pointer-events:none;opacity:0;visibility:hidden;color:#9aa99b;filter:drop-shadow(1px 0 #3e9e8d44) drop-shadow(-1px 0 #973d4d33);font:13px/1.5 var(--terminal,monospace)}
-[data-room-camera=true] .room-camcorder{opacity:.86;visibility:visible}
+[data-room-camera-view=true] .room-camcorder{opacity:.86;visibility:visible}
 .room-camcorder>i{position:absolute;width:34px;height:30px;border:1px solid #a5b2a299}
 .room-camcorder>i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
 .room-camcorder>i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
@@ -124,15 +126,13 @@ html body[data-world=iznanka] .room-broadcast-controls :is(a,button):focus-visib
 .room-camcorder>i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
 .room-camera-rec{position:absolute;top:8px;left:14px;letter-spacing:.04em}.room-camera-rec b{display:inline-block;width:7px;height:7px;background:#a83c46;border-radius:50%;margin-right:6px;box-shadow:0 0 4px #8d28334d}.room-camera-rec small{font:inherit;opacity:.6;margin-left:10px}
 .room-camera-tape{position:absolute;bottom:8px;left:14px;opacity:.65;font-size:10px;letter-spacing:.07em}.room-camera-battery{position:absolute;bottom:8px;right:14px;opacity:.72}
-[data-room-camera=true][data-room-camera-lifting=true] .room-camcorder{animation:room-camera-lift .76s cubic-bezier(.22,.7,.25,1) both}
-@keyframes room-camera-lift{0%{transform:translateY(68vh) rotate(-5deg) scale(1.05);opacity:.15}70%{transform:translateY(-1vh) rotate(.4deg);opacity:.8}100%{transform:none;opacity:.86}}
-@media(max-width:760px){.room-camera-power{top:109px;right:15px;font-size:10px;min-height:36px;padding:7px 9px}.room-camcorder{inset:112px 15px 106px;font-size:11px}.room-camcorder>i{width:23px;height:24px}.room-camera-rec{top:7px;left:10px}.room-camera-rec small{margin-left:4px}.room-camera-tape{font-size:8px;left:9px}.room-broadcast-controls{bottom:105px;display:grid;grid-template-columns:1fr 1fr;width:calc(100% - 40px);gap:6px}html body[data-world=iznanka] .room-broadcast-controls :is(a,button){font-size:10px;min-height:38px;padding:8px;text-align:center}}
-@media(prefers-reduced-motion:reduce){.room-camcorder{animation:none!important}}
-html.calm .room-camcorder{animation:none!important}
-
-/* Keep the active camera control outside the important part of the broadcast. */
-.room-camera-power[aria-pressed=true]{top:51px;min-height:28px;font-size:10px;padding:5px 9px}
-@media(max-width:760px){.room-camera-power[aria-pressed=true]{top:78px;font-size:9px;min-height:27px;padding:5px 8px}}
+.room-camcorder{transition:opacity .18s linear}
+[data-room-camera-view=true] .room-camera-rec b{animation:room-record-light 2.4s steps(1,end) infinite}
+[data-room-paused=true] .room-camera-rec b,[data-room-visible=false] .room-camera-rec b{animation-play-state:paused}
+@keyframes room-record-light{0%,78%,100%{opacity:.9}79%,99%{opacity:.22}}
+@media(max-width:760px){.room-camera-power{font-size:10px;padding:10px 15px}.room-camcorder{inset:112px 15px 106px;font-size:11px}.room-camcorder>i{width:23px;height:24px}.room-camera-rec{top:7px;left:10px}.room-camera-rec small{margin-left:4px}.room-camera-tape{font-size:8px;left:9px}.room-broadcast-controls{bottom:105px;display:grid;grid-template-columns:1fr 1fr;width:calc(100% - 40px);gap:6px}html body[data-world=iznanka] .room-broadcast-controls :is(a,button){font-size:10px;min-height:38px;padding:8px;text-align:center}}
+@media(prefers-reduced-motion:reduce){.room-camcorder,.room-camera-power{transition:none!important}.room-camera-rec b{animation:none!important}}
+html.calm :is(.room-camcorder,.room-camera-power){transition:none!important}html.calm .room-camera-rec b{animation:none!important}
 /* Tape indicators stay above the film and television controls. */
 .room-camera-tape{top:8px;bottom:auto;left:153px}
 .room-camera-battery{top:8px;bottom:auto}
@@ -142,6 +142,3 @@ html.calm .room-camcorder{animation:none!important}
 html body[data-world=iznanka] .room-site-header .room-information-version{font:10px/1.6 var(--terminal,monospace);min-height:30px;padding:4px 10px;border:1px solid #6875706b;border-radius:2px;background:#0b1216b8;color:#a8b4ac}
 @media(max-width:760px){.room-header-links{align-items:flex-end}.room-site-header .room-header-links nav{display:flex;flex-wrap:wrap;width:auto;max-width:230px}.room-site-header .room-header-links{justify-self:end}}
 @media(max-width:420px){.room-site-header{grid-template-columns:1fr}.room-site-header .room-header-links{justify-self:stretch;align-items:stretch}.room-site-header .room-header-links nav{max-width:none;justify-content:space-between}.room-site-header .room-information-version{align-self:flex-end}}
-/* The alternate page and camera must remain separate hit targets on narrow screens. */
-.room-camera-power{top:94px}
-@media(max-width:760px){.room-camera-power{top:152px}}

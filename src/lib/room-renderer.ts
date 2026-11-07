@@ -10,9 +10,10 @@ import {addRoomTeamBoard} from './room-team-board';
 import {addRoomFilmBeam} from './room-film-beam';
 import {createRoomHands} from './room-hands';
 import {addRoomEvidence} from './room-evidence';
+import {createRoomHandheldCamera} from './room-handheld-camera';
 export type RoomScreenLabel={id:string;title:string;image?:string;subtitle?:string};
 export type ProjectedGlass={quad:ScreenQuad;visible:boolean;depth?:number};
-export type RoomRenderState={active?:RoomStationId;hover?:RoomStationId;pulse?:string;atmosphere?:RoomAtmosphereFrame;projectorOn?:boolean;projectorTime?:number;lifeTime?:number;cameraTime?:number;cameraAmount?:number;questDetails?:boolean;calm?:boolean};
+export type RoomRenderState={active?:RoomStationId;hover?:RoomStationId;pulse?:string;atmosphere?:RoomAtmosphereFrame;projectorOn?:boolean;projectorTime?:number;lifeTime?:number;cameraTime?:number;cameraAmount?:number;cameraWear?:number;questDetails?:boolean;calm?:boolean};
 
 /** One WebGL context; DOM controls are projected with this exact same camera. */
 export async function createRoomRenderer(canvas:HTMLCanvasElement,url:string,options:{screens:RoomScreenLabel[];invalidate?:()=>void}){
@@ -163,6 +164,7 @@ export async function createRoomRenderer(canvas:HTMLCanvasElement,url:string,opt
  const entranceSign=new Mesh(new PlaneGeometry(1.52,.24),signMaterial);entranceSign.position.set(0,2.87,7.13);scene.add(entranceSign);
  renderer.shadowMap.needsUpdate=true;
  const pixelPass=createRoomPixelPass(renderer);
+ const handheld=createRoomHandheldCamera();
  const ordinaryFog=new Color('#171c1c'),recordedFog=new Color('#080d15'),ghostPoint=new Vector3();
  let width=0,height=0,previousPulse:string|undefined;
  const picker=new Raycaster();
@@ -247,6 +249,13 @@ export async function createRoomRenderer(canvas:HTMLCanvasElement,url:string,opt
    dust.position.y=air?Math.sin(air.drift*.23)*.025:0;dust.position.x=air?Math.sin(air.drift*.11)*.015:0;
    canvas.dataset.roomLamp=String(air?.lamp??1);canvas.dataset.roomCloth=String(air?.cloth??0);
    renderer.setRenderTarget(pixelPass.target);renderer.render(scene,camera);
+   const propVisible=!state.calm&&handheld.update(state.cameraWear??1,camera.aspect,camera.fov);
+   if(propVisible){
+    // Foreground metres are independent of corridor movement, but the actual
+    // geometry, lighting and final pixel transfer remain in the same frame.
+    renderer.autoClear=false;renderer.clearDepth();renderer.render(handheld.scene,handheld.eye);renderer.autoClear=true;
+   }
+   canvas.dataset.roomCameraProp=String(propVisible);
    const triangles=renderer.info.render.triangles,calls=renderer.info.render.calls;
    pixelPass.present(width<=760?1.3:1.2,state.calm?0:state.cameraTime||0,!!state.pulse,amount);
    canvas.dataset.roomFrames=String(Number(canvas.dataset.roomFrames||0)+1);canvas.dataset.roomTriangles=String(triangles);canvas.dataset.roomCalls=String(calls+1);
@@ -274,6 +283,6 @@ export async function createRoomRenderer(canvas:HTMLCanvasElement,url:string,opt
    while(object){if(id==='projector'?object.name==='RoomFilmProjector'||object.name.startsWith('RoomFilmReel_'):object.name==='RoomScreen_'+id)return true;object=object.parent;}
    return false;
   },
-  dispose(){alive=false;hands.dispose();blood.dispose();evidence.dispose();teamBoard.dispose();model.scene.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose()});beam.dispose();sign.geometry.dispose();entranceSign.geometry.dispose();dustGeometry.dispose();key.shadow.dispose();fixtures.forEach(fixture=>fixture.light.shadow.dispose());for(const material of materials){for(const value of Object.values(material))if(value?.isTexture)textures.add(value);material.dispose();}textures.forEach(t=>t.dispose());cleanSignals.clear();pixelPass.dispose();renderer.dispose();renderer.forceContextLoss();}
+  dispose(){alive=false;handheld.dispose();hands.dispose();blood.dispose();evidence.dispose();teamBoard.dispose();model.scene.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose()});beam.dispose();sign.geometry.dispose();entranceSign.geometry.dispose();dustGeometry.dispose();key.shadow.dispose();fixtures.forEach(fixture=>fixture.light.shadow.dispose());for(const material of materials){for(const value of Object.values(material))if(value?.isTexture)textures.add(value);material.dispose();}textures.forEach(t=>t.dispose());cleanSignals.clear();pixelPass.dispose();renderer.dispose();renderer.forceContextLoss();}
  };
 }

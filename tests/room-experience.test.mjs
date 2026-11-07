@@ -578,14 +578,44 @@ test('Мобильные якоря и камера используют выс�
 test('До поднятия камеры среда обычная; переход ограничен по времени, выключение останавливает живые эффекты',async()=>{
  const x=await controllerHarness({camera:false,liveMotion:true});try{
   await x.visible();x.settle();assert.equal(x.root.dataset.roomCamera,'false');assert.equal(x.w.__states.at(-1).cameraAmount,0);
-  assert.equal(x.timers.size,0,'Обычный коридор не продолжает хоррор-события');
+  assert.equal(x.timers.size,1,'В обычном коридоре работает только однократная задержка надевания');
   const button=x.root.querySelector('[data-room-camera-power]');button.click();x.flush(240);
-  assert.ok(x.w.__states.at(-1).cameraAmount>0&&x.w.__states.at(-1).cameraAmount<1,'Появление среды связано с подъёмом камеры');
+  assert.ok(x.w.__states.at(-1).cameraWear>0,'Сначала поднимается физическая камера');
+  assert.equal(x.w.__states.at(-1).cameraAmount,0,'Хоррор не появляется, пока окуляр находится далеко от лица');
+  x.flush(1260);assert.ok(x.w.__states.at(-1).cameraAmount>0&&x.w.__states.at(-1).cameraAmount<1,'Среда проявляется при приближении окуляра');
   x.settle();assert.equal(x.w.__states.at(-1).cameraAmount,1);assert.equal(x.root.dataset.roomCameraLifting,'false');
   assert.ok([...x.timers.values()].some(t=>t.delay===83));
   button.click();x.settle();assert.equal(x.w.__states.at(-1).cameraAmount,0);assert.equal(x.timers.size,0);
   await x.preference(true);button.click();x.flush();assert.equal(x.w.__states.at(-1).cameraAmount,1);assert.equal(x.root.dataset.roomCameraLifting,'false');assert.equal(x.timers.size,0,'Спокойный режим сохраняет неподвижное изображение');
  }finally{x.close()}
+});
+
+test('Камера сама надевается через секунду видимого коридора; снятие сохраняется при навигации',async()=>{
+ const x=await controllerHarness({camera:false,liveMotion:true});try{
+  await x.visible();const button=x.root.querySelector('[data-room-camera-power]');
+  assert.equal(x.w.__states.at(-1).cameraWear,0);assert.equal(x.root.dataset.roomCameraView,'false');
+  x.advance(999);assert.equal(x.root.dataset.roomCamera,'false');
+  x.advance(1);assert.equal(x.root.dataset.roomCamera,'true');assert.equal(button.disabled,true);
+  x.flush(600);assert.ok(x.w.__states.at(-1).cameraWear>0&&x.w.__states.at(-1).cameraWear<1);assert.equal(x.w.__states.at(-1).cameraAmount,0);
+  x.settle();assert.equal(button.textContent,'Убрать камеру');assert.equal(button.disabled,false);assert.equal(x.root.dataset.roomCameraView,'true');
+  button.click();x.settle();assert.equal(button.textContent,'Надеть камеру');assert.equal(x.w.__states.at(-1).cameraAmount,0);
+  x.d.querySelector('[data-room-go="quests"]').click();x.settle();x.root.querySelector('[data-room-open="quest_0"]').click();x.settle();
+  x.advance(10000);assert.equal(x.root.dataset.roomCamera,'false','Переход к квесту не надевает снятую камеру заново');assert.equal(x.timers.size,0);
+ }finally{x.close()}
+});
+
+test('Секунда ожидания и надевание приостанавливаются в скрытой вкладке и вне комнаты',async()=>{
+ const x=await controllerHarness({camera:false});try{
+  await x.visible();x.advance(400);x.hide(true);assert.equal(x.timers.size,0);
+  x.advance(20000);x.hide(false);x.flush(0);x.advance(599);assert.equal(x.root.dataset.roomCamera,'false');x.advance(1);x.flush(500);
+  const wear=x.w.__states.at(-1).cameraWear;assert.ok(wear>0&&wear<1);
+  await x.visible(false);assert.equal(x.frames.size,0);assert.equal(x.timers.size,0);x.advance(30000);
+  await x.visible();x.flush();assert.equal(x.w.__states.at(-1).cameraWear,wear,'Возврат не пропускает невидимую часть анимации');
+  x.settle();assert.equal(x.w.__states.at(-1).cameraWear,1);
+ }finally{x.close()}
+ const calm=await controllerHarness({camera:false,reduced:true});try{
+  await calm.visible();calm.settle();calm.advance(1000);calm.flush();assert.equal(calm.w.__states.at(-1).cameraWear,1);assert.equal(calm.root.dataset.roomCameraLifting,'false');assert.equal(calm.timers.size,0);
+ }finally{calm.close()}
 });
 
 test('При выборе телевизора остаётся исходный кадр; описание включается отдельно и сбрасывается после возврата',async()=>{
