@@ -80,3 +80,4 @@ body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font
 .calm .hub-logo-metric{opacity:1!important;transition:none}.calm .hub-logo-slice{opacity:0!important}
 /* Crop browser-page chrome from the captured corridor while retaining its actual scene. */
 .hub-world-iznanka .hub-preview-scene{transform:scale(1.3)}
+.hub-world:focus-visible{outline-color:var(--ink)}
