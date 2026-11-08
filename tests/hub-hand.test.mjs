@@ -9,6 +9,11 @@ import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,introLetterProgress,handScroll
 import {setupDOM} from './dom-harness.mjs';
 
 test('Скролл сначала вводит руку, затем держит открытую позу и только после этого отправляет название в шапку',()=>{
+ assert.equal(HERO_PIN_END,.97);
+ assert.equal(HAND_ENTRY_END,.64);
+ assert.equal(HAND_HOLD_END,.665);
+ assert.ok(HAND_HOLD_END-HAND_ENTRY_END<=.03,'полностью раскрытая поза задерживается лишь на короткий момент');
+ assert.ok(1-HAND_HOLD_END>HAND_ENTRY_END*.5,'исчезновение занимает заметную часть сцены');
  for(let i=0;i<4;i++){
   assert.equal(introLetterProgress(2.5,10,i),0);
   assert.equal(introLetterProgress(7.1,10,i),1);
@@ -26,10 +31,10 @@ test('Скролл сначала вводит руку, затем держит
  assert.deepEqual([...stops].reverse().map(p=>handScrollState(p,10)).reverse(),stops.map(p=>handScrollState(p,10)));
 });
 
-test('Плавное догоняние скролла не зависит от частоты кадров, не перелетает цель и работает в обе стороны',()=>{
+test('Плавное догоняние скролла не зависит от частоты кадров, медленно гасит рывки и работает в обе стороны',()=>{
  const values=[30,60,120].map(fps=>{let p=.1;for(let i=0;i<fps*.4;i++)p=smoothScrollProgress(p,.8,1/fps);return p});
  assert.ok(Math.max(...values)-Math.min(...values)<1e-10);
- assert.ok(values.every(p=>p>.1&&p<.8));
+ assert.ok(values.every(p=>p>.1&&p<.8&&p<.72));
  const reverse=smoothScrollProgress(.8,.1,1/60);assert.ok(reverse>.1&&reverse<.8);
  assert.equal(smoothScrollProgress(.4,.8,0),.4);
  assert.equal(smoothScrollProgress(.79999,.8,1/60),.8);

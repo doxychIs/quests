@@ -7,7 +7,7 @@ html body[data-world=hub][data-page=home] .hub-header{max-width:none;background:
 .hub-header[data-hub-home=true] .theme-toggle{display:none}
 .hub-hand-enhanced .hub-header[data-hub-home=true]{opacity:var(--hub-nav-opacity,0);pointer-events:var(--hub-nav-events,none)}
 .hub-hand-enhanced .hub-header[data-hub-home=true]:focus-within{opacity:1;pointer-events:auto}
-.hub-intro{--hub-header-height:96px;--hub-stage-height:max(400px,calc(100svh - var(--hub-header-height)));--hub-travel:520svh;position:relative;max-width:none;padding:0;height:var(--hub-stage-height)}
+.hub-intro{--hub-header-height:96px;--hub-stage-height:max(400px,calc(100svh - var(--hub-header-height)));--hub-travel:570svh;position:relative;max-width:none;padding:0;height:var(--hub-stage-height)}
 .hub-intro[data-logo-ready=true]{height:calc(var(--hub-stage-height) + var(--hub-travel))}
 .hub-intro[data-hand-state=fallback]{--hub-travel:65svh}
 .hub-intro[data-hand-state=reduced]{--hub-travel:0px}
@@ -68,7 +68,7 @@ body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font
 .hub-about>*,.hub-gift-simple>*,.hub-questions>*{min-width:0}
 html body[data-world=hub] .hub-world-preview-title{font-family:var(--brand-display);font-style:normal;text-transform:uppercase;letter-spacing:.07em}
 @media(max-width:760px){
- .hub-intro{--hub-header-height:80px;--hub-stage-height:max(360px,calc(100svh - var(--hub-header-height)));--hub-travel:460svh}
+ .hub-intro{--hub-header-height:80px;--hub-stage-height:max(360px,calc(100svh - var(--hub-header-height)));--hub-travel:500svh}
  html body[data-world=hub] .hub-logo-home{--hub-logo-width:min(88vw,135svh);top:calc(var(--hub-stage-height) - var(--hub-logo-width)/5.6 - 46px)}
  html body[data-world=hub] .hub-wordmark{width:112px}
  .hub-world-list{grid-template-columns:1fr;gap:18px}.hub-worlds{padding-top:40px}
