@@ -1,5 +1,5 @@
 /* The brand shell is scoped to the entrance and its information pages. */
-html body[data-world=hub]{--hub-pad:clamp(24px,5.5vw,88px);--paper:#050506;--ink:#e5e7eb;--muted:#a4a8b1;--line:#d6dce023;--accent:#c4cad4;--portal-paper:var(--paper);--portal-ink:var(--ink);--portal-muted:var(--muted);--portal-line:var(--line);background:var(--paper);color:var(--ink);color-scheme:dark;font-family:var(--sans)}
+html body[data-world=hub]{--hub-pad:clamp(24px,5.5vw,88px);--paper:#050506;--ink:#e5e7eb;--muted:#a4a8b1;--line:#d6dce023;--accent:#c4cad4;--portal-accent:var(--accent);--portal-paper:var(--paper);--portal-ink:var(--ink);--portal-muted:var(--muted);--portal-line:var(--line);background:var(--paper);color:var(--ink);color-scheme:dark;font-family:var(--sans)}
 html[data-site-theme=light] body[data-world=hub]{--paper:#fafafa;--ink:#191919;--muted:#626262;--line:#d6d6d6;--accent:#252525;color-scheme:light}
 html body[data-world=hub] :is(h1,h2,h3,em){font-family:var(--sans);font-style:normal;font-weight:500}
 html body[data-world=hub] ::selection{background:var(--ink);color:var(--paper)}
