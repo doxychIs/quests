@@ -1,5 +1,5 @@
 import {logoPose,logoProgress,type LogoRect} from '../lib/hub-logo';
-import {HERO_PIN_END,clamp01,handScrollState,introLetterProgress,smoothstep} from '../lib/hub-hand-motion';
+import {HERO_PIN_END,clamp01,handScrollState,introLetterProgress,smoothstep,smoothScrollProgress} from '../lib/hub-hand-motion';
 import type {HandController} from './hub-hand';
 
 /** Native scrolling drives the entry, hold and exit of one pinned scene. */
@@ -16,6 +16,7 @@ export function initHubHero(){
  let controller:HandController|undefined,started=false,destroyed=false,visible=true;
  let failed=false,frame=0,measureNeeded=true,loadTimer=0;
  let origin:LogoRect={left:0,top:0,width:1,height:1},pinTravel=1,travel=1,start=0;
+ let displayedProgress=0,positioned=false,lastFrame=0;
  const calm=()=>media.matches||document.documentElement.classList.contains('calm');
  const active=()=>!destroyed&&typeof document!=='undefined'&&!!document.documentElement;
  function schedule(){if(!frame&&active()&&!document.hidden)frame=requestAnimationFrame(update)}
@@ -36,15 +37,18 @@ export function initHubHero(){
    hero!.dataset.handState=calm()?'reduced':'ready';measure();
   }catch(error){if(active()){fallback();if(!abort.signal.aborted)console.warn('ИНОЕ: 3D недоступно, навигация сохранена.',error)}}
  }
- function update(){
+ function update(now=performance.now()){
   frame=0;if(!active()||document.hidden)return;
+  const seconds=lastFrame&&now-lastFrame<100?(now-lastFrame)/1000:1/60;lastFrame=now;
   const reduced=calm(),simplified=reduced||failed;
   const duration=controller?.duration||10;
-  const scroll=Math.max(0,scrollY-start);
-  const state=handScrollState(scroll/travel,duration);
-  // A failure or reduced motion must never hide the available text/navigation.
-  hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?state.phase:'loading';
-  logo!.style.opacity=simplified?'1':controller&&state.time>0?'1':'0';
+  hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?'appearance':'loading';
+  if(simplified){
+   logo!.style.opacity='1';logo!.tabIndex=0;
+   document.documentElement.style.setProperty('--hub-nav-opacity','1');
+   document.documentElement.style.setProperty('--hub-nav-events','auto');
+  }
+  const remeasuring=measureNeeded;
   if(measureNeeded){
    const r=home!.getBoundingClientRect(),section=hero!.getBoundingClientRect();
    if(r.width<1)return;
@@ -56,7 +60,10 @@ export function initHubHero(){
    controller?.resize(Math.max(1,Math.min(stage!.clientHeight*.68,home!.offsetTop-32)));
    measureNeeded=false;
   }
-  const position=Math.max(0,scrollY-start),progress=clamp01(position/travel);
+  const position=Math.max(0,scrollY-start),targetProgress=clamp01(position/travel);
+  const instant=simplified||!positioned||remeasuring||!visible||targetProgress===0||targetProgress===1;
+  displayedProgress=instant?targetProgress:smoothScrollProgress(displayedProgress,targetProgress,seconds);positioned=true;
+  const progress=displayedProgress;
   const poseState=handScrollState(progress,duration);
   const docking=reduced?(position>=stage!.clientHeight*.5?1:0):failed?logoProgress(position,pinTravel):poseState.docking;
   const from=reduced?{...origin,top:origin.top-scrollY}:origin;
@@ -76,13 +83,14 @@ export function initHubHero(){
    const amount=simplified||poseState.docking>0?1:introLetterProgress(poseState.time,duration,index);
    revealed=Math.max(revealed,amount);
    letter.style.setProperty('--letter-reveal',String(amount));
-   letter.style.setProperty('--letter-mask',amount===1?'none':`inset(0 0 ${(1-amount)*100}% 0)`);
-   letter.style.transform=`translate3d(0,${((1-amount)*.30).toFixed(4)}em,0)`;
+   letter.style.setProperty('--letter-mask',amount===1?'none':`linear-gradient(180deg,#000 0%,#000 ${Math.max(0,amount*125-20).toFixed(2)}%,transparent ${(amount*125+5).toFixed(2)}%)`);
+   letter.style.transform=`translate3d(0,${((1-amount)*.18).toFixed(4)}em,0) rotateX(${((1-amount)*8).toFixed(3)}deg)`;
   });
   logo!.style.opacity=simplified||controller&&revealed>0?'1':'0';
   logo!.tabIndex=simplified||revealed>.1?0:-1;
   hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?poseState.phase:'loading';
   hero!.dataset.scrollProgress=progress.toFixed(5);hero!.dataset.dockProgress=docking.toFixed(5);
+  hero!.dataset.scrollTarget=targetProgress.toFixed(5);
   hero!.dataset.pinReleased=String(position>=pinTravel);
   const navOpacity=simplified?1:smoothstep(progress/.1);
   document.documentElement.style.setProperty('--hub-nav-opacity',String(navOpacity));
@@ -90,6 +98,7 @@ export function initHubHero(){
   host!.style.opacity=controller&&!reduced?String(poseState.opacity):'0';
   controller?.setVisible(visible&&!reduced);
   controller?.seek(reduced?duration:poseState.time);
+  if(!simplified&&visible&&Math.abs(progress-targetProgress)>=.00002)schedule();
  }
  function motionChange(){
   hero!.dataset.handState=calm()?'reduced':failed?'fallback':controller?'ready':'loading';
@@ -110,5 +119,11 @@ export function initHubHero(){
   document.removeEventListener('visibilitychange',visibility);media.removeEventListener('change',motionChange);
  });
  hero.dataset.handState=calm()?'reduced':'loading';hero.dataset.logoReady='true';
- document.fonts?.ready.then(measure);update();if(!calm())void load();
+ const initialHash=location.hash;
+ document.fonts?.ready.then(()=>{
+  measure();
+  // Keep an explicit link to the world selector below the expanded pinned scene.
+  if(['#worlds','#how'].includes(initialHash)&&location.hash===initialHash)
+   requestAnimationFrame(()=>document.getElementById(initialHash.slice(1))?.scrollIntoView({block:'start',behavior:'instant'}));
+ });update();if(!calm())void load();
 }

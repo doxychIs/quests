@@ -23,7 +23,7 @@ test('Главная: единый словесный логотип и три �
   const hero=x.d.querySelector('[data-hub-hero]'),root=x.d.querySelector('[data-world-selector]');
   assert.equal(hero.querySelector('h1').getAttribute('aria-label'),'ИНОЕ');assert.equal(hero.querySelectorAll('[data-hub-logo]').length,1);
   assert.equal(hero.querySelector('p,button,.hub-action'),null);assert.ok(x.d.querySelector('.hub-header[data-hub-home=true] [data-logo-target]'));
-  assert.equal(root.querySelector('.hub-world-list p,.hub-world-list h2,.hub-world-meta,.hub-world-bottom'),null);
+  assert.equal(root.querySelector('p,h2,.hub-world-meta,.hub-world-bottom'),null);
   assert.equal(root.querySelectorAll('a').length,3);assert.equal(root.querySelectorAll('.hub-world-preview-title').length,3);
   assert.doesNotMatch(hero.textContent+root.textContent,/Выйти из|Одна команда|Три настроения|Для тех/);
   assert.deepEqual(x.errors,[]);

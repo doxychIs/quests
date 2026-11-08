@@ -1,41 +1,36 @@
-/* The brand shell is scoped to the entrance and its information pages. */
-html body[data-world=hub]{--hub-pad:clamp(24px,5.5vw,88px);--paper:#050506;--ink:#e5e7eb;--muted:#a4a8b1;--line:#d6dce023;--accent:#c4cad4;--portal-accent:var(--accent);--portal-paper:var(--paper);--portal-ink:var(--ink);--portal-muted:var(--muted);--portal-line:var(--line);background:var(--paper);color:var(--ink);color-scheme:dark;font-family:var(--sans)}
+/* Shared neutral shell. No theme values leak into the three worlds. */
+html body[data-world=hub]{--hub-pad:clamp(24px,5.5vw,88px);--paper:#101010;--ink:#e9e9e9;--muted:#a0a0a0;--line:#343434;--accent:#dedede;--portal-accent:var(--accent);--portal-paper:var(--paper);--portal-ink:var(--ink);--portal-muted:var(--muted);--portal-line:var(--line);background:var(--paper);color:var(--ink);color-scheme:dark;font-family:var(--sans)}
 html[data-site-theme=light] body[data-world=hub]{--paper:#fafafa;--ink:#191919;--muted:#626262;--line:#d6d6d6;--accent:#252525;color-scheme:light}
 html body[data-world=hub] :is(h1,h2,h3,em){font-family:var(--sans);font-style:normal;font-weight:500}
 html body[data-world=hub] ::selection{background:var(--ink);color:var(--paper)}
 html body[data-world=hub] .site-header{max-width:1600px;margin-inline:auto;height:96px;padding-inline:var(--hub-pad);border:0;background:var(--paper);color:var(--ink);position:relative;gap:30px}
-html body[data-world=hub] .site-header:after{display:block;content:'';position:absolute;left:var(--hub-pad);right:var(--hub-pad);bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--line) 22%,var(--line) 78%,transparent)}
-html body[data-world=hub] .hub-wordmark{display:block;width:126px;flex:none;line-height:0;transition:filter .7s}
-html body[data-world=hub] .hub-wordmark:hover{filter:brightness(1.12)}
-html body[data-world=hub] .desktop-nav{gap:32px;font-size:11px;font-weight:400;letter-spacing:.045em;color:var(--muted)}
-html body[data-world=hub] .desktop-nav a{padding-block:16px;transition:color .7s}
-html body[data-world=hub] .desktop-nav a:after{display:block;content:'';position:absolute;bottom:8px;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--ink),transparent);transform:scaleX(0);transform-origin:center;transition:transform .7s var(--ease)}
-html body[data-world=hub] .desktop-nav a:is(:hover,:focus-visible){color:var(--ink)}
-html body[data-world=hub] .desktop-nav a:is(:hover,:focus-visible):after{transform:scaleX(1)}
+html body[data-world=hub] .site-header:after,html body[data-world=hub] .desktop-nav a:after{display:none}
+html body[data-world=hub] .hub-wordmark{width:126px;display:block;flex:none;line-height:0}
+html body[data-world=hub] .desktop-nav{gap:32px;font-size:13px;font-weight:400}
+html body[data-world=hub] .desktop-nav a:hover{color:var(--muted)}
 html body[data-world=hub] .header-tools{gap:20px}
 html body[data-world=hub] .theme-toggle{display:flex;align-items:center;gap:9px;font-size:12px;white-space:nowrap;min-height:44px;padding:8px 0}
 .theme-toggle svg{fill:none;stroke:currentColor;stroke-width:1.4;flex:none}
 html body[data-world=hub] .mobile-menu nav{background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 40px #0002}
 html body[data-world=hub] .portal-section,html body[data-world=hub] .site-footer,html body[data-world=hub] .footer-bottom{border:0}
-html body[data-world=hub] .site-footer{max-width:1600px;margin-inline:auto;padding:64px var(--hub-pad) 30px;background:var(--paper);color:var(--ink);border-top:1px solid var(--line)}
-.hub-footer-content>.hub-wordmark{width:176px!important}
+html body[data-world=hub] .site-footer{max-width:1600px;margin-inline:auto;padding:50px var(--hub-pad) 30px;background:var(--paper);color:var(--ink)}
 .hub-footer-content{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:70px}
 .hub-footer-content nav{display:flex;flex-direction:column;gap:15px;font-size:13px;color:var(--muted)}
 .hub-footer-content a:hover{color:var(--ink)}
-html body[data-world=hub] .footer-bottom{padding-top:24px;font-size:10px;letter-spacing:.02em;color:var(--muted);border-top:1px solid var(--line)}
+html body[data-world=hub] .footer-bottom{padding-top:0;font-size:11px;letter-spacing:0;color:var(--muted)}
 html body[data-world=hub] .footer-bottom nav,html body[data-world=hub] .back-top{font-size:11px}
 html body[data-world=hub] .common-page{max-width:1600px;margin-inline:auto;padding:55px var(--hub-pad) 100px;color:var(--ink)}
-html body[data-world=hub] .common-page>h1{font:400 clamp(56px,7.6vw,112px)/1.02 var(--brand-display);letter-spacing:-.035em;max-width:1100px;margin-block:35px 28px}
+html body[data-world=hub] .common-page>h1{font:500 clamp(45px,6.4vw,96px)/1.08 var(--sans);letter-spacing:-.06em;max-width:1100px;margin-block:35px 28px}
 html body[data-world=hub] .common-page>h1 em{font-family:inherit;font-style:normal}
 html body[data-world=hub] .detail-back,html body[data-world=hub] .portal-underlink{color:var(--ink);font-size:13px;border:0}
 html body[data-world=hub] .page-intro{color:var(--muted);font-size:17px;max-width:55ch}
-html body[data-world=hub] .large-copy{font:400 clamp(36px,4.1vw,62px)/1.08 var(--brand-display);letter-spacing:-.035em;color:var(--ink)}
+html body[data-world=hub] .large-copy{font:500 clamp(30px,3.7vw,54px)/1.15 var(--sans);letter-spacing:-.04em;color:var(--ink)}
 html body[data-world=hub] :is(.page-issue,.portal-kicker,.eyebrow){color:var(--muted);letter-spacing:0;text-transform:none;font-size:13px}
 html body[data-world=hub] .portal-button{background:var(--ink);color:var(--paper);border:0;border-radius:5px;font-size:14px;min-height:50px;padding:14px 24px}
 html body[data-world=hub] .portal-about-copy p,html body[data-world=hub] .legal-section p,html body[data-world=hub] .contacts-layout p{color:var(--muted)}
 html body[data-world=hub] :is(.about-steps,.portal-steps li,.legal-section,.contact-help,.contact-list>div){border:0}
 html body[data-world=hub] .portal-steps{list-style:none;padding:0;gap:40px}
-html body[data-world=hub] .portal-steps h3{font:400 30px/1.15 var(--brand-display);margin:0 0 16px;letter-spacing:-.02em}
+html body[data-world=hub] .portal-steps h3{font:500 22px/1.3 var(--sans);margin:0 0 16px;letter-spacing:-.03em}
 html body[data-world=hub] .portal-steps p{color:var(--muted);font-size:15px}
 html body[data-world=hub] .legal-navigation a{font-size:13px;line-height:1.6}
 html body[data-world=hub] .contact-list :is(dt,dd){color:var(--muted)}
@@ -50,4 +45,4 @@ html body[data-world=hub] .certificate-layout :is(input,select,textarea){color:v
 html body[data-world=hub] .certificate-layout .field,html body[data-world=hub] .certificate-layout .gift-privacy-note{color:var(--muted)}
 html body[data-world=hub] .preferences{background:var(--paper);color:var(--ink);border-color:var(--line)}
 @media(max-width:1000px){html body[data-world=hub] .desktop-nav{gap:20px}html body[data-world=hub] .theme-toggle>span{display:none}}
-@media(max-width:760px){html body[data-world=hub] .site-header{height:80px;gap:20px}html body[data-world=hub] .desktop-nav{display:none}html body[data-world=hub] .mobile-menu{display:block}html body[data-world=hub] .hub-wordmark{font-size:28px}.hub-footer-content{grid-template-columns:1fr 1fr;gap:35px;margin-bottom:45px}.hub-footer-content>.hub-wordmark{grid-column:1/-1}html body[data-world=hub] .footer-bottom{gap:20px}html body[data-world=hub] .common-page{padding-top:30px}html body[data-world=hub] .portal-steps li{display:block;padding:0}html body[data-world=hub] .certificate-frame{min-height:360px;padding:28px 24px}html body[data-world=hub] .contact-art{display:none}}
+@media(max-width:760px){html body[data-world=hub] .site-header{height:80px;gap:20px}html body[data-world=hub] .desktop-nav{display:none}html body[data-world=hub] .mobile-menu{display:block}html body[data-world=hub] .hub-wordmark{width:112px}.hub-footer-content{grid-template-columns:1fr 1fr;gap:35px;margin-bottom:45px}.hub-footer-content>.hub-wordmark{grid-column:1/-1}html body[data-world=hub] .footer-bottom{gap:20px}html body[data-world=hub] .common-page{padding-top:30px}html body[data-world=hub] .portal-steps li{display:block;padding:0}html body[data-world=hub] .certificate-frame{min-height:360px;padding:28px 24px}html body[data-world=hub] .contact-art{display:none}}

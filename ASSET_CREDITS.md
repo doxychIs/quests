@@ -2,6 +2,8 @@
 
 ## Рука главной страницы, 8 ноября 2026
 
+Прямое начертание общей оболочки: [Forum, Denis Masharov — Google Fonts](https://github.com/google/fonts/tree/main/ofl/forum), SIL Open Font License 1.1. Локальные WOFF2 получены из официального Google Fonts CSS API; лицензия сохранена в `public/fonts/forum-OFL.txt`, полный исходник — в `assets-source/branding/Forum-Regular.ttf`.
+
 `public/models/inoe-hand-animated.glb` — предоставленная и утверждённая пользователем модель из `inoe-hand-model/web_asset_light/hand_inoe_animated_light.glb`, 6 028 548 байт. Источник исходной анатомической модели: [Innerscene — Posable anatomical right hand](https://www.innerscene.com/tools/library/3d-parts/posable-anatomical-right-hand-f6098b4f). Фарфоровая отделка, ногти, скелет анимации и готовый 10-секундный клип подготовлены ранее в Blender. При интеграции файл скопирован побайтно; геометрия и материалы не редактировались. SVG-контуры слова «ИНОЕ» адаптированы по приложенному пользователем референсу логотипа; отдельная монограмма не используется. Перламутровые грани выполнены SVG и CSS, свет руки — Three.js. Видео для этой интеграции не создавалось.
 
 Проверено 16 октября 2026 года. Все постоянные материалы находятся в `public/`, внешних видеоплееров и горячих ссылок нет.
