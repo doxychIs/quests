@@ -2,8 +2,10 @@
 export function initHubTheme(){
  if(document.body.dataset.world!=='hub')return;
  const root=document.documentElement;
+ const cinematicHome=!!document.querySelector('[data-hub-hero]');
  const buttons=[...document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')];
  const apply=(theme:'dark'|'light')=>{
+  if(cinematicHome)theme='dark';
   root.dataset.siteTheme=theme;
   const light=theme==='light';
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#fafafa':'#101010');

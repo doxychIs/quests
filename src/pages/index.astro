@@ -1,14 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
+import BrandWordmark from '../components/BrandWordmark.astro';
 import {worlds,href,worldKeys} from '../lib/data';
 import '../styles/hub.css';
 const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остров'};
 ---
 <Base>
+ <script is:inline>
+  document.documentElement.classList.add('hub-hand-enhanced');
+  setTimeout(()=>{const hero=document.querySelector('[data-hub-hero]');if(hero&&!hero.hasAttribute('data-logo-ready'))document.documentElement.classList.remove('hub-hand-enhanced')},15000);
+ </script>
  <section class="hub-intro" data-hub-hero aria-labelledby="hub-title">
-  <h1 id="hub-title" class="hub-logo-home" aria-label="ИНОЕ"><span class="hub-logo-placeholder" aria-hidden="true">ИНОЕ</span><a class="hub-logo-object" data-hub-logo href={href()} aria-label="ИНОЕ — главная">{[...'ИНОЕ'].map(letter=><span class="hub-logo-letter" aria-hidden="true"><span class="hub-logo-metric">{letter}</span><span class="hub-logo-slice">{letter}</span><span class="hub-logo-slice">{letter}</span><span class="hub-logo-slice">{letter}</span></span>)}</a></h1>
+  <div class="hub-hand-stage" data-hand-stage>
+  <div class="hub-hand-scene" data-hand-scene data-hand-src={href('models/inoe-hand-animated.glb')} aria-hidden="true"></div>
+  </div>
+  <h1 id="hub-title" class="hub-logo-home" aria-label="ИНОЕ"><span class="hub-logo-placeholder" aria-hidden="true"><BrandWordmark id="hero-metric"/></span><a class="hub-logo-object" data-hub-logo href={href()} aria-label="ИНОЕ — главная"><BrandWordmark id="hero-wordmark" animated/></a></h1>
  </section>
  <section class="hub-worlds" id="worlds" data-world-selector aria-label="Выбрать мир квестов">
+  <div class="hub-worlds-heading"><p class="brand-kicker">По ту сторону обычного</p><h2>Три мира.<br/><em>Одна грань.</em></h2><p class="hub-worlds-note">Выберите свою историю.</p></div>
   <nav class="hub-world-list" aria-label="Три мира квестов">
    {worldKeys.map(w=><a class={`hub-world hub-world-${w}`} href={href(w+'/')} data-world-zone={w} aria-label={`${previewNames[w]} — открыть квесты`}>
     <span class="hub-world-cover" aria-hidden="true">{worlds[w].name}</span>

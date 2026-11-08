@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {setupDOM} from './dom-harness.mjs';
 
-test('Главная: тёмная тема по умолчанию, переключатель меняет цвета, метаданные и сохраняет выбор',()=>{
- const x=setupDOM('');try{
+test('Информационная страница: переключатель меняет цвета, метаданные и сохраняет выбор',()=>{
+ const x=setupDOM('about');try{
   const root=x.d.documentElement,button=x.d.querySelector('[data-theme-toggle]');
   assert.equal(root.dataset.siteTheme,'dark');assert.equal(button.getAttribute('aria-pressed'),'false');
   button.click();assert.equal(root.dataset.siteTheme,'light');assert.equal(button.getAttribute('aria-pressed'),'true');assert.match(button.getAttribute('aria-label'),/тёмную/);
@@ -13,7 +13,7 @@ test('Главная: тёмная тема по умолчанию, перек�
 });
 
 test('Тема восстанавливается на информационных страницах и не меняет оформление миров',()=>{
- for(const route of ['','about','contacts','rules','certificates']){const x=setupDOM(route,{theme:'light'});try{
+ for(const route of ['about','contacts','rules','certificates']){const x=setupDOM(route,{theme:'light'});try{
   assert.equal(x.d.documentElement.dataset.siteTheme,'light');assert.equal(x.d.querySelector('[data-theme-toggle]').getAttribute('aria-pressed'),'true');
   x.w.dispatchEvent(new x.w.StorageEvent('storage',{key:'inoe-theme',newValue:'dark'}));assert.equal(x.d.documentElement.dataset.siteTheme,'dark');assert.deepEqual(x.errors,[]);
  }finally{x.close()}}
