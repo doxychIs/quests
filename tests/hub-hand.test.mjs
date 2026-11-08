@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import {AnimationMixer} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,introLetterProgress,handScrollState,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
+import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,entryClipProgress,introLetterProgress,handScrollState,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
 import {setupDOM} from './dom-harness.mjs';
 
 test('Скролл сначала вводит руку, затем держит открытую позу и только после этого отправляет название в шапку',()=>{
@@ -14,6 +14,10 @@ test('Скролл сначала вводит руку, затем держит
  assert.equal(HAND_HOLD_END,.665);
  assert.ok(HAND_HOLD_END-HAND_ENTRY_END<=.03,'полностью раскрытая поза задерживается лишь на короткий момент');
  assert.ok(1-HAND_HOLD_END>HAND_ENTRY_END*.5,'исчезновение занимает заметную часть сцены');
+ assert.equal(entryClipProgress(0),0);assert.equal(entryClipProgress(1),1);
+ const curve=Array.from({length:101},(_,i)=>entryClipProgress(i/100));
+ assert.ok(curve.every((p,i)=>i===0||p>curve[i-1]),'входная кривая проходит кадры только вперёд');
+ assert.ok(entryClipProgress(.5)<.1&&entryClipProgress(.9)>.7,'активное раскрытие длится, финальное расслабление короткое');
  for(let i=0;i<4;i++){
   assert.equal(introLetterProgress(2.5,10,i),0);
   assert.equal(introLetterProgress(7.1,10,i),1);

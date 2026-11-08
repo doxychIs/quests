@@ -2,10 +2,16 @@
 export const HERO_PIN_END=.97;
 export const HAND_ENTRY_END=.64;
 export const HAND_HOLD_END=.665;
+const ENTRY_RELAXATION_BIAS=10;
 export const clamp01=(value:number)=>Math.min(1,Math.max(0,value));
 export const smoothstep=(value:number)=>{const p=clamp01(value);return p*p*(3-2*p)};
 /** Zero velocity and acceleration at either end of a pose transition. */
 export const smootherstep=(value:number)=>{const p=clamp01(value);return p*p*p*(p*(p*6-15)+10)};
+/** Keep the active opening slow, then pass through the clip's subtle relaxation briskly. */
+export function entryClipProgress(value:number){
+ const p=clamp01(value),head=p*p,tail=Math.pow(1-p,1.5);
+ return head/(head+ENTRY_RELAXATION_BIAS*tail);
+}
 /** Frame-rate independent settling between wheel events; never runs an idle loop. */
 export function smoothScrollProgress(current:number,target:number,seconds:number){
  if(Math.abs(target-current)<.00002)return target;
@@ -18,7 +24,7 @@ export function introLetterProgress(time:number,duration:number,index:number){
 /** One reversible scroll choreography. Nothing advances with elapsed time. */
 export function handScrollState(progress:number,duration:number){
  const p=clamp01(progress);
- const appearance=smootherstep(p/HAND_ENTRY_END);
+ const appearance=entryClipProgress(p/HAND_ENTRY_END);
  const docking=smootherstep((p-HAND_HOLD_END)/(1-HAND_HOLD_END));
  const time=(p<=HAND_HOLD_END?appearance:1-docking)*Math.max(0,duration);
  const opacity=p<=HAND_HOLD_END?smootherstep(appearance/.09):1-smootherstep((docking-.4)/.6);
