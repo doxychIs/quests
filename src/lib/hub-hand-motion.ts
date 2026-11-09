@@ -33,12 +33,15 @@ export function introLetterProgress(time:number,duration:number,index:number){
 }
 
 export const HAND_LEVER_LENGTH=.197;
-/** A rigid forearm swings about its hidden proximal end while the whole arm approaches. */
-export function handStagePose(arrival:number,span:number){
- const p=clamp01(arrival),approach=smootherstep(p/.94),turn=smootherstep((p-.08)/.84);
+export const HAND_ASSET_ROLL=Math.PI;
+/** Forward pitch only: dorsal-facing fist becomes a horizontal, upward-facing palm. */
+export function handStagePose(arrival:number){
+ // Finish the pitch before the fingers unfold, so the half-open palm already faces up.
+ const p=clamp01(arrival),approach=smootherstep(p/.94),turn=smootherstep((p-.04)/.54);
  return {
-  pivotX:-.15,pivotY:-span*.5-.02+(1-approach)*.30,pivotZ:-1.45*(1-approach),
-  rotationX:-1.02+turn*.70,rotationY:-.10*turn,rotationZ:3.40-turn*1.02,
+  // Follow the elevated camera's sightline in depth; the distant fist stays in frame.
+  pivotX:0,pivotY:-.02-(1-approach)*.33,pivotZ:-1.45*(1-approach),
+  rotationX:turn*Math.PI/2,rotationY:0,rotationZ:0,
  };
 }
 

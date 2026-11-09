@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import {AnimationMixer,Group,PerspectiveCamera,Scene,Texture,Vector3,WebGLRenderTarget} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,HAND_LEVER_LENGTH,entryClipProgress,introLetterProgress,handScrollState,handStagePose,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
+import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,HAND_ASSET_ROLL,HAND_LEVER_LENGTH,entryClipProgress,introLetterProgress,handScrollState,handStagePose,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
 import {setupDOM} from './dom-harness.mjs';
 import {createHandAtmosphere} from '../src/scripts/hub-atmosphere.ts';
 import {createHandGlow} from '../src/scripts/hub-hand-glow.ts';
@@ -42,28 +42,35 @@ test('Скролл сначала вводит руку, затем держит
  assert.deepEqual([...stops].reverse().map(p=>handScrollState(p,10)).reverse(),stops.map(p=>handScrollState(p,10)));
 });
 
-test('Перспектива приближает руку из глубины; жёсткий рычаг сохраняет длину и движется по дуге без зеркального масштаба',()=>{
+test('Рука приближается по вертикальной дуге без бокового вращения и заканчивает горизонтальной ладонью вверх',()=>{
  for(const span of [.56,.90]){
-  const pivot=new Group(),swing=new Group(),wrist=new Vector3(0,-HAND_LEVER_LENGTH,0);
+  const pivot=new Group(),swing=new Group(),wrist=new Vector3(0,HAND_LEVER_LENGTH,0);
   pivot.add(swing);
-  const camera=new PerspectiveCamera(34,1,.02,8);camera.position.z=span/(2*Math.tan(34*Math.PI/360));camera.updateMatrixWorld();
+  const camera=new PerspectiveCamera(34,1,.02,8);camera.position.set(0,.22,span/(2*Math.tan(34*Math.PI/360)));camera.lookAt(0,-.04,0);camera.updateMatrixWorld();
   const points=[];
   for(let i=0;i<=100;i++){
-   const pose=handStagePose(i/100,span);
+   const pose=handStagePose(i/100);
    assert.ok(Object.values(pose).every(Number.isFinite));
    pivot.position.set(pose.pivotX,pose.pivotY,pose.pivotZ);swing.rotation.set(pose.rotationX,pose.rotationY,pose.rotationZ);pivot.updateMatrixWorld(true);
    const point=swing.localToWorld(wrist.clone());points.push(point);
    assert.ok(Math.abs(point.distanceTo(pivot.position)-HAND_LEVER_LENGTH)<1e-12,'поворот не растягивает предплечье');
    assert.deepEqual(pivot.scale.toArray(),[1,1,1]);assert.deepEqual(swing.scale.toArray(),[1,1,1]);
+   assert.equal(pose.rotationY,0);assert.equal(pose.rotationZ,0);
+   const normal=new Vector3(0,0,-1).applyEuler(swing.rotation);
+   const thumb=new Vector3(-1,0,0).applyEuler(swing.rotation);
+   assert.ok(normal.y>=-1e-12,'ладонь раскрывается верхней стороной вверх на всём пути');
+   assert.ok(Math.abs(thumb.x+1)<1e-12&&Math.abs(thumb.y)+Math.abs(thumb.z)<1e-12,'большой палец не переходит на другую сторону');
   }
   assert.ok(points.at(-1).z-points[0].z>1.4,'реальная глубина меняется, а не только размер картинки');
-  assert.ok(Math.abs(points.at(-1).x-points[0].x)>.15,'траектория не сводится к вертикальному спуску');
-  assert.ok(points.at(-1).y<points[0].y,'приближаясь, рука опускается');
+  assert.ok(points.every(p=>Math.abs(p.x)<1e-12),'всё движение остаётся в вертикальной плоскости глубины');
+  assert.ok(points.at(-1).clone().project(camera).y<points[0].clone().project(camera).y,'приближаясь, рука опускается в кадре');
+  assert.ok(points.every(p=>Math.abs(p.clone().project(camera).y)<.85),'запястье остаётся в кадре на всей дуге');
   const projectedSize=point=>{
    const a=point.clone().project(camera),b=point.clone().add(new Vector3(.02,0,0)).project(camera);return b.x-a.x;
   };
   assert.ok(projectedSize(points.at(-1))>projectedSize(points[0])*1.8);
-  assert.deepEqual(handStagePose(0,span),handStagePose(-1,span));assert.deepEqual(handStagePose(1,span),handStagePose(2,span));
+  assert.deepEqual(handStagePose(0),handStagePose(-1));assert.deepEqual(handStagePose(1),handStagePose(2));
+  assert.equal(handStagePose(0).rotationX,0);assert.equal(handStagePose(1).rotationX,Math.PI/2);
  }
 });
 
@@ -119,6 +126,26 @@ test('Настоящий утверждённый GLB декодируется: 
  const times=[0,2.8,5,7,10],forward=times.map(snapshot);
  assert.notDeepEqual(forward[0],forward[4]);
  assert.deepEqual([...times].reverse().map(snapshot).reverse(),forward);
+ // Verify the anatomy of the actual asset rather than an assumed palm normal.
+ const pivot=new Group(),swing=new Group(),offset=new Group();
+ pivot.add(swing);swing.add(offset);offset.position.y=HAND_LEVER_LENGTH;offset.add(gltf.scene);
+ gltf.scene.rotation.set(0,0,HAND_ASSET_ROLL);
+ const point=name=>gltf.scene.getObjectByName(name).getWorldPosition(new Vector3());
+ for(let i=0;i<=40;i++){
+  const state=handScrollState(HAND_ENTRY_END*i/40,10),pose=handStagePose(state.arrival);
+  snapshot(state.time);pivot.position.set(pose.pivotX,pose.pivotY,pose.pivotZ);
+  swing.rotation.set(pose.rotationX,pose.rotationY,pose.rotationZ);pivot.updateMatrixWorld(true);
+  const wrist=point('wrist'),length=point('middle_1').sub(wrist),width=point('index_1').sub(point('pinky_1'));
+  const normal=width.cross(length).normalize();
+  assert.ok(normal.y>=-.03,'анатомическая ладонь поворачивается вверх без переворота');
+  assert.ok(point('thumb_3').x<point('middle_palm').x,'большой палец той же руки остаётся слева');
+  assert.ok(gltf.scene.matrixWorld.determinant()>0,'модель не отражается');
+  if(state.time>=4)assert.ok(normal.y>.99,'полураскрытая ладонь уже обращена вверх');
+  if(i===40){
+   assert.ok(normal.y>.99,'плоскость раскрытой ладони горизонтальна и обращена вверх');
+   assert.ok(Math.abs(length.y)<.003,'пальцы направлены вдоль горизонтальной плоскости');
+  }
+ }
  mixer.stopAllAction();mixer.uncacheRoot(gltf.scene);
 });
 

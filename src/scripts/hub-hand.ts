@@ -8,7 +8,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import {createHandAtmosphere,type HandPresentation} from './hub-atmosphere';
 import {createHandGlow} from './hub-hand-glow';
-import {HAND_LEVER_LENGTH,handStagePose} from '../lib/hub-hand-motion';
+import {HAND_ASSET_ROLL,HAND_LEVER_LENGTH,handStagePose} from '../lib/hub-hand-motion';
 
 export interface HandAnchor{x:number;y:number;top:number}
 
@@ -31,7 +31,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
  const canvas=renderer.domElement;canvas.setAttribute('aria-hidden','true');host.append(canvas);
  const scene=new Scene(),camera=new PerspectiveCamera(34,1,.02,8);
  const pivot=new Group(),swing=new Group(),wristOffset=new Group();
- scene.add(pivot);pivot.add(swing);swing.add(wristOffset);wristOffset.position.y=-HAND_LEVER_LENGTH;
+ scene.add(pivot);pivot.add(swing);swing.add(wristOffset);wristOffset.position.y=HAND_LEVER_LENGTH;
  const background=new Scene(),compositionCamera=new OrthographicCamera(-1,1,1,-1,.1,5);compositionCamera.position.z=1;
  const meshes:Mesh[]=[],materials=new Set<Material>();
  let mixer:AnimationMixer|undefined,root:Group|undefined,disposed=false;
@@ -69,9 +69,9 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   if(!response.ok)throw new Error(`Hand GLB: HTTP ${response.status}`);
   const gltf=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(await response.arrayBuffer(),'');
   root=gltf.scene;
-  // Presentation change requested after the first preview: show the palm.
-  // Rotate the complete imported asset; never mirror or edit its skin/geometry.
-  root.rotation.y=Math.PI;
+  // One fixed orientation for the whole clip: forearm below, dorsal fist toward camera.
+  // A forward X pitch then turns this same hand palm-up; no yaw, roll or mirroring.
+  root.rotation.set(0,0,HAND_ASSET_ROLL);
   if(signal.aborted||disposed){root.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});throw new DOMException('Aborted','AbortError')}
   const clip=gltf.animations.find(a=>a.name==='INOE_Hand_10s');
   const wrist=root.getObjectByName('wrist'),palm=root.getObjectByName('middle_palm');
@@ -95,7 +95,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
    root!.position.set(0,0,0);root!.updateMatrixWorld(true);
    wrist!.getWorldPosition(wristLocal);root!.worldToLocal(wristLocal);wristLocal.applyQuaternion(root!.quaternion);
    root!.position.copy(wristLocal).negate();
-   const pose=handStagePose(presentation.arrival??0,span);
+   const pose=handStagePose(presentation.arrival??0);
    pivot.position.set(pose.pivotX,pose.pivotY,pose.pivotZ);
    swing.rotation.set(pose.rotationX,pose.rotationY,pose.rotationZ);
    pivot.updateMatrixWorld(true);
@@ -108,6 +108,8 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
     finger.getWorldPosition(tip);finger.parent.getWorldPosition(parentJoint);
     distal.subVectors(tip,parentJoint);tip.addScaledVector(distal,.95).project(camera);top=Math.max(top,tip.y);
    }
+   // A palm-up forearm recedes behind the wrist. Keep the word above its cuff too.
+   pivot.getWorldPosition(tip);tip.y+=.032;tip.project(camera);top=Math.max(top,tip.y);
    crown.set(focus.x,Math.min(.88,top+.12),0);
    const x=(focus.x+1)/2,y=(1-focus.y)/2,highest=(1-top)/2;
    if(Math.abs(anchor.x-x)+Math.abs(anchor.y-y)+Math.abs(anchor.top-highest)>.0001){
@@ -159,7 +161,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
    glow!.resize(width,height,renderer.getPixelRatio());
    atmosphere!.resize(width,height,renderer.getPixelRatio());
    camera.aspect=width/height;span=Math.max(.56,.29/camera.aspect);
-   camera.position.set(0,-.035,span/(2*Math.tan(camera.fov*Math.PI/360)));camera.lookAt(0,-.035,0);
+   camera.position.set(0,.22,span/(2*Math.tan(camera.fov*Math.PI/360)));camera.lookAt(0,-.04,0);
    camera.updateProjectionMatrix();lastTime=-1;schedule();
   }
   desiredTime=0;resize();applyTime(0);
