@@ -1,6 +1,7 @@
-import {buildEnergyRoute,energyAtDistance,energyAtY,energyFrontier,unit,type EnergyBox,type EnergyLayout,type EnergyPath} from '../lib/hub-energy-path';
+import {buildEnergyRoute,energyAtDistance,energyAtY,energyFrontier,energyVisibility,unit,type EnergyBox,type EnergyLayout} from '../lib/hub-energy-path';
+import type {createEnergyRibbon} from './hub-energy-ribbon';
 
-/** A viewport-sized SVG clips one document-space route, without full-page blur buffers. */
+/** The hero's soft fabric follows a document-space route in one viewport-sized surface. */
 export function initHubEnergy(){
  const root=document.querySelector<HTMLElement>('[data-hub-energy]');
  const hero=document.querySelector<HTMLElement>('[data-hub-hero]');
@@ -9,14 +10,15 @@ export function initHubEnergy(){
  const sections=['.hub-about','.hub-gift-simple','.hub-questions','.site-footer'].map(s=>document.querySelector<HTMLElement>(s));
  if(!root||!hero||!stage||cards.length!==3||sections.some(s=>!s))return;
  const svg=root.querySelector<SVGSVGElement>('[data-energy-svg]')!,space=root.querySelector<SVGGElement>('[data-energy-space]')!;
- const main=root.querySelector<SVGGElement>('[data-energy-main]')!;
- const threads=[...root.querySelectorAll<SVGGElement>('[data-energy-thread]')];
+ const canvas=root.querySelector<HTMLCanvasElement>('[data-energy-ribbon]')!;
  const branches=[...root.querySelectorAll<SVGGElement>('[data-energy-branch]')];
  const motes=[...root.querySelectorAll<SVGCircleElement>('[data-energy-motes] circle')];
  const source=root.querySelector<SVGCircleElement>('[data-energy-source]')!,head=root.querySelector<SVGGElement>('[data-energy-head]')!;
  const ending=[...root.querySelectorAll<SVGCircleElement>('[data-energy-ending] circle')];
  const media=matchMedia('(prefers-reduced-motion: reduce)');
  let layout:Omit<EnergyLayout,'source'>|undefined,route:ReturnType<typeof buildEnergyRoute>|undefined;
+ let ribbon:ReturnType<typeof createEnergyRibbon>|undefined,ribbonRoute:typeof route;
+ let ribbonLoading=false,ribbonFailed=false;
  let frame=0,lastPaint=0,measureNeeded=true,routeDirty=true,disposed=false;
  let heroTop=0,heroHeight=0,stageHeight=0,headerHeight=0,pageHeight=0,anchor={x:.5,y:.62},heroProgress=0;
  let previousSource={x:-1,y:-1};
@@ -25,11 +27,13 @@ export function initHubEnergy(){
  const box=(node:Element):EnergyBox=>{const r=node.getBoundingClientRect();return {left:r.left,top:r.top+scrollY,width:r.width,height:r.height}};
  function schedule(){if(!frame&&!disposed&&!document.hidden&&!calm())frame=requestAnimationFrame(paint)}
  function measure(){measureNeeded=true;schedule()}
- function draw(group:SVGGElement,path:EnergyPath,reveal:number,changed:boolean){
-  group.querySelectorAll<SVGPathElement>('[data-energy-stroke]').forEach(stroke=>{
-   if(changed)stroke.setAttribute('d',path.d);
-   stroke.style.strokeDashoffset=String(1-unit(reveal));
-  });
+ function loadRibbon(){
+  if(ribbon||ribbonLoading||ribbonFailed||calm())return;ribbonLoading=true;
+  void import('./hub-energy-ribbon').then(({createEnergyRibbon})=>{
+   if(disposed||calm())return;
+   ribbon=createEnergyRibbon(canvas,()=>{ribbon?.dispose();ribbon=undefined;ribbonFailed=true;root!.dataset.energyRenderer='unavailable'});
+   root!.dataset.energyRenderer='silk';measure();
+  }).catch(()=>{ribbonFailed=true;root!.dataset.energyRenderer='unavailable'}).finally(()=>{ribbonLoading=false});
  }
  function paint(now:number){
   frame=0;if(disposed||document.hidden||calm())return;
@@ -53,30 +57,33 @@ export function initHubEnergy(){
   if(changed){route=buildEnergyRoute({...layout,source:origin});previousSource=origin;routeDirty=false}
   if(!route)return;
   const frontier=energyFrontier(route.main,scrollY,innerHeight,pageHeight,heroProgress),reveal=frontier/route.main.length;
-  const strength=unit(heroProgress/.16),clock=now/1000;
+  const strength=energyVisibility(heroProgress),clock=now/1000;
   space.setAttribute('transform',`translate(0 ${-scrollY})`);space.style.opacity=String(strength);
-  draw(main,route.main,reveal,changed);root!.dataset.energyProgress=reveal.toFixed(5);
-  route.threads.forEach((path,i)=>draw(threads[i],path,reveal,changed));
-  setPoint(source,origin.x,origin.y);source.style.opacity=String(.45+Math.sin(clock*.8)*.10);
+  root!.dataset.energyProgress=reveal.toFixed(5);
+  if(strength>0)loadRibbon();
+  if(ribbon){
+   if(ribbonRoute!==route){ribbon.resize(layout.width,innerHeight);ribbon.setRoute(route,layout.width<=760);ribbonRoute=route}
+   ribbon.render(route,frontier,scrollY,clock,strength);
+  }
+  setPoint(source,origin.x,origin.y);source.style.opacity=String(.10+Math.sin(clock*.8)*.025);
   const tip=energyAtDistance(route.main,frontier);setPoint(head,tip.x,tip.y);
-  head.style.opacity=String(frontier>1?.72+Math.sin(clock*1.3)*.12:0);
+  head.style.opacity=String(unit((reveal-.975)/.025)*(.35+Math.sin(clock*1.3)*.08));
   const count=layout.width<=760?10:20;
   const visibleStart=energyAtY(route.main,scrollY-40).distance;
   motes.forEach((mote,i)=>{
    const distance=(Math.floor(visibleStart/75)+i)*75+(clock*18)%75;
    const p=energyAtDistance(route!.main,distance),on=i<count&&distance<frontier&&frontier>10&&p.y>scrollY-30&&p.y<scrollY+innerHeight+30;
    mote.style.opacity=on?String(.2+.35*Math.sin((distance/route!.main.length)*Math.PI)):'0';
-   if(on)setPoint(mote,p.x+Math.sin(clock*.7+i*2.1)*5,p.y);
+   if(on)setPoint(mote,p.x+Math.sin(clock*.7+i*2.1)*(layout!.width<=760?18:48),p.y+Math.cos(i*1.8)*8);
   });
   route.branches.forEach((branch,i)=>{
    const amount=unit((frontier-branch.startDistance)/branch.path.length);
-   draw(branches[i],branch.path,amount,changed);
    const destination=branches[i].querySelector<SVGCircleElement>('[data-energy-destination]')!;
-   setPoint(destination,branch.end.x,branch.end.y);destination.style.opacity=String(amount*.7);
+   setPoint(destination,branch.end.x,branch.end.y);destination.style.opacity=String(amount*.3);
    cards[i].style.setProperty('--energy-charge',amount.toFixed(4));
    const mote=branches[i].querySelector<SVGCircleElement>('[data-energy-mote]')!;
    const p=energyAtDistance(branch.path,branch.path.length*((clock*.16+i*.31)%1));
-   mote.style.opacity=String(amount>.01&&(p.distance/branch.path.length)<amount?.85:0);setPoint(mote,p.x,p.y);
+   mote.style.opacity=String(amount>.01&&(p.distance/branch.path.length)<amount?.45:0);setPoint(mote,p.x,p.y);
   });
   const finale=unit((reveal-.975)/.025);
   ending.forEach((mote,i)=>{
@@ -106,6 +113,7 @@ export function initHubEnergy(){
  const destroy=(event:PageTransitionEvent)=>{
   cancelAnimationFrame(frame);frame=0;if(event.persisted)return;disposed=true;
   resize.disconnect();settings.disconnect();hero!.removeEventListener('inoe:hero-energy',onAnchor);
+  ribbon?.dispose();ribbon=undefined;
   removeEventListener('scroll',schedule);removeEventListener('resize',measure);removeEventListener('pageshow',measure);removeEventListener('pagehide',destroy);
   document.removeEventListener('visibilitychange',visibility);media.removeEventListener('change',motion);
  };

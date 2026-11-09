@@ -8,6 +8,8 @@ export interface EnergySample extends EnergyPoint{distance:number}
 export interface EnergyPath{d:string;samples:EnergySample[];length:number}
 export const unit=(n:number)=>Math.max(0,Math.min(1,n));
 const ease=(n:number)=>{const t=unit(n);return t*t*(3-2*t)};
+/** The travelling ribbon starts only after the palm and wordmark have opened. */
+export const energyVisibility=(heroProgress:number)=>ease((heroProgress-.64)/.13);
 
 /** Monotone vertical cubic segments: bends stay inside the page and never loop through copy. */
 export function energyPath(points:EnergyPoint[]):EnergyPath{
@@ -17,8 +19,10 @@ export function energyPath(points:EnergyPoint[]):EnergyPath{
   const a=points[i-1],b=points[i],dy=b.y-a.y;
   const c={x:a.x,y:a.y+dy*.46},e={x:b.x,y:b.y-dy*.46};
   d+=`C${c.x.toFixed(2)},${c.y.toFixed(2)} ${e.x.toFixed(2)},${e.y.toFixed(2)} ${b.x.toFixed(2)},${b.y.toFixed(2)}`;
-  for(let j=1;j<=24;j++){
-   const t=j/24,s=1-t;
+  // Dense enough for a broad fabric surface: coarse centre lines kink its fine fibers.
+  const steps=Math.max(24,Math.min(240,Math.ceil(Math.hypot(b.x-a.x,dy)/5)));
+  for(let j=1;j<=steps;j++){
+   const t=j/steps,s=1-t;
    const x=s*s*s*a.x+3*s*s*t*c.x+3*s*t*t*e.x+t*t*t*b.x;
    const y=s*s*s*a.y+3*s*s*t*c.y+3*s*t*t*e.y+t*t*t*b.y;
    const previous=samples[samples.length-1];length+=Math.hypot(x-previous.x,y-previous.y);
@@ -65,15 +69,12 @@ export function buildEnergyRoute(layout:EnergyLayout){
  add(right,footer.top+Math.min(112,footer.height*.45));
  add(w*.5,footer.top+footer.height-12);
  const main=energyPath(points);
- const threads=[-1,1].map(side=>energyPath(points.map((p,i)=>({
-  x:i===0||i===points.length-1?p.x:Math.max(10,Math.min(w-10,p.x+Math.sin(i*1.7+side)*side*(compact?4:9))),y:p.y,
- }))));
  const branches=cards.map(card=>{
   const start=energyAtY(main,card.top-gap),end={x:card.left+card.width*.5,y:card.top-2};
   const path=energyPath([start,end]);
   return {path,startDistance:start.distance,end};
  });
- return {main,threads,branches,end:points[points.length-1]};
+ return {main,branches,end:points[points.length-1]};
 }
 
 /** Scroll sets the frontier. Elapsed time is used only for motes inside the revealed stream. */
@@ -81,7 +82,7 @@ export function energyFrontier(path:EnergyPath,scroll:number,viewport:number,pag
  const end=path.samples[path.samples.length-1],start=path.samples[0];
  const finish=ease((scroll-(pageHeight-viewport*1.8))/(viewport*.8));
  const ahead=scroll+viewport*(.82+.18*finish);
- const growth=ease((heroProgress-.015)/.19);
+ const growth=energyVisibility(heroProgress);
  const y=start.y+Math.max(0,Math.min(end.y,ahead)-start.y)*growth;
  return energyAtY(path,y).distance;
 }

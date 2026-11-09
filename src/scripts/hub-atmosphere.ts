@@ -1,4 +1,5 @@
 import {AdditiveBlending,BufferAttribute,BufferGeometry,Mesh,PlaneGeometry,Points,ShaderMaterial,Vector2,type Scene} from 'three';
+import {SILK_FABRIC_GLSL} from '../lib/silk-fabric.ts';
 
 export interface HandPresentation{presence:number;opening:number;progress:number;arrival?:number;reveal?:number;handOpacity?:number}
 
@@ -85,6 +86,7 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
   fragmentShader:`
    varying vec2 vUv;uniform float uTime,uPresence,uOpening,uProgress,uReveal;uniform vec2 uPointer,uViewport,uFocus,uCrown;
    ${silkPath}
+   ${SILK_FABRIC_GLSL}
    void main(){
     vec2 p=vUv*2.0-1.0;p+=uPointer*.009;
     float phase=uTime*.065+uProgress*.38;
@@ -95,12 +97,7 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
     for(int i=0;i<3;i++){
      float layer=float(i),center=silkY(u,side,layer,phase,uFocus);
      float width=silkWidth(u,layer),d=(p.y-center)/width;
-     float fabric=exp(-d*d*.85)*(.11+.045*sin(u*9.0-phase+layer));
-     float fibers=pow(.5+.5*sin(d*13.0+u*20.0+sin(u*17.0-phase)*1.3+layer),24.0)*exp(-d*d*.7)*.08;
-     float crest=exp(-pow((d-sin(u*9.0+phase+layer)*.26)*12.0,2.0))*.28;
-     crest*=.3+.7*pow(.5+.5*sin(u*10.0-phase*.6+layer),3.0);
-     float folds=.35+.65*pow(.5+.5*sin(u*15.0-phase+layer),2.0);
-     silk+=(fabric+fibers+crest)*folds/(1.0+layer*.45);
+     silk+=silkFabric(d,u,layer,phase);
     }
     silk*=1.0-smoothstep(.85,1.12,abs(p.x));
     vec2 q=(p-uFocus)*vec2(uViewport.x/uViewport.y,1.0);float r=length(q);

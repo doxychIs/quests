@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildEnergyRoute,energyAtDistance,energyAtY,energyFrontier} from '../src/lib/hub-energy-path.ts';
+import {buildEnergyRoute,energyAtDistance,energyAtY,energyFrontier,energyVisibility} from '../src/lib/hub-energy-path.ts';
 import {setupDOM} from './dom-harness.mjs';
 
 function layout(width){
@@ -32,6 +32,11 @@ test('Поток огибает реальные секции, остаётся 
 test('Граница потока управляется прокруткой в обе стороны и достигает финальной точки только у низа страницы',()=>{
  const input=layout(1280),{main}=buildEnergyRoute(input),height=input.footer.top+input.footer.height;
  assert.equal(energyFrontier(main,0,844,height,0),0);
+ for(const p of [0,.1,.3,.5,.64]){
+  assert.equal(energyVisibility(p),0,'шлейф не виден в начале вступления');
+  assert.equal(energyFrontier(main,3000,844,height,p),0);
+ }
+ assert.ok(energyVisibility(.70)>0&&energyVisibility(.70)<1);assert.equal(energyVisibility(.77),1);
  const scrolls=[4600,4900,5300,5800,6300,height-844];
  const forward=scrolls.map(y=>energyFrontier(main,y,844,height,1));
  assert.ok(forward.every((d,i)=>i===0||d>=forward[i-1]));
@@ -55,7 +60,8 @@ test('Декоративный слой не создаёт элементов �
  const x=setupDOM('',{reduced:true});try{
   const root=x.d.querySelector('[data-hub-energy]');
   assert.equal(root.getAttribute('aria-hidden'),'true');assert.ok(root.hasAttribute('inert'));
-  assert.equal(root.dataset.energyState,'reduced');assert.equal(root.querySelector('a,button,input,canvas'),null);
+  assert.equal(root.dataset.energyState,'reduced');assert.equal(root.querySelector('a,button,input'),null);
+  assert.equal(x.w.canvasCalls,0,'уменьшенное движение не создаёт WebGL-контекст');
   assert.equal(root.querySelectorAll('[data-energy-branch]').length,3);
   assert.deepEqual(x.errors,[]);
  }finally{x.close()}
