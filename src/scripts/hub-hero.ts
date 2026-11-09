@@ -73,7 +73,8 @@ export function initHubHero(){
   logo!.style.setProperty('--logo-x',`${pose.x.toFixed(3)}px`);
   logo!.style.setProperty('--logo-y',`${pose.y.toFixed(3)}px`);
   logo!.style.setProperty('--logo-scale',String(pose.scale));
-  logo!.style.setProperty('--brand-gleam',String(.94+opening*.11));
+  logo!.style.setProperty('--brand-gleam',String(.98+opening*(1-docking)*.14));
+  logo!.style.setProperty('--logo-magic',String(simplified?0:opening*(1-docking)));
   logo!.style.setProperty('--logo-tilt-x',`${(5*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-y',`${(-9*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-z',`${(-.4*(1-docking)).toFixed(3)}deg`);

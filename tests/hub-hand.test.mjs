@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {AnimationMixer,Scene} from 'three';
+import {AnimationMixer,Scene,Texture,WebGLRenderTarget} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,entryClipProgress,introLetterProgress,handScrollState,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
 import {setupDOM} from './dom-harness.mjs';
 import {createHandAtmosphere} from '../src/scripts/hub-atmosphere.ts';
+import {createHandGlow} from '../src/scripts/hub-hand-glow.ts';
 
 test('Скролл сначала вводит руку, затем держит открытую позу и только после этого отправляет название в шапку',()=>{
  assert.equal(HERO_PIN_END,.97);
@@ -64,6 +65,18 @@ test('Фоновая пыль ограничена на телефоне, скр
   objects.forEach(o=>{o.geometry.addEventListener('dispose',()=>released++);o.material.addEventListener('dispose',()=>released++)});
   atmosphere.dispose();assert.equal(scene.children.length,0);assert.equal(released,objects.length*2);
  }
+});
+
+test('Сияние использует уменьшенные буферы, сохраняет активный render target и освобождает свою поверхность',()=>{
+ const scene=new Scene(),source=new Texture(),original=new WebGLRenderTarget(8,8),passes=[];
+ let active=original;
+ const renderer={getRenderTarget:()=>active,setRenderTarget:value=>{active=value},render:()=>passes.push({width:active.width,height:active.height})};
+ const glow=createHandGlow(renderer,source,scene);glow.resize(1280,800,1.5);glow.setStrength(1);
+ glow.refresh();assert.equal(active,original);assert.equal(passes.length,2);
+ assert.ok(passes.every(p=>p.width<=480&&p.height<=300),'сияние не создаёт полноразмерные дополнительные буферы');
+ let released=0;const mesh=scene.children[0];
+ mesh.geometry.addEventListener('dispose',()=>released++);mesh.material.addEventListener('dispose',()=>released++);
+ glow.dispose();assert.equal(scene.children.length,0);assert.equal(released,2);source.dispose();original.dispose();
 });
 
 test('Настоящий утверждённый GLB декодируется: 10 секунд, 21 кость; скелет и ногти возвращаются из конца в исходные позы',async()=>{

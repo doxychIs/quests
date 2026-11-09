@@ -16,6 +16,12 @@ const {id,animated=false}=Astro.props;
    <path class="inoe-wordmark-silhouette" d={glyph.outline} fill={`url(#${id}-pearl)`} fill-rule="evenodd"/>
    <g clip-path={`url(#${id}-clip-${index})`}><path class="inoe-wordmark-fold" d={glyph.fold} fill={`url(#${id}-fold)`}/><path class="inoe-wordmark-edge" d={glyph.edge} fill="none" stroke-width=".7"/></g>
    {animated&&<g class="hub-logo-sheen" clip-path={`url(#${id}-clip-${index})`}><rect x="-70" y="-100" width="140" height="400" fill={`url(#${id}-sheen)`}/></g>}
+   {animated&&<>
+    <path class="hub-logo-luminous-edge" d={glyph.outline} fill="none" stroke="#f7faff" stroke-width=".65" pathLength="1"/>
+    <g class="hub-logo-flare" transform={`translate(${index===0?12:index===1?177:index===2?100:184} ${index===2?12:14})`}>
+     <path d="M-10 0H10M0-10V10" fill="none" stroke="#f9fcff" stroke-width=".55"/><circle r="1.4" fill="#fff"/>
+    </g>
+   </>}
   </svg>
  </span>)}
 </span>
