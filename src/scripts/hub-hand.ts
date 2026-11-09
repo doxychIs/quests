@@ -148,6 +148,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
     updateAnchor();
    }
    glow!.setStrength((.30+presentation.opening*.82)*presentation.presence);
+   glow!.setOpacity(presentation.handOpacity??1);
    atmosphere!.update(presentation,clock,pointerX,pointerY,focus,crown);
    renderer.render(background,compositionCamera);lastTime=desiredTime;lastArrival=presentation.arrival??0;lastPaint=now;
    if(presentation.presence>.001)schedule();

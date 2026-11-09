@@ -112,7 +112,7 @@ export function initHubHero(){
   document.documentElement.style.setProperty('--hub-nav-events',navOpacity>.01?'auto':'none');
   host!.style.opacity=controller&&!reduced?String(poseState.opacity):'0';
   controller?.setVisible(visible&&!reduced);
-  controller?.seek(reduced?duration:poseState.time,{presence,opening,progress,arrival:poseState.arrival,reveal:revealed*(1-docking)});
+  controller?.seek(reduced?duration:poseState.time,{presence,opening,progress,arrival:poseState.arrival,reveal:revealed*(1-docking),handOpacity:poseState.handOpacity});
   if(!simplified&&visible&&Math.abs(progress-targetProgress)>=.00002)schedule();
  }
  function motionChange(){

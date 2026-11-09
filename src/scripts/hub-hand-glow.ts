@@ -23,9 +23,9 @@ export function createHandGlow(renderer:WebGLRenderer,source:Texture,scene:Scene
  const geometry=new PlaneGeometry(2,2),blurQuad=new Mesh(geometry,blur);blurQuad.frustumCulled=false;blurScene.add(blurQuad);
  const material=new ShaderMaterial({
   transparent:true,depthTest:false,depthWrite:false,
-  uniforms:{uSource:{value:source},uGlow:{value:vertical.texture},uPixel:{value:new Vector2()},uStrength:{value:0}},vertexShader,
+  uniforms:{uSource:{value:source},uGlow:{value:vertical.texture},uPixel:{value:new Vector2()},uStrength:{value:0},uOpacity:{value:1}},vertexShader,
   fragmentShader:`
-   varying vec2 vUv;uniform sampler2D uSource,uGlow;uniform vec2 uPixel;uniform float uStrength;
+   varying vec2 vUv;uniform sampler2D uSource,uGlow;uniform vec2 uPixel;uniform float uStrength,uOpacity;
    void main(){
     vec4 hand=texture2D(uSource,vUv);float halo=texture2D(uGlow,vUv).a;
     float left=texture2D(uSource,vUv-vec2(uPixel.x,0.0)).a,right=texture2D(uSource,vUv+vec2(uPixel.x,0.0)).a;
@@ -36,7 +36,7 @@ export function createHandGlow(renderer:WebGLRenderer,source:Texture,scene:Scene
     float alpha=hand.a+glow;
     vec3 surface=hand.rgb+vec3(.8,.95,1.18)*inner*uStrength*.8;
     vec3 color=(surface*hand.a+vec3(1.0,1.12,1.38)*glow)/max(alpha,.00001);
-    gl_FragColor=vec4(color,alpha);
+    gl_FragColor=vec4(color,alpha*uOpacity);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
    }`,
@@ -55,6 +55,7 @@ export function createHandGlow(renderer:WebGLRenderer,source:Texture,scene:Scene
    renderer.setRenderTarget(vertical);renderer.render(blurScene,camera);renderer.setRenderTarget(previous);
   },
   setStrength(strength:number){material.uniforms.uStrength.value=strength},
+  setOpacity(opacity:number){material.uniforms.uOpacity.value=Math.max(0,Math.min(1,opacity));composite.visible=material.uniforms.uOpacity.value>0},
   dispose(){scene.remove(composite);horizontal.dispose();vertical.dispose();geometry.dispose();blur.dispose();material.dispose()},
  };
 }

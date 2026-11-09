@@ -54,7 +54,9 @@ export function handScrollState(progress:number,duration:number){
  const clipProgress=p<=HAND_HOLD_END?appearance:entryClipProgress(1-exit);
  const time=clipProgress*Math.max(0,duration);
  const opacity=smootherstep(clipProgress/.09)*(1-smootherstep((exit-.7)/.3));
+ // Keep the distant fist and its returning silhouette hidden; dust keeps its own fade.
+ const handOpacity=smootherstep((p-.26)/.12)*(1-smootherstep((p-.71)/.10));
  const phase=p>=1?'complete':p>=HAND_HOLD_END?'docking':p>=HAND_ENTRY_END?'hold':'appearance';
  const arrival=p<=HAND_HOLD_END?clamp01(p/HAND_ENTRY_END):1-exit;
- return {progress:p,appearance,arrival,docking,time,opacity,phase};
+ return {progress:p,appearance,arrival,docking,time,opacity,handOpacity,phase};
 }

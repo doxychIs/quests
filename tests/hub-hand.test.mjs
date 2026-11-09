@@ -31,6 +31,9 @@ test('Скролл сначала вводит руку, затем держит
  }
  const initial=handScrollState(0,10);
  assert.equal(initial.time,0);assert.equal(initial.opacity,0);assert.equal(initial.docking,0);
+ for(const p of [0,.1,.2,.26,.81,.86,1])assert.equal(handScrollState(p,10).handOpacity,0,'дальний кулак и возвращающийся силуэт полностью скрыты');
+ for(const p of [.38,.5,.64,.665,.71])assert.equal(handScrollState(p,10).handOpacity,1);
+ for(const p of [.29,.32,.35,.74,.77,.80])assert.ok(handScrollState(p,10).handOpacity>0&&handScrollState(p,10).handOpacity<1,'появление и исчезновение плавные');
  const entering=[.1,.2,.3,.4,HAND_ENTRY_END].map(p=>handScrollState(p,10));
  assert.ok(entering.every((s,i)=>s.docking===0&&(!i||s.time>entering[i-1].time)));
  for(const p of [HAND_ENTRY_END,.65,HAND_HOLD_END]){const s=handScrollState(p,10);assert.equal(s.time,10);assert.equal(s.docking,0);assert.equal(s.opacity,1)}

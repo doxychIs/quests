@@ -1,6 +1,6 @@
 import {AdditiveBlending,BufferAttribute,BufferGeometry,Mesh,PlaneGeometry,Points,ShaderMaterial,Vector2,type Scene} from 'three';
 
-export interface HandPresentation{presence:number;opening:number;progress:number;arrival?:number;reveal?:number}
+export interface HandPresentation{presence:number;opening:number;progress:number;arrival?:number;reveal?:number;handOpacity?:number}
 
 // Shared by the silk surface and the motes travelling through its folds.
 const silkPath=`
