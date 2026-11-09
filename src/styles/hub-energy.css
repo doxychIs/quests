@@ -1,0 +1,13 @@
+.hub-energy{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:0;contain:strict}
+.hub-energy[data-energy-state=active]{opacity:1}
+.hub-energy svg{display:block;width:100%;height:100%;overflow:hidden}
+.hub-energy path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+body[data-world=hub][data-page=home] :is(.hub-worlds,.hub-about,.hub-gift-simple,.hub-questions,.site-footer){position:relative;z-index:2}
+html body[data-world=hub][data-page=home] .site-footer{background:transparent}
+.hub-world-iznanka{--energy-rgb:239 105 119}
+.hub-world-arhiv{--energy-rgb:230 193 110}
+.hub-world-ostrov{--energy-rgb:108 184 243}
+.hub-world:after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgb(var(--energy-rgb) / calc(var(--energy-charge,0)*.14)),transparent 55%);box-shadow:inset 0 1px 0 rgb(var(--energy-rgb) / calc(var(--energy-charge,0)*.65));opacity:var(--energy-charge,0)}
+@media(prefers-reduced-motion:reduce){.hub-energy{display:none}.hub-world:after{display:none}}
+.calm .hub-energy,.calm .hub-world:after{display:none}
+@media(forced-colors:active){.hub-energy,.hub-world:after{display:none}}

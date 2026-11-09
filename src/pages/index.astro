@@ -1,11 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import BrandWordmark from '../components/BrandWordmark.astro';
+import HubEnergy from '../components/HubEnergy.astro';
 import {worlds,href,worldKeys} from '../lib/data';
 import '../styles/hub.css';
+import '../styles/hub-energy.css';
 const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остров'};
 ---
 <Base>
+ <HubEnergy/>
  <script is:inline>
   document.documentElement.classList.add('hub-hand-enhanced');
   setTimeout(()=>{const hero=document.querySelector('[data-hub-hero]');if(hero&&!hero.hasAttribute('data-logo-ready'))document.documentElement.classList.remove('hub-hand-enhanced')},15000);
@@ -37,5 +40,5 @@ const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остр
   <details><summary>Можно с детьми?</summary><p>Для семейных команд есть «Остров», от 6 лет. «Архив» — от 14 лет, отдельные квесты от 16. «Изнанка» — только 18+.</p></details>
   <details><summary>Можно забронировать игру?</summary><p>Сейчас это демонстрационный проект: можно изучить квесты и проверить форму записи. Реальные сеансы и оплата пока не подключены.</p></details>
  </div></section>
- <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';initWorldSelector();initHubHero();</script>
+ <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';import {initHubEnergy} from '../scripts/hub-energy';initHubEnergy();initWorldSelector();initHubHero();</script>
 </Base>

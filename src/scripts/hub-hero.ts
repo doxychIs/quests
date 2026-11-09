@@ -106,6 +106,7 @@ export function initHubHero(){
   hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?poseState.phase:'loading';
   hero!.dataset.scrollProgress=progress.toFixed(5);hero!.dataset.dockProgress=docking.toFixed(5);
   hero!.dataset.scrollTarget=targetProgress.toFixed(5);
+  hero!.dispatchEvent(new CustomEvent('inoe:hero-energy',{detail:{x:controller?.anchor.x??.5,y:controller?.anchor.y??.62,progress}}));
   hero!.dataset.pinReleased=String(position>=pinTravel);
   const navOpacity=simplified?1:smoothstep(progress/.1);
   document.documentElement.style.setProperty('--hub-nav-opacity',String(navOpacity));

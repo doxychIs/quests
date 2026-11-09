@@ -1,0 +1,29 @@
+---
+const layers=[{width:28,opacity:.016},{width:16,opacity:.028},{width:7,opacity:.07},{width:2.4,opacity:.17},{width:.85,opacity:.50}];
+const colors=['#ef6977','#e6c16e','#6cb8f3'];
+---
+<div class="hub-energy" data-hub-energy aria-hidden="true" inert>
+ <svg data-energy-svg xmlns="http://www.w3.org/2000/svg" focusable="false">
+  <defs>
+   <radialGradient id="energy-silver"><stop stop-color="#e5edff" stop-opacity=".68"/><stop offset=".24" stop-color="#c2d6ff" stop-opacity=".17"/><stop offset="1" stop-color="#c2d6ff" stop-opacity="0"/></radialGradient>
+   {colors.map((color,i)=><radialGradient id={`energy-world-${i}`}><stop stop-color={color} stop-opacity=".85"/><stop offset=".25" stop-color={color} stop-opacity=".23"/><stop offset="1" stop-color={color} stop-opacity="0"/></radialGradient>)}
+  </defs>
+  <g data-energy-space>
+   <g data-energy-main stroke="#d1dfff">
+    {layers.map(l=><path data-energy-stroke pathLength="1" stroke-width={l.width} opacity={l.opacity}/>)}
+   </g>
+   {[0,1].map(i=><g data-energy-thread={i} stroke="#b5ccef"><path data-energy-stroke pathLength="1" stroke-width=".65" opacity=".23"/></g>)}
+   {colors.map((color,i)=><g data-energy-branch={i} stroke={color}>
+    <path data-energy-stroke pathLength="1" stroke-width="16" opacity=".045"/>
+    <path data-energy-stroke pathLength="1" stroke-width="5" opacity=".17"/>
+    <path data-energy-stroke pathLength="1" stroke-width=".9" opacity=".8"/>
+    <circle data-energy-destination r="29" fill={`url(#energy-world-${i})`} stroke="none"/>
+    <circle data-energy-mote r="2.2" fill={color} stroke="none"/>
+   </g>)}
+   <circle data-energy-source r="30" fill="url(#energy-silver)"/>
+   <g data-energy-motes fill="#dce8ff">{Array.from({length:20},(_,i)=><circle data-energy-mote={i} r={i%4===0?1.8:.8}/>)}</g>
+   <g data-energy-head><circle data-energy-halo r="28" fill="url(#energy-silver)"/><circle r="1.7" fill="#e2ebff"/></g>
+   <g data-energy-ending fill="#d9e7ff">{Array.from({length:6},()=> <circle r=".85"/>)}</g>
+  </g>
+ </svg>
+</div>
