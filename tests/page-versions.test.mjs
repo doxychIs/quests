@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {setupDOM} from './dom-harness.mjs';
+import fs from 'node:fs';
+import {JSDOM} from 'jsdom';
 
 test('Информационная страница: переключатель меняет цвета, метаданные и сохраняет выбор',()=>{
- const x=setupDOM('about');try{
+ const x=setupDOM('rules');try{
   const root=x.d.documentElement,button=x.d.querySelector('[data-theme-toggle]');
   assert.equal(root.dataset.siteTheme,'dark');assert.equal(button.getAttribute('aria-pressed'),'false');
   button.click();assert.equal(root.dataset.siteTheme,'light');assert.equal(button.getAttribute('aria-pressed'),'true');assert.match(button.getAttribute('aria-label'),/тёмную/);
@@ -13,7 +15,7 @@ test('Информационная страница: переключатель 
 });
 
 test('Тема восстанавливается на информационных страницах и не меняет оформление миров',()=>{
- for(const route of ['about','contacts','rules','certificates']){const x=setupDOM(route,{theme:'light'});try{
+ for(const route of ['rules','privacy']){const x=setupDOM(route,{theme:'light'});try{
   assert.equal(x.d.documentElement.dataset.siteTheme,'light');assert.equal(x.d.querySelector('[data-theme-toggle]').getAttribute('aria-pressed'),'true');
   x.w.dispatchEvent(new x.w.StorageEvent('storage',{key:'inoe-theme',newValue:'dark'}));assert.equal(x.d.documentElement.dataset.siteTheme,'dark');assert.deepEqual(x.errors,[]);
  }finally{x.close()}}
@@ -33,8 +35,27 @@ test('Две версии хоррора связаны настоящими с�
 });
 
 test('Общие страницы: без стрелок, нумерации разделов и декоративных иллюстраций',()=>{
- for(const route of ['','about','contacts','certificates','rules','privacy']){const x=setupDOM(route);try{
+ for(const route of ['','rules','privacy']){const x=setupDOM(route);try{
   assert.doesNotMatch(x.d.querySelector('main').textContent,/[↗↘↙←→↑↓]|Глава \d|0[12345] \/ /);
   assert.equal(x.d.querySelector('main img:not(.hub-world-preview img),.section-index'),null);assert.deepEqual(x.errors,[]);
  }finally{x.close()}}
+});
+
+test('Главная объединяет информацию, приглашение и контакты; прежние адреса ведут к разделам',()=>{
+ const x=setupDOM();try{
+  for(const id of ['about','invitations','contacts']){
+   assert.ok(x.d.querySelector('main section#'+id));
+   assert.ok(x.d.querySelector('.desktop-nav a[href="#'+id+'"]'));
+  }
+  assert.equal(x.d.querySelectorAll('#gift-form').length,1);
+  assert.ok(x.d.querySelector('#contacts a[href="tel:+79999999999"]'));
+  assert.ok(x.d.querySelector('#contacts a[href="mailto:exemple@example.com"]'));
+  for(const [route,id] of Object.entries({about:'about',certificates:'invitations',contacts:'contacts'})){
+   const redirect=new JSDOM(fs.readFileSync('dist/'+route+'/index.html','utf8'));
+   assert.equal(redirect.window.document.querySelector('meta[http-equiv=refresh]').content,'0;url=/#'+id);
+   assert.equal(redirect.window.document.querySelector('a').getAttribute('href'),'/#'+id);
+   redirect.window.close();
+  }
+  assert.deepEqual(x.errors,[]);
+ }finally{x.close()}
 });

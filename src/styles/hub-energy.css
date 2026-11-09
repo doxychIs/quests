@@ -4,7 +4,7 @@
 .hub-energy canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 .hub-energy svg{position:absolute;inset:0}
 .hub-energy path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
-body[data-world=hub][data-page=home] :is(.hub-worlds,.hub-about,.hub-gift-simple,.hub-questions,.site-footer){position:relative;z-index:2}
+body[data-world=hub][data-page=home] :is(.hub-worlds,.hub-about,.hub-invitations,.hub-questions,.hub-contacts,.site-footer){position:relative;z-index:2}
 html body[data-world=hub][data-page=home] .site-footer{background:transparent}
 .hub-world-iznanka{--energy-rgb:239 105 119}
 .hub-world-arhiv{--energy-rgb:230 193 110}

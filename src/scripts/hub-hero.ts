@@ -139,7 +139,7 @@ export function initHubHero(){
  document.fonts?.ready.then(()=>{
   measure();
   // Keep an explicit link to the world selector below the expanded pinned scene.
-  if(['#worlds','#how'].includes(initialHash)&&location.hash===initialHash)
+  if(['#worlds','#how','#about','#invitations','#contacts'].includes(initialHash)&&location.hash===initialHash)
    requestAnimationFrame(()=>document.getElementById(initialHash.slice(1))?.scrollIntoView({block:'start',behavior:'instant'}));
  });update();if(!calm())void load();
 }

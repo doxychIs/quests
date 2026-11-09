@@ -1,0 +1,23 @@
+---
+import {worlds,worldKeys} from '../lib/data';
+---
+<div class="hub-invitation-layout">
+ <form id="gift-form" class="hub-invitation-form">
+  <label>Имя получателя<input name="recipient" maxlength="30" placeholder="Например, Анна" autocomplete="off"/></label>
+  <label>Мир<select name="world"><option value="all">Три мира на выбор</option>{worldKeys.map(world=><option value={world}>{worlds[world].name} · {worlds[world].age}</option>)}</select></label>
+  <label>Пожелание<textarea name="message" maxlength="120" rows="3" placeholder="Пусть этот день станет приключением."></textarea></label>
+  <button type="submit" class="hub-action">Сохранить приглашение</button>
+  <p class="hub-form-note">Имя и пожелание остаются в этой вкладке.</p>
+  <span id="gift-status" role="status" aria-live="polite"></span>
+ </form>
+ <div class="hub-invite-preview" data-certificate>
+  <div class="hub-invite-card">
+   <span class="hub-invite-brand">ИНОЕ</span>
+   <p class="hub-invite-label">Приглашение на квест</p>
+   <h3 data-gift-title>Для <span data-recipient>вас</span>.</h3>
+   <p data-gift-world>Три мира на выбор</p>
+   <p class="hub-invite-message" data-gift-message>Пусть этот день станет приключением.</p>
+   <small>Демонстрационная открытка.<br/>Не является оплаченным сертификатом.</small>
+  </div>
+ </div>
+</div>

@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import BrandWordmark from '../components/BrandWordmark.astro';
 import HubEnergy from '../components/HubEnergy.astro';
+import HubInvitation from '../components/HubInvitation.astro';
+import {config} from '../lib/config';
 import {worlds,href,worldKeys} from '../lib/data';
 import '../styles/hub.css';
 import '../styles/hub-energy.css';
@@ -30,15 +32,32 @@ const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остр
    </a>)}
   </nav>
  </section>
- <section class="hub-about" id="how" aria-labelledby="about-title">
-  <h2 id="about-title">Вы — часть<br/>происходящего.</h2>
-  <div><p>«ИНОЕ» объединяет хоррор, детективы и семейные приключения. Исследуйте комнаты, находите связи и принимайте решения вместе с командой.</p><p>У каждого квеста указаны возраст, длительность и состав команды. Специальные знания не нужны.</p><a class="hub-link" href={href('about/')}>О проекте</a></div>
+ <section class="hub-about" id="about" aria-labelledby="about-title">
+  <span id="how" class="hub-anchor" aria-hidden="true"></span>
+  <h2 id="about-title">О проекте.</h2>
+  <div><p>12 квестов в трёх мирах: хоррор, детективы и семейные приключения.</p>
+   <dl class="hub-facts"><div><dt>60–75 мин</dt><dd>на игру</dd></div><div><dt>2–6</dt><dd>игроков</dd></div><div><dt>от 6 лет</dt><dd>возраст зависит от квеста</dd></div></dl>
+   <p class="hub-demo-note">Демонстрационный проект. Реальная запись и оплата не подключены.</p>
+  </div>
  </section>
- <section class="hub-gift-simple" aria-labelledby="gift-title"><div><p class="hub-location">Для тех, с кем хочется разделить впечатления</p><h2 id="gift-title">Подарить<br/>приключение.</h2></div><div><p>Выберите мир, добавьте имя и несколько своих слов. Приглашение можно сохранить и отправить.</p><a class="hub-action" href={href('certificates/')}>Создать приглашение</a></div></section>
+ <section class="hub-invitations" id="invitations" aria-labelledby="gift-title">
+  <div class="hub-section-heading"><h2 id="gift-title">Приглашение.</h2><p>Выберите мир, добавьте имя и сохраните открытку.</p></div>
+  <HubInvitation/>
+ </section>
  <section class="hub-questions" aria-labelledby="questions-title"><h2 id="questions-title">Перед игрой.</h2><div>
-  <details><summary>Сколько человек в команде?</summary><p>От двух до шести. Точный состав зависит от квеста и указан в его описании.</p></details>
+  <details><summary>Нужна подготовка?</summary><p>Нет. Достаточно внимания и работы в команде. Возраст и состав указаны у каждого квеста.</p></details>
   <details><summary>Можно с детьми?</summary><p>Для семейных команд есть «Остров», от 6 лет. «Архив» — от 14 лет, отдельные квесты от 16. «Изнанка» — только 18+.</p></details>
-  <details><summary>Можно забронировать игру?</summary><p>Сейчас это демонстрационный проект: можно изучить квесты и проверить форму записи. Реальные сеансы и оплата пока не подключены.</p></details>
+  <details><summary>Можно забронировать игру?</summary><p>Форма записи работает как демонстрация. Реальные сеансы и оплата не подключены.</p></details>
  </div></section>
+ <section class="hub-contacts" id="contacts" aria-labelledby="contacts-title">
+  <h2 id="contacts-title">Контакты.</h2><div>
+   <dl class="hub-contact-list"><div><dt>Город</dt><dd>{config.city}</dd></div>
+    {config.address&&<div><dt>Адрес</dt><dd>{config.address}</dd></div>}
+    {config.phone&&<div><dt>Телефон</dt><dd><a href={'tel:'+config.phone.replace(/[^\d+]/g,'')}>{config.phone}</a></dd></div>}
+    {config.email&&<div><dt>Почта</dt><dd><a href={'mailto:'+config.email}>{config.email}</a></dd></div>}
+   </dl>
+   {config.demo&&<p class="hub-contact-note">Демонстрационные контакты.</p>}
+  </div>
+ </section>
  <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';import {initHubEnergy} from '../scripts/hub-energy';initHubEnergy();initWorldSelector();initHubHero();</script>
 </Base>

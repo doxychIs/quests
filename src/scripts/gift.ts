@@ -10,7 +10,7 @@ export function initGift(){
   document.querySelector('[data-gift-world]')!.textContent=giftNames[v.world]||giftNames.all;
   document.querySelector('[data-gift-message]')!.textContent=v.message;
   document.querySelector<HTMLElement>('[data-certificate]')!.dataset.theme=v.world;
-  const title=document.querySelector<HTMLElement>('.certificate-frame h2')!;title.style.fontSize=v.to.length>23?'31px':v.to.length>15?'38px':'';
+  const title=document.querySelector<HTMLElement>('[data-gift-title],.certificate-frame h2')!;title.style.fontSize=v.to.length>23?'31px':v.to.length>15?'38px':'';
  }
  form.addEventListener('input',refresh);form.addEventListener('change',refresh);refresh();
  form.addEventListener('submit',event=>{

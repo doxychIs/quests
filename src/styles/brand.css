@@ -12,7 +12,7 @@ html body[data-world=hub]{--sans:Forum,'Manrope',serif;font-family:var(--sans);f
 html body[data-world=hub] :is(h1,h2,h3,.large-copy){font-family:var(--brand-display);font-style:normal;font-weight:400}
 html body[data-world=hub] .common-page>h1{font-family:var(--brand-display);font-weight:400;letter-spacing:.01em}
 html body[data-world=hub] .common-page :is(h1,h2,h3,.large-copy) em{font:inherit;letter-spacing:inherit;color:inherit}
-html body[data-world=hub] :is(.hub-about h2,.hub-gift-simple h2,.hub-questions>h2){font-family:var(--brand-display);font-weight:400;letter-spacing:.015em;text-transform:uppercase}
+html body[data-world=hub] :is(.hub-about h2,.hub-section-heading h2,.hub-contacts h2,.hub-questions>h2){font-family:var(--brand-display);font-weight:400;letter-spacing:.015em;text-transform:uppercase}
 html body[data-world=hub] .desktop-nav{font-size:13px;letter-spacing:.09em;text-transform:uppercase}
 html body[data-world=hub] :is(.hub-action,.portal-button,.button){font-family:var(--brand-ui);font-weight:400;letter-spacing:.045em}
 @media(forced-colors:active){.inoe-wordmark-silhouette{fill:CanvasText}.inoe-wordmark-fold,.inoe-wordmark-edge{display:none}}

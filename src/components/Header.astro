@@ -3,23 +3,22 @@ import {href,worlds,type World} from '../lib/data';
 import HorrorLogo from './HorrorLogo.astro';
 import BrandWordmark from './BrandWordmark.astro';
 const {world}=Astro.props as {world?:World};
-const current=(path:string)=>Astro.url.pathname===href(path)?'page':undefined;
 const information=Astro.url.pathname.endsWith('/iznanka/information/');
 const hubHome=!world&&Astro.url.pathname===href();
+const sectionHref=(id:string)=>(hubHome?'':href())+'#'+id;
 ---
 {!world?<header class="site-header hub-header" data-hub-home={hubHome?'true':undefined}>
  <a class="hub-wordmark" data-logo-target={hubHome?'':undefined} href={href()} aria-label="ИНОЕ — главная"><BrandWordmark id="header-wordmark"/></a>
- <nav class="desktop-nav" aria-label="Основная навигация"><a href={href()+'#worlds'}>Квесты</a><a href={href('about/')}>О проекте</a><a href={href('certificates/')}>Приглашения</a><a href={href('contacts/')}>Контакты</a></nav>
- <div class="header-tools"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Включить светлую тему" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span data-theme-label>Светлая тема</span></button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()+'#worlds'}>Квесты</a><a href={href('about/')}>О проекте</a><a href={href('certificates/')}>Приглашения</a><a href={href('contacts/')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
+ <nav class="desktop-nav" aria-label="Основная навигация"><a href={sectionHref('worlds')}>Квесты</a><a href={sectionHref('about')}>О проекте</a><a href={sectionHref('invitations')}>Приглашения</a><a href={sectionHref('contacts')}>Контакты</a></nav>
+ <div class="header-tools"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Включить светлую тему" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span data-theme-label>Светлая тема</span></button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={sectionHref('worlds')}>Квесты</a><a href={sectionHref('about')}>О проекте</a><a href={sectionHref('invitations')}>Приглашения</a><a href={sectionHref('contacts')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
 </header>:<>
 <header class:list={['site-header',{ 'on-world':world}]}>
  <a class:list={['brand',{'brand-horror':world==='iznanka'}]} href={href()} aria-label={world==='iznanka'?'Изнанка / ИНОЕ — выбор мира':'ИНОЕ — выбор мира'}>{world==='iznanka'?<HorrorLogo/>:<span>ИНОЕ<span class="brand-sub">{world ? worlds[world].name : 'КВЕСТЫ В РЕАЛЬНОСТИ'}</span></span>}</a>
  <nav class="desktop-nav" aria-label="Основная навигация">
   <a href={information?'#quests':href(world+'/#quests')}>Квесты</a>
   <a href={information?'#rules':href(world+'/#trial')}>{information?'Правила':'Испытание'}</a>
-  <a href={href('certificates/')} aria-current={!world?current('certificates/'):undefined}>Сертификаты</a>
-  {!world&&<a href={href('contacts/')} aria-current={current('contacts/')}>Контакты</a>}
+  <a href={sectionHref('invitations')}>Приглашения</a>
  </nav>
- <div class="header-tools"><span class="place">ПЕРМЬ <span class="dot"></span></span><button class="sound-toggle" aria-pressed="false" aria-label="Включить звук"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">Звук выкл.</span></button><button type="button" class="motion-toggle" aria-pressed="false" aria-label="Уменьшить движение" title="Уменьшить движение"><span aria-hidden="true">◌</span><span class="motion-label">Движение вкл.</span></button><button class="settings-toggle" aria-label="Настройки впечатлений">⚙</button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()}>Три мира</a><a href={world?href(world+'/#quests'):href()+'#worlds'}>Выбрать квест</a><a href={href('about/')}>Как это устроено</a><a href={href('certificates/')}>Сертификаты</a><a href={href('contacts/')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
+ <div class="header-tools"><span class="place">ПЕРМЬ <span class="dot"></span></span><button class="sound-toggle" aria-pressed="false" aria-label="Включить звук"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">Звук выкл.</span></button><button type="button" class="motion-toggle" aria-pressed="false" aria-label="Уменьшить движение" title="Уменьшить движение"><span aria-hidden="true">◌</span><span class="motion-label">Движение вкл.</span></button><button class="settings-toggle" aria-label="Настройки впечатлений">⚙</button><details class="mobile-menu"><summary aria-label="Открыть меню"><span></span><span></span></summary><nav aria-label="Мобильная навигация"><a href={href()}>Три мира</a><a href={world?href(world+'/#quests'):sectionHref('worlds')}>Выбрать квест</a><a href={sectionHref('about')}>Как это устроено</a><a href={sectionHref('invitations')}>Приглашения</a><a href={sectionHref('contacts')}>Контакты</a><a href={href('rules/')}>Правила</a></nav></details></div>
 </header>
 </>}

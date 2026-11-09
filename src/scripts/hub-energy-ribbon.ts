@@ -83,11 +83,11 @@ export function createEnergyRibbon(canvas:HTMLCanvasElement,onLost:()=>void){
     meshes[i].material.uniforms.uLength.value=path.length;
    });
   },
-  render(route:ReturnType<typeof buildEnergyRoute>,frontier:number,scroll:number,time:number,strength:number){
+  render(route:ReturnType<typeof buildEnergyRoute>,frontier:number,branchAmounts:number[],scroll:number,time:number,strength:number){
    if(disposed)return;
    shared.uTime.value=time;shared.uScroll.value=scroll;shared.uStrength.value=strength;
    meshes[0].material.uniforms.uFrontier.value=frontier;
-   route.branches.forEach((branch,i)=>meshes[i+1].material.uniforms.uFrontier.value=Math.max(0,frontier-branch.startDistance));
+   route.branches.forEach((branch,i)=>meshes[i+1].material.uniforms.uFrontier.value=branch.path.length*branchAmounts[i]);
    renderer.render(scene,camera);
   },
   dispose(){if(disposed)return;disposed=true;canvas.removeEventListener('webglcontextlost',lost);meshes.forEach(mesh=>{mesh.geometry.dispose();mesh.material.dispose()});renderer.dispose()},

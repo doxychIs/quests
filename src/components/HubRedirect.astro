@@ -1,0 +1,12 @@
+---
+import {href} from '../lib/data';
+const {section,label}=Astro.props as {section:string;label:string};
+const target=href()+'#'+section;
+---
+<!doctype html>
+<html lang="ru"><head>
+ <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+ <title>{label} — ИНОЕ</title><link rel="canonical" href={target}/>
+ <meta http-equiv="refresh" content={'0;url='+target}/>
+ <script is:inline define:vars={{target}}>const destination=new URL(target,location.href);destination.search=location.search;location.replace(destination.href);</script>
+</head><body><p><a href={target}>Перейти к разделу «{label}»</a></p></body></html>

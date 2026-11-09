@@ -1,8 +1,7 @@
 export interface EnergyPoint{x:number;y:number}
-export interface EnergyBox{left:number;top:number;width:number;height:number;bottomGap?:number}
+export interface EnergyBox{left:number;top:number;width:number;height:number}
 export interface EnergyLayout{
  width:number;viewport:number;source:EnergyPoint;cards:EnergyBox[];
- about:EnergyBox;gift:EnergyBox;questions:EnergyBox;footer:EnergyBox;
 }
 export interface EnergySample extends EnergyPoint{distance:number}
 export interface EnergyPath{d:string;samples:EnergySample[];length:number}
@@ -45,44 +44,38 @@ export const energyAtY=(path:EnergyPath,y:number)=>interpolate(path,y,'y');
 export const energyAtDistance=(path:EnergyPath,distance:number)=>interpolate(path,distance,'distance');
 
 export function buildEnergyRoute(layout:EnergyLayout){
- const {width:w,viewport:vh,source,cards,about,gift,questions,footer}=layout;
+ const {width:w,viewport:vh,source,cards}=layout;
  const compact=w<=760,gap=compact?48:76;
- const left=Math.max(12,Math.min(44,about.left*.48));
- const right=w-left,top=Math.min(...cards.map(c=>c.top));
- const bottom=Math.max(...cards.map(c=>c.top+c.height));
+ const top=Math.min(...cards.map(c=>c.top));
  const junction={x:w*.5,y:top-gap};
  const points:EnergyPoint[]=[source];
  const add=(x:number,y:number)=>points.push({x:Math.max(10,Math.min(w-10,x)),y:Math.max(points[points.length-1].y+8,y)});
  add(w*(compact?.84:.80),source.y+Math.min(vh*.38,Math.max(16,(junction.y-source.y)*.48)));
  add(junction.x,junction.y);
- add(right,top+cards[0].height*.30);
- add(right,bottom+20);
- add(left+10,about.top+Math.min(62,about.height*.14));
- add(left,about.top+about.height-Math.max(30,(about.bottomGap??128)-18));
- add(right,about.top+about.height-26);
- add(right-12,gift.top+Math.min(74,gift.height*.24));
- add(right,gift.top+gift.height-Math.max(30,(gift.bottomGap??118)-18));
- add(left,gift.top+gift.height-24);
- add(left+8,questions.top+Math.min(65,questions.height*.2));
- add(left,questions.top+questions.height-Math.max(30,(questions.bottomGap??110)-18));
- add(right,questions.top+questions.height-24);
- add(right,footer.top+Math.min(112,footer.height*.45));
- add(w*.5,footer.top+footer.height-12);
  const main=energyPath(points);
- const branches=cards.map(card=>{
-  const start=energyAtY(main,card.top-gap),end={x:card.left+card.width*.5,y:card.top-2};
-  const path=energyPath([start,end]);
-  return {path,startDistance:start.distance,end};
+ const branches=cards.map((card,i)=>{
+  const start=points[points.length-1],end={x:card.left+card.width*.5,y:card.top-2};
+  // Stacked cards receive separate coloured branches around their right edge.
+  const branchPoints=compact&&i>0?[start,
+   {x:w-(i===1?22:12),y:cards[0].top+cards[0].height*.25},
+   {x:w-(i===1?22:12),y:card.top-gap},end]:[start,end];
+  const path=energyPath(branchPoints);
+  return {path,startDistance:main.length,end};
  });
  return {main,branches,end:points[points.length-1]};
 }
 
 /** Scroll sets the frontier. Elapsed time is used only for motes inside the revealed stream. */
-export function energyFrontier(path:EnergyPath,scroll:number,viewport:number,pageHeight:number,heroProgress:number){
+export function energyFrontier(path:EnergyPath,scroll:number,viewport:number,heroProgress:number){
  const end=path.samples[path.samples.length-1],start=path.samples[0];
- const finish=ease((scroll-(pageHeight-viewport*1.8))/(viewport*.8));
- const ahead=scroll+viewport*(.82+.18*finish);
+ const ahead=scroll+viewport*.82;
  const growth=energyVisibility(heroProgress);
  const y=start.y+Math.max(0,Math.min(end.y,ahead)-start.y)*growth;
  return energyAtY(path,y).distance;
+}
+
+/** Each coloured branch advances to its card after the main stream reaches the junction. */
+export function energyBranchProgress(path:EnergyPath,scroll:number,viewport:number,heroProgress:number){
+ const start=path.samples[0],end=path.samples[path.samples.length-1];
+ return ease((scroll+viewport*.82-start.y)/Math.max(1,end.y-start.y+viewport*.12))*energyVisibility(heroProgress);
 }
