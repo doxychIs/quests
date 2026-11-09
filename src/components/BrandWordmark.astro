@@ -7,6 +7,7 @@ const {id,animated=false}=Astro.props;
  <svg class="inoe-wordmark-defs" width="0" height="0" focusable="false"><defs>
   <linearGradient id={`${id}-pearl`} x1=".15" y1="0" x2=".8" y2="1" gradientUnits="objectBoundingBox"><stop class="brand-stop-light" offset="0"/><stop class="brand-stop-mid" offset=".43"/><stop class="brand-stop-light" offset=".72"/><stop class="brand-stop-dark" offset="1"/></linearGradient>
   <linearGradient id={`${id}-fold`} x1="0" y1=".8" x2="1" y2=".1"><stop class="brand-stop-shadow"/><stop class="brand-stop-dark" offset=".55"/><stop class="brand-stop-mid" offset="1"/></linearGradient>
+  {animated&&<linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="1" y2="0"><stop stop-color="#eff4ff" stop-opacity="0"/><stop offset=".42" stop-color="#c4d0df" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset=".58" stop-color="#d6e1f0" stop-opacity=".16"/><stop offset="1" stop-color="#eff4ff" stop-opacity="0"/></linearGradient>}
   {wordmarkGlyphs.map((glyph,index)=><clipPath id={`${id}-clip-${index}`}><path d={glyph.outline} fill-rule="evenodd"/></clipPath>)}
  </defs></svg>
  {wordmarkGlyphs.map((glyph,index)=><span class:list={['inoe-wordmark-glyph',{'hub-logo-letter':animated}]}>
@@ -14,6 +15,7 @@ const {id,animated=false}=Astro.props;
   <svg class:list={['inoe-wordmark-face',{'hub-logo-metric':animated}]} viewBox="0 0 200 200" focusable="false">
    <path class="inoe-wordmark-silhouette" d={glyph.outline} fill={`url(#${id}-pearl)`} fill-rule="evenodd"/>
    <g clip-path={`url(#${id}-clip-${index})`}><path class="inoe-wordmark-fold" d={glyph.fold} fill={`url(#${id}-fold)`}/><path class="inoe-wordmark-edge" d={glyph.edge} fill="none" stroke-width=".7"/></g>
+   {animated&&<g class="hub-logo-sheen" clip-path={`url(#${id}-clip-${index})`}><rect x="-70" y="-100" width="140" height="400" fill={`url(#${id}-sheen)`}/></g>}
   </svg>
  </span>)}
 </span>

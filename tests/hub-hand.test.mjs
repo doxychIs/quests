@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {AnimationMixer} from 'three';
+import {AnimationMixer,Scene} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,entryClipProgress,introLetterProgress,handScrollState,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
 import {setupDOM} from './dom-harness.mjs';
+import {createHandAtmosphere} from '../src/scripts/hub-atmosphere.ts';
 
 test('Скролл сначала вводит руку, затем держит открытую позу и только после этого отправляет название в шапку',()=>{
  assert.equal(HERO_PIN_END,.97);
@@ -17,7 +18,12 @@ test('Скролл сначала вводит руку, затем держит
  assert.equal(entryClipProgress(0),0);assert.equal(entryClipProgress(1),1);
  const curve=Array.from({length:101},(_,i)=>entryClipProgress(i/100));
  assert.ok(curve.every((p,i)=>i===0||p>curve[i-1]),'входная кривая проходит кадры только вперёд');
- assert.ok(entryClipProgress(.5)<.1&&entryClipProgress(.9)>.7,'активное раскрытие длится, финальное расслабление короткое');
+ assert.ok(entryClipProgress(.5)>.28&&entryClipProgress(.5)<.4,'к середине входа кулак уже опустился, пальцы начинают раскрываться');
+ assert.equal(entryClipProgress(.88),.64,'почти неподвижный хвост клипа занимает только последние 12% входа');
+ for(const cue of [.12,.4,.88]){
+  const delta=.000001,left=(entryClipProgress(cue)-entryClipProgress(cue-delta))/delta,right=(entryClipProgress(cue+delta)-entryClipProgress(cue))/delta;
+  assert.ok(Math.abs(left-right)<.001,'скорость не скачет в местах смены движения');
+ }
  for(let i=0;i<4;i++){
   assert.equal(introLetterProgress(2.5,10,i),0);
   assert.equal(introLetterProgress(7.1,10,i),1);
@@ -42,6 +48,22 @@ test('Плавное догоняние скролла не зависит от 
  const reverse=smoothScrollProgress(.8,.1,1/60);assert.ok(reverse>.1&&reverse<.8);
  assert.equal(smoothScrollProgress(.4,.8,0),.4);
  assert.equal(smoothScrollProgress(.79999,.8,1/60),.8);
+});
+
+test('Фоновая пыль ограничена на телефоне, скрывается в чёрном старте и полностью освобождает GPU-ресурсы',()=>{
+ for(const compact of [false,true]){
+  const scene=new Scene(),atmosphere=createHandAtmosphere(scene,compact);
+  const objects=[...scene.children],dust=objects.find(o=>o.isPoints);
+  assert.ok(dust.geometry.attributes.position.count<=(compact?100:200));
+  atmosphere.update({presence:0,opening:0,progress:0},0,0,0);
+  assert.ok(objects.every(o=>!o.visible));
+  atmosphere.resize(390,844,1.25);
+  atmosphere.update({presence:1,opening:1,progress:.6},12,.5,-.5);
+  assert.ok(objects.every(o=>o.visible));
+  let released=0;
+  objects.forEach(o=>{o.geometry.addEventListener('dispose',()=>released++);o.material.addEventListener('dispose',()=>released++)});
+  atmosphere.dispose();assert.equal(scene.children.length,0);assert.equal(released,objects.length*2);
+ }
 });
 
 test('Настоящий утверждённый GLB декодируется: 10 секунд, 21 кость; скелет и ногти возвращаются из конца в исходные позы',async()=>{

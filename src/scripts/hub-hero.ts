@@ -1,5 +1,5 @@
 import {logoPose,logoProgress,type LogoRect} from '../lib/hub-logo';
-import {HERO_PIN_END,clamp01,handScrollState,introLetterProgress,smoothstep,smoothScrollProgress} from '../lib/hub-hand-motion';
+import {HERO_PIN_END,clamp01,handScrollState,introLetterProgress,smoothstep,smootherstep,smoothScrollProgress} from '../lib/hub-hand-motion';
 import type {HandController} from './hub-hand';
 
 /** Native scrolling drives the entry, hold and exit of one pinned scene. */
@@ -39,7 +39,7 @@ export function initHubHero(){
  }
  function update(now=performance.now()){
   frame=0;if(!active()||document.hidden)return;
-  const seconds=lastFrame&&now-lastFrame<100?(now-lastFrame)/1000:1/60;lastFrame=now;
+  const seconds=lastFrame?Math.min(.05,(now-lastFrame)/1000):1/60;lastFrame=now;
   const reduced=calm(),simplified=reduced||failed;
   const duration=controller?.duration||10;
   hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?'appearance':'loading';
@@ -65,13 +65,15 @@ export function initHubHero(){
   displayedProgress=instant?targetProgress:smoothScrollProgress(displayedProgress,targetProgress,seconds);positioned=true;
   const progress=displayedProgress;
   const poseState=handScrollState(progress,duration);
+  const opening=smootherstep((poseState.time/duration-.24)/.4);
+  const presence=simplified?0:smootherstep(progress/.1)*(1-smootherstep((progress-.89)/.11));
   const docking=reduced?(position>=stage!.clientHeight*.5?1:0):failed?logoProgress(position,pinTravel):poseState.docking;
   const from=reduced?{...origin,top:origin.top-scrollY}:origin;
   const pose=logoPose(from,target!.getBoundingClientRect(),docking);
   logo!.style.setProperty('--logo-x',`${pose.x.toFixed(3)}px`);
   logo!.style.setProperty('--logo-y',`${pose.y.toFixed(3)}px`);
   logo!.style.setProperty('--logo-scale',String(pose.scale));
-  logo!.style.setProperty('--brand-gleam',String(.98+Math.sin(progress*Math.PI)*.06));
+  logo!.style.setProperty('--brand-gleam',String(.94+opening*.11));
   logo!.style.setProperty('--logo-tilt-x',`${(5*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-y',`${(-9*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-z',`${(-.4*(1-docking)).toFixed(3)}deg`);
@@ -84,7 +86,11 @@ export function initHubHero(){
    revealed=Math.max(revealed,amount);
    letter.style.setProperty('--letter-reveal',String(amount));
    letter.style.setProperty('--letter-mask',amount===1?'none':`linear-gradient(180deg,#000 0%,#000 ${Math.max(0,amount*125-20).toFixed(2)}%,transparent ${(amount*125+5).toFixed(2)}%)`);
-   letter.style.transform=`translate3d(0,${((1-amount)*.18).toFixed(4)}em,0) rotateX(${((1-amount)*8).toFixed(3)}deg)`;
+   const sheen=smootherstep((poseState.time/duration-.29-index*.055)/.54);
+   letter.style.setProperty('--letter-sheen-x',`${(-150+sheen*500).toFixed(2)}px`);
+   letter.style.setProperty('--letter-sheen-opacity',String(simplified?0:Math.sin(sheen*Math.PI)*(1-docking)*.86));
+   letter.style.setProperty('--letter-filter',amount===1?'none':`blur(${((1-amount)*3.5).toFixed(3)}px)`);
+   letter.style.transform=`translate3d(0,${((1-amount)*.24).toFixed(4)}em,0) rotateX(${((1-amount)*24).toFixed(3)}deg) rotateZ(${((1-amount)*(index-1.5)*.7).toFixed(3)}deg)`;
   });
   logo!.style.opacity=simplified||controller&&revealed>0?'1':'0';
   logo!.tabIndex=simplified||revealed>.1?0:-1;
@@ -97,7 +103,7 @@ export function initHubHero(){
   document.documentElement.style.setProperty('--hub-nav-events',navOpacity>.01?'auto':'none');
   host!.style.opacity=controller&&!reduced?String(poseState.opacity):'0';
   controller?.setVisible(visible&&!reduced);
-  controller?.seek(reduced?duration:poseState.time);
+  controller?.seek(reduced?duration:poseState.time,{presence,opening,progress});
   if(!simplified&&visible&&Math.abs(progress-targetProgress)>=.00002)schedule();
  }
  function motionChange(){

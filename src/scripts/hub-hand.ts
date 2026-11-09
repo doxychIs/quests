@@ -1,15 +1,16 @@
 import {
  ACESFilmicToneMapping,AnimationMixer,Box3,HemisphereLight,LoopOnce,
- Mesh,OrthographicCamera,RectAreaLight,Scene,SRGBColorSpace,WebGLRenderer,
+ HalfFloatType,Mesh,MeshBasicMaterial,OrthographicCamera,PlaneGeometry,RectAreaLight,Scene,SRGBColorSpace,WebGLRenderer,WebGLRenderTarget,
  type Material,type SkinnedMesh,type Group,
 } from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import {createHandAtmosphere,type HandPresentation} from './hub-atmosphere';
 
 export interface HandController{
  duration:number;
- seek:(seconds:number)=>void;
+ seek:(seconds:number,presentation?:HandPresentation)=>void;
  resize:(handBottom:number)=>void;
  setVisible:(visible:boolean)=>void;
  dispose:()=>void;
@@ -24,13 +25,29 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
  renderer.toneMappingExposure=.85;
  const canvas=renderer.domElement;canvas.setAttribute('aria-hidden','true');host.append(canvas);
  const scene=new Scene(),camera=new OrthographicCamera(-1,1,1,-1,.001,5);
+ const background=new Scene(),compositionCamera=new OrthographicCamera(-1,1,1,-1,.1,5);compositionCamera.position.z=1;
  const meshes:Mesh[]=[],materials=new Set<Material>();
  let mixer:AnimationMixer|undefined,root:Group|undefined,disposed=false;
  let visible=true,lastTime=-1,desiredTime=0,handBottom=host.clientHeight*.62,minY=-.195;
+ let atmosphere:ReturnType<typeof createHandAtmosphere>|undefined,frame=0,lastFrame=0,clock=0;
+ let handTarget:WebGLRenderTarget|undefined,handComposite:Mesh<PlaneGeometry,MeshBasicMaterial>|undefined,lastPaint=0;
+ let pointerX=0,pointerY=0,targetX=0,targetY=0;
+ let presentation:HandPresentation={presence:0,opening:0,progress:0};
+ const pointerMove=(event:PointerEvent)=>{
+  if(!visible||presentation.presence<.001||event.pointerType==='touch')return;
+  const rect=host.getBoundingClientRect();
+  targetX=Math.max(-1,Math.min(1,(event.clientX-rect.left)/Math.max(1,rect.width)*2-1));
+  targetY=Math.max(-1,Math.min(1,1-(event.clientY-rect.top)/Math.max(1,rect.height)*2));
+ };
+ const pointerLeave=()=>{targetX=targetY=0};
+ addEventListener('pointermove',pointerMove,{passive:true});document.addEventListener('pointerleave',pointerLeave);
  const contextLost=(event:Event)=>{event.preventDefault();onContextLost()};
  canvas.addEventListener('webglcontextlost',contextLost);
  function dispose(){
   if(disposed)return;disposed=true;
+  cancelAnimationFrame(frame);atmosphere?.dispose();
+  handTarget?.dispose();handComposite?.geometry.dispose();handComposite?.material.dispose();
+  removeEventListener('pointermove',pointerMove);document.removeEventListener('pointerleave',pointerLeave);
   canvas.removeEventListener('webglcontextlost',contextLost);
   mixer?.stopAllAction();if(root)mixer?.uncacheRoot(root);
   const skeletons=new Set(meshes.map(m=>(m as SkinnedMesh).skeleton).filter(Boolean));
@@ -66,23 +83,45 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   scene.add(new HemisphereLight(0xdde7ff,0x111219,.16));
   const softbox=(color:number,intensity:number,width:number,height:number,x:number,y:number,z:number)=>{
    const light=new RectAreaLight(color,intensity,width,height);light.position.set(x,y,z);light.lookAt(0,-.07,0);scene.add(light);
+   return light;
   };
-  softbox(0xf4f5ff,3.8,.40,.52,-.22,.10,.32);
+  const key=softbox(0xf4f5ff,3.8,.40,.52,-.22,.10,.32);
   softbox(0xcbd8f3,.75,.35,.46,.27,-.06,.23);
-  softbox(0xffffff,1.8,.22,.48,.13,.01,-.15);
+  const rim=softbox(0xffffff,1.8,.22,.48,.13,.01,-.15);
   softbox(0xe5e9ff,.6,.25,.18,-.05,-.30,.18);
-  function render(){
+  // Cache an idle pose. Moving dust needs only the lightweight background and this quad.
+  handTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,samples:2});
+  handComposite=new Mesh(new PlaneGeometry(2,2),new MeshBasicMaterial({map:handTarget.texture,transparent:true,depthTest:false,depthWrite:false}));
+  handComposite.renderOrder=2;handComposite.frustumCulled=false;background.add(handComposite);
+  atmosphere=createHandAtmosphere(background,matchMedia('(max-width:760px)').matches);
+  function schedule(){if(!frame&&!disposed&&visible&&!document.hidden)frame=requestAnimationFrame(render)}
+  function render(now:number){
+   frame=0;
    if(disposed||!visible||document.hidden)return;
-   applyTime(desiredTime);renderer.render(scene,camera);lastTime=desiredTime;
+   if(lastTime===desiredTime&&lastPaint&&now-lastPaint<1000/30){if(presentation.presence>.001)schedule();return}
+   const delta=lastFrame?Math.min(.05,(now-lastFrame)/1000):0;lastFrame=now;clock+=delta;
+   const settle=1-Math.exp(-delta*3);
+   pointerX+=(targetX-pointerX)*settle;pointerY+=(targetY-pointerY)*settle;
+   key.intensity=3.05+presentation.opening*.75;
+   rim.intensity=1.8+presentation.opening*1.1;
+   renderer.toneMappingExposure=.72+presentation.opening*.13;
+   if(lastTime!==desiredTime){
+    applyTime(desiredTime);renderer.setRenderTarget(handTarget!);renderer.render(scene,camera);renderer.setRenderTarget(null);
+   }
+   atmosphere!.update(presentation,clock,pointerX,pointerY);
+   renderer.render(background,compositionCamera);lastTime=desiredTime;lastPaint=now;
+   if(presentation.presence>.001)schedule();
   }
   function resize(bottom:number){
    if(disposed)return;handBottom=bottom;
    const width=Math.max(1,host.clientWidth),height=Math.max(1,host.clientHeight);
    renderer.setPixelRatio(Math.min(devicePixelRatio||1,matchMedia('(max-width:760px)').matches?1.25:1.5));
    renderer.setSize(width,height,false);
+   handTarget!.setSize(Math.round(width*renderer.getPixelRatio()),Math.round(height*renderer.getPixelRatio()));
+   atmosphere!.resize(width,height,renderer.getPixelRatio());
    const span=.40,top=minY+handBottom/height*span,centre=top-span/2;
    camera.left=-span*width/height/2;camera.right=-camera.left;camera.top=span/2;camera.bottom=-span/2;
-   camera.position.set(-.0072,centre,.8);camera.lookAt(-.0072,centre,0);camera.updateProjectionMatrix();lastTime=-1;render();
+   camera.position.set(-.0072,centre,.8);camera.lookAt(-.0072,centre,0);camera.updateProjectionMatrix();lastTime=-1;schedule();
   }
   desiredTime=0;resize(handBottom);applyTime(0);
   await renderer.compileAsync(scene,camera);
@@ -90,9 +129,9 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   host.dataset.handDuration=String(clip.duration);host.dataset.handTracks=String(clip.tracks.length);host.dataset.handReady='true';
   return {
    duration:clip.duration,
-   seek(seconds){desiredTime=Math.max(0,Math.min(clip.duration,seconds));host.dataset.handTime=desiredTime.toFixed(4);if(lastTime!==desiredTime)render()},
+   seek(seconds,state){desiredTime=Math.max(0,Math.min(clip.duration,seconds));if(state)presentation=state;host.dataset.handTime=desiredTime.toFixed(4);schedule()},
    resize,
-   setVisible(value){if(visible===value)return;visible=value;if(value)render()},
+   setVisible(value){if(visible===value)return;visible=value;lastFrame=0;if(value)schedule();else{cancelAnimationFrame(frame);frame=0}},
    dispose,
   };
  }catch(error){dispose();throw error}
