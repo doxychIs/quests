@@ -1,6 +1,6 @@
 import {AdditiveBlending,BufferAttribute,BufferGeometry,Mesh,PlaneGeometry,Points,ShaderMaterial,Vector2,type Scene} from 'three';
 
-export interface HandPresentation{presence:number;opening:number;progress:number}
+export interface HandPresentation{presence:number;opening:number;progress:number;arrival?:number;reveal?:number}
 
 // Shared by the silk surface and the motes travelling through its folds.
 const silkPath=`
@@ -18,7 +18,7 @@ const silkPath=`
 export function createHandAtmosphere(scene:Scene,compact:boolean){
  const uniforms={
   uTime:{value:0},uPresence:{value:0},uOpening:{value:0},uProgress:{value:0},
-  uPointer:{value:new Vector2()},uViewport:{value:new Vector2(1,1)},uFocus:{value:new Vector2(0,-.5)},uDpr:{value:1},
+  uPointer:{value:new Vector2()},uViewport:{value:new Vector2(1,1)},uFocus:{value:new Vector2(0,-.5)},uCrown:{value:new Vector2(0,.05)},uReveal:{value:0},uDpr:{value:1},
  };
  const count=compact?100:190;
  const positions=new Float32Array(count*3),details=new Float32Array(count*3);
@@ -38,7 +38,7 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
   vertexShader:`
    attribute vec3 aDetail;
    uniform float uTime,uPresence,uOpening,uProgress,uDpr;
-   uniform vec2 uPointer,uFocus;
+   uniform vec2 uPointer,uFocus,uCrown;
    varying float vOpacity,vSeed,vBokeh;
    ${silkPath}
    void main(){
@@ -54,6 +54,11 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
     vec2 flowing=vec2(mix(side*1.22,uFocus.x,u),silkY(u,side,layer,uTime*.065+uProgress*.38,uFocus));
     flowing.y+=sin(phase*7.0)*silkWidth(u,layer)*.8;
     p=mix(p,flowing,stream*uOpening);
+    float rising=step(.84,fract(phase*2.13))*uOpening;
+    float lift=fract(phase*.31+uTime*.042);
+    vec2 energy=mix(uFocus,uCrown,lift);
+    energy.x+=sin(phase*5.0+lift*7.0)*.035*sin(lift*3.14159265);
+    p=mix(p,energy,rising);
     p+=uPointer*(.006+depth*.022);
     float edge=(1.0-smoothstep(.78,1.0,abs(p.x)))*(1.0-smoothstep(.82,1.0,abs(p.y)));
     vBokeh=step(7.0,aDetail.z);
@@ -78,7 +83,7 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
   uniforms,transparent:true,depthWrite:false,depthTest:true,blending:AdditiveBlending,
   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,.99,1.0);}`,
   fragmentShader:`
-   varying vec2 vUv;uniform float uTime,uPresence,uOpening,uProgress;uniform vec2 uPointer,uViewport,uFocus;
+   varying vec2 vUv;uniform float uTime,uPresence,uOpening,uProgress,uReveal;uniform vec2 uPointer,uViewport,uFocus,uCrown;
    ${silkPath}
    void main(){
     vec2 p=vUv*2.0-1.0;p+=uPointer*.009;
@@ -102,18 +107,25 @@ export function createHandAtmosphere(scene:Scene,compact:boolean){
     float orb=exp(-r*r*14500.0)*1.4+exp(-r*r*2200.0)*.68+exp(-r*r*130.0)*.14;
     orb+=exp(-abs(q.x)*22.0-abs(q.y)*340.0)*.30+exp(-abs(q.y)*48.0-abs(q.x)*420.0)*.18;
     orb*=.97+.03*sin(uTime*.7);
-    float alpha=(silk*1.35+orb)*magic*uPresence;
+    float lift=clamp((p.y-uFocus.y)/max(.03,uCrown.y-uFocus.y),0.0,1.0);
+    float threadX=mix(uFocus.x,uCrown.x,lift)+sin(lift*7.0-phase*.8)*.022*sin(lift*3.14159265);
+    float breath=.96+.04*sin(uTime*.65);
+    float energy=exp(-pow((p.x-threadX)/(.016+.055*lift),2.0))*sin(lift*3.14159265)*.16;
+    float crown=exp(-pow((p.y-uCrown.y)*55.0,2.0)-pow((p.x-uCrown.x)*5.0,2.0))*.10*uReveal;
+    float alpha=(silk*1.35+orb+energy+crown)*magic*uPresence*breath;
     gl_FragColor=vec4(.84,.91,1.0,alpha);
    }`,
  });
  const veil=new Mesh(new PlaneGeometry(2,2),veilMaterial);veil.frustumCulled=false;
  scene.add(veil,dust);
  return {
-  update(state:HandPresentation,time:number,pointerX:number,pointerY:number,focus?:{x:number;y:number}){
+  update(state:HandPresentation,time:number,pointerX:number,pointerY:number,focus?:{x:number;y:number},crown?:{x:number;y:number}){
    uniforms.uTime.value=time;uniforms.uPresence.value=state.presence;
    uniforms.uOpening.value=state.opening;uniforms.uProgress.value=state.progress;
    uniforms.uPointer.value.set(pointerX,pointerY);
    if(focus)uniforms.uFocus.value.set(focus.x,focus.y);
+   if(crown)uniforms.uCrown.value.set(crown.x,crown.y);
+   uniforms.uReveal.value=state.reveal??state.opening;
    dust.visible=veil.visible=state.presence>.001;
   },
   resize(width:number,height:number,dpr:number){

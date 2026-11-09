@@ -29,7 +29,17 @@ export function smoothScrollProgress(current:number,target:number,seconds:number
  return current+(target-current)*(1-Math.exp(-Math.max(0,Math.min(.05,seconds))/.19));
 }
 export function introLetterProgress(time:number,duration:number,index:number){
- return smootherstep((time/Math.max(.001,duration)-.26-index*.024)/.37);
+ return smootherstep((time/Math.max(.001,duration)-.65-index*.014)/.21);
+}
+
+export const HAND_LEVER_LENGTH=.197;
+/** A rigid forearm swings about its hidden proximal end while the whole arm approaches. */
+export function handStagePose(arrival:number,span:number){
+ const p=clamp01(arrival),approach=smootherstep(p/.94),turn=smootherstep((p-.08)/.84);
+ return {
+  pivotX:-.15,pivotY:-span*.5-.02+(1-approach)*.30,pivotZ:-1.45*(1-approach),
+  rotationX:-1.02+turn*.70,rotationY:-.10*turn,rotationZ:3.40-turn*1.02,
+ };
 }
 
 /** One reversible scroll choreography. Nothing advances with elapsed time. */
@@ -42,5 +52,6 @@ export function handScrollState(progress:number,duration:number){
  const time=clipProgress*Math.max(0,duration);
  const opacity=smootherstep(clipProgress/.09)*(1-smootherstep((exit-.7)/.3));
  const phase=p>=1?'complete':p>=HAND_HOLD_END?'docking':p>=HAND_ENTRY_END?'hold':'appearance';
- return {progress:p,appearance,docking,time,opacity,phase};
+ const arrival=p<=HAND_HOLD_END?clamp01(p/HAND_ENTRY_END):1-exit;
+ return {progress:p,appearance,arrival,docking,time,opacity,phase};
 }

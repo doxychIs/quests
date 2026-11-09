@@ -21,6 +21,8 @@ html body[data-world=hub] .hub-logo-home{--hub-logo-width:min(82vw,960px,135svh)
 [data-logo-ready=true] .hub-logo-object{position:fixed;z-index:70;transform:translate3d(var(--logo-x),var(--logo-y),0) scale(var(--logo-scale));will-change:transform}
 .hub-hand-enhanced .hub-intro:not([data-logo-ready]) .hub-logo-object{opacity:0}
 .hub-logo-volume{transform-style:preserve-3d;transform-origin:50% 50%;transform:perspective(1400px) rotateX(var(--logo-tilt-x,5deg)) rotateY(var(--logo-tilt-y,-9deg)) rotateZ(var(--logo-tilt-z,-.4deg))}
+.hub-logo-object .hub-logo-volume{animation:hub-wordmark-float 7s ease-in-out infinite}
+@keyframes hub-wordmark-float{0%,100%{translate:0 0}50%{translate:0 calc(-5px * var(--logo-float,0))}}
 .hub-logo-letter{position:relative;display:block;transform-style:preserve-3d;filter:var(--letter-filter,none);--letter-reveal:1;--letter-mask:none}
 .hub-logo-sheen{opacity:var(--letter-sheen-opacity,0);pointer-events:none;mix-blend-mode:screen}
 .hub-logo-sheen rect{transform:translateX(var(--letter-sheen-x,-150px)) rotate(-18deg);transform-origin:0 100px}
@@ -84,6 +86,6 @@ html body[data-world=hub] .hub-world-preview-title{font-family:var(--brand-displ
  body[data-world=hub] .hub-about h2,body[data-world=hub] .hub-gift-simple h2{font-size:clamp(30px,8.5vw,48px)}body[data-world=hub] .hub-questions>h2{font-size:clamp(29px,8vw,42px)}
 }
 @media(hover:none){.hub-world-cover{display:none}.hub-world-preview{transform:none}}
-@media(prefers-reduced-motion:reduce){.hub-world-cover,.hub-world-preview,.hub-logo-object,.hub-hand-scene canvas{transition:none!important}.hub-logo-volume{transform:none!important}.hub-logo-letter{filter:none!important;transform:none!important}.hub-logo-side,.hub-logo-sheen,.hub-logo-luminous-edge,.hub-logo-flare{display:none}}
-.calm .hub-world-cover,.calm .hub-world-preview,.calm .hub-logo-object,.calm .hub-hand-scene canvas{transition:none!important}.calm .hub-logo-volume{transform:none!important}.calm .hub-logo-letter{filter:none!important;transform:none!important}.calm .hub-logo-side,.calm .hub-logo-sheen,.calm .hub-logo-luminous-edge,.calm .hub-logo-flare{display:none}
+@media(prefers-reduced-motion:reduce){.hub-world-cover,.hub-world-preview,.hub-logo-object,.hub-hand-scene canvas{transition:none!important}.hub-logo-volume{transform:none!important;animation:none!important;translate:none!important}.hub-logo-letter{filter:none!important;transform:none!important}.hub-logo-side,.hub-logo-sheen,.hub-logo-luminous-edge,.hub-logo-flare{display:none}}
+.calm .hub-world-cover,.calm .hub-world-preview,.calm .hub-logo-object,.calm .hub-hand-scene canvas{transition:none!important}.calm .hub-logo-volume{transform:none!important;animation:none!important;translate:none!important}.calm .hub-logo-letter{filter:none!important;transform:none!important}.calm .hub-logo-side,.calm .hub-logo-sheen,.calm .hub-logo-luminous-edge,.calm .hub-logo-flare{display:none}
 @media(forced-colors:active){.hub-logo-side,.hub-logo-sheen,.hub-logo-luminous-edge,.hub-logo-flare{display:none}}

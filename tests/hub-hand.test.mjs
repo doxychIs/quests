@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {AnimationMixer,Scene,Texture,WebGLRenderTarget} from 'three';
+import {AnimationMixer,Group,PerspectiveCamera,Scene,Texture,Vector3,WebGLRenderTarget} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,entryClipProgress,introLetterProgress,handScrollState,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
+import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,HAND_LEVER_LENGTH,entryClipProgress,introLetterProgress,handScrollState,handStagePose,smoothScrollProgress} from '../src/lib/hub-hand-motion.ts';
 import {setupDOM} from './dom-harness.mjs';
 import {createHandAtmosphere} from '../src/scripts/hub-atmosphere.ts';
 import {createHandGlow} from '../src/scripts/hub-hand-glow.ts';
@@ -26,8 +26,8 @@ test('Скролл сначала вводит руку, затем держит
   assert.ok(Math.abs(left-right)<.001,'скорость не скачет в местах смены движения');
  }
  for(let i=0;i<4;i++){
-  assert.equal(introLetterProgress(2.5,10,i),0);
-  assert.equal(introLetterProgress(7.1,10,i),1);
+  assert.equal(introLetterProgress(6.5,10,i),0,'название не появляется до раскрытия ладони');
+  assert.equal(introLetterProgress(9.1,10,i),1);
  }
  const initial=handScrollState(0,10);
  assert.equal(initial.time,0);assert.equal(initial.opacity,0);assert.equal(initial.docking,0);
@@ -40,6 +40,31 @@ test('Скролл сначала вводит руку, затем держит
  assert.equal(handScrollState(1,10).time,0);assert.equal(handScrollState(1,10).docking,1);assert.equal(handScrollState(1,10).opacity,0);
  const stops=[0,.16,.37,.58,.77,.92,1];
  assert.deepEqual([...stops].reverse().map(p=>handScrollState(p,10)).reverse(),stops.map(p=>handScrollState(p,10)));
+});
+
+test('Перспектива приближает руку из глубины; жёсткий рычаг сохраняет длину и движется по дуге без зеркального масштаба',()=>{
+ for(const span of [.56,.90]){
+  const pivot=new Group(),swing=new Group(),wrist=new Vector3(0,-HAND_LEVER_LENGTH,0);
+  pivot.add(swing);
+  const camera=new PerspectiveCamera(34,1,.02,8);camera.position.z=span/(2*Math.tan(34*Math.PI/360));camera.updateMatrixWorld();
+  const points=[];
+  for(let i=0;i<=100;i++){
+   const pose=handStagePose(i/100,span);
+   assert.ok(Object.values(pose).every(Number.isFinite));
+   pivot.position.set(pose.pivotX,pose.pivotY,pose.pivotZ);swing.rotation.set(pose.rotationX,pose.rotationY,pose.rotationZ);pivot.updateMatrixWorld(true);
+   const point=swing.localToWorld(wrist.clone());points.push(point);
+   assert.ok(Math.abs(point.distanceTo(pivot.position)-HAND_LEVER_LENGTH)<1e-12,'поворот не растягивает предплечье');
+   assert.deepEqual(pivot.scale.toArray(),[1,1,1]);assert.deepEqual(swing.scale.toArray(),[1,1,1]);
+  }
+  assert.ok(points.at(-1).z-points[0].z>1.4,'реальная глубина меняется, а не только размер картинки');
+  assert.ok(Math.abs(points.at(-1).x-points[0].x)>.15,'траектория не сводится к вертикальному спуску');
+  assert.ok(points.at(-1).y<points[0].y,'приближаясь, рука опускается');
+  const projectedSize=point=>{
+   const a=point.clone().project(camera),b=point.clone().add(new Vector3(.02,0,0)).project(camera);return b.x-a.x;
+  };
+  assert.ok(projectedSize(points.at(-1))>projectedSize(points[0])*1.8);
+  assert.deepEqual(handStagePose(0,span),handStagePose(-1,span));assert.deepEqual(handStagePose(1,span),handStagePose(2,span));
+ }
 });
 
 test('Плавное догоняние скролла не зависит от частоты кадров, медленно гасит рывки и работает в обе стороны',()=>{

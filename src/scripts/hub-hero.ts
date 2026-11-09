@@ -31,7 +31,7 @@ export function initHubHero(){
   try{
    const {createHubHand}=await import('./hub-hand');
    if(!active()||abort.signal.aborted)return;
-   const hand=await createHubHand(host!,host!.dataset.handSrc!,abort.signal,fallback);
+   const hand=await createHubHand(host!,host!.dataset.handSrc!,abort.signal,fallback,schedule);
    if(destroyed||abort.signal.aborted){hand.dispose();return}
    clearTimeout(loadTimer);controller=hand;
    hero!.dataset.handState=calm()?'reduced':'ready';measure();
@@ -57,7 +57,7 @@ export function initHubHero(){
    origin={left:r.left,top:section.top+scrollY+home!.offsetTop,width:r.width,height:r.height};
    pinTravel=Math.max(1,hero!.offsetHeight-stage!.offsetHeight);
    travel=simplified?pinTravel:pinTravel/HERO_PIN_END;
-   controller?.resize(Math.max(1,Math.min(stage!.clientHeight*.68,home!.offsetTop-32)));
+   controller?.resize();
    measureNeeded=false;
   }
   const position=Math.max(0,scrollY-start),targetProgress=clamp01(position/travel);
@@ -68,13 +68,21 @@ export function initHubHero(){
   const opening=smootherstep((poseState.time/duration-.24)/.4);
   const presence=simplified?0:smootherstep(progress/.1)*(1-smootherstep((progress-.89)/.11));
   const docking=reduced?(position>=stage!.clientHeight*.5?1:0):failed?logoProgress(position,pinTravel):poseState.docking;
-  const from=reduced?{...origin,top:origin.top-scrollY}:origin;
+  let from=reduced?{...origin,top:origin.top-scrollY}:origin;
+  if(!simplified&&controller){
+   const anchor=controller.anchor,rect=stage!.getBoundingClientRect();
+   const margin=Math.max(16,rect.width*.04),half=origin.width/2;
+   const center=Math.max(margin+half,Math.min(rect.width-margin-half,anchor.x*rect.width));
+   const bottom=Math.min(anchor.y*rect.height-rect.height*.10,anchor.top*rect.height-rect.height*.06);
+   from={...origin,left:rect.left+center-half,top:rect.top+Math.max(20,bottom-origin.height)};
+  }
   const pose=logoPose(from,target!.getBoundingClientRect(),docking);
   logo!.style.setProperty('--logo-x',`${pose.x.toFixed(3)}px`);
   logo!.style.setProperty('--logo-y',`${pose.y.toFixed(3)}px`);
   logo!.style.setProperty('--logo-scale',String(pose.scale));
   logo!.style.setProperty('--brand-gleam',String(.98+opening*(1-docking)*.14));
   logo!.style.setProperty('--logo-magic',String(simplified?0:opening*(1-docking)));
+  logo!.style.setProperty('--logo-float',String(simplified?0:opening*(1-docking)));
   logo!.style.setProperty('--logo-tilt-x',`${(5*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-y',`${(-9*(1-docking)).toFixed(3)}deg`);
   logo!.style.setProperty('--logo-tilt-z',`${(-.4*(1-docking)).toFixed(3)}deg`);
@@ -104,7 +112,7 @@ export function initHubHero(){
   document.documentElement.style.setProperty('--hub-nav-events',navOpacity>.01?'auto':'none');
   host!.style.opacity=controller&&!reduced?String(poseState.opacity):'0';
   controller?.setVisible(visible&&!reduced);
-  controller?.seek(reduced?duration:poseState.time,{presence,opening,progress});
+  controller?.seek(reduced?duration:poseState.time,{presence,opening,progress,arrival:poseState.arrival,reveal:revealed*(1-docking)});
   if(!simplified&&visible&&Math.abs(progress-targetProgress)>=.00002)schedule();
  }
  function motionChange(){

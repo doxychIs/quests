@@ -1,38 +1,45 @@
 import {
- ACESFilmicToneMapping,AnimationMixer,Box3,HemisphereLight,LoopOnce,
- HalfFloatType,Mesh,OrthographicCamera,RectAreaLight,Scene,SRGBColorSpace,Vector3,WebGLRenderer,WebGLRenderTarget,
- type Material,type SkinnedMesh,type Group,
+ ACESFilmicToneMapping,AnimationMixer,Group,HemisphereLight,LoopOnce,
+ HalfFloatType,Mesh,OrthographicCamera,PerspectiveCamera,RectAreaLight,Scene,SRGBColorSpace,Vector3,WebGLRenderer,WebGLRenderTarget,
+ type Material,type SkinnedMesh,
 } from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import {createHandAtmosphere,type HandPresentation} from './hub-atmosphere';
 import {createHandGlow} from './hub-hand-glow';
+import {HAND_LEVER_LENGTH,handStagePose} from '../lib/hub-hand-motion';
+
+export interface HandAnchor{x:number;y:number;top:number}
 
 export interface HandController{
  duration:number;
+ readonly anchor:HandAnchor;
  seek:(seconds:number,presentation?:HandPresentation)=>void;
- resize:(handBottom:number)=>void;
+ resize:()=>void;
  setVisible:(visible:boolean)=>void;
  dispose:()=>void;
 }
 
-/** The GLB owns all geometry, materials, skinning and movement. This owns only its stage. */
-export async function createHubHand(host:HTMLElement,url:string,signal:AbortSignal,onContextLost:()=>void):Promise<HandController>{
+/** The GLB owns geometry, materials and finger articulation; parent groups stage the rigid arm. */
+export async function createHubHand(host:HTMLElement,url:string,signal:AbortSignal,onContextLost:()=>void,onAnchorChange:()=>void=()=>{}):Promise<HandController>{
  const renderer=new WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
  renderer.setClearColor(0x000000,0);
  renderer.outputColorSpace=SRGBColorSpace;
  renderer.toneMapping=ACESFilmicToneMapping;
  renderer.toneMappingExposure=.85;
  const canvas=renderer.domElement;canvas.setAttribute('aria-hidden','true');host.append(canvas);
- const scene=new Scene(),camera=new OrthographicCamera(-1,1,1,-1,.001,5);
+ const scene=new Scene(),camera=new PerspectiveCamera(34,1,.02,8);
+ const pivot=new Group(),swing=new Group(),wristOffset=new Group();
+ scene.add(pivot);pivot.add(swing);swing.add(wristOffset);wristOffset.position.y=-HAND_LEVER_LENGTH;
  const background=new Scene(),compositionCamera=new OrthographicCamera(-1,1,1,-1,.1,5);compositionCamera.position.z=1;
  const meshes:Mesh[]=[],materials=new Set<Material>();
  let mixer:AnimationMixer|undefined,root:Group|undefined,disposed=false;
- let visible=true,lastTime=-1,desiredTime=0,handBottom=host.clientHeight*.62,minY=-.195;
+ let visible=true,lastTime=-1,lastArrival=-1,desiredTime=0,span=.56;
  let atmosphere:ReturnType<typeof createHandAtmosphere>|undefined,frame=0,lastFrame=0,clock=0;
  let handTarget:WebGLRenderTarget|undefined,glow:ReturnType<typeof createHandGlow>|undefined,lastPaint=0;
- const focus=new Vector3(0,-.5,0),tip=new Vector3(),parentJoint=new Vector3(),distal=new Vector3();
+ const focus=new Vector3(0,-.5,0),crown=new Vector3(0,.05,0),tip=new Vector3(),parentJoint=new Vector3(),distal=new Vector3(),wristLocal=new Vector3();
+ const anchor:HandAnchor={x:.5,y:.72,top:.52};
  let pointerX=0,pointerY=0,targetX=0,targetY=0;
  let presentation:HandPresentation={presence:0,opening:0,progress:0};
  const pointerMove=(event:PointerEvent)=>{
@@ -67,9 +74,11 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   root.rotation.y=Math.PI;
   if(signal.aborted||disposed){root.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});throw new DOMException('Aborted','AbortError')}
   const clip=gltf.animations.find(a=>a.name==='INOE_Hand_10s');
-  const middleTip=root.getObjectByName('middle_3');
+  const wrist=root.getObjectByName('wrist'),palm=root.getObjectByName('middle_palm');
+  const fingertips=['index_3','middle_3','ring_3','pinky_3','thumb_3'].map(name=>root!.getObjectByName(name)).filter(Boolean);
   if(!clip||clip.duration<=0)throw new Error('The approved hand animation is missing');
-  scene.add(root);
+  if(!wrist||!palm)throw new Error('The approved hand wrist and palm anchors are missing');
+  wristOffset.add(root);
   root.traverse(object=>{
    if(!(object instanceof Mesh))return;
    // Animated skin/morph bounds can extend beyond their bind-pose bounds.
@@ -80,8 +89,31 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   const action=mixer.clipAction(clip);action.setLoop(LoopOnce,1);action.clampWhenFinished=true;
   action.play();action.paused=true;
   // Seeking a paused action leaves it enabled even at the end of the clip.
-  function applyTime(seconds:number){action.time=Math.max(0,Math.min(clip!.duration,seconds));mixer!.update(0);root!.updateMatrixWorld(true)}
-  applyTime(clip.duration);minY=new Box3().setFromObject(root,true).min.y;
+  function applyTime(seconds:number){
+   action.time=Math.max(0,Math.min(clip!.duration,seconds));mixer!.update(0);
+   // Cancel only the baked straight descent. All bones, skin weights and morphs stay intact.
+   root!.position.set(0,0,0);root!.updateMatrixWorld(true);
+   wrist!.getWorldPosition(wristLocal);root!.worldToLocal(wristLocal);wristLocal.applyQuaternion(root!.quaternion);
+   root!.position.copy(wristLocal).negate();
+   const pose=handStagePose(presentation.arrival??0,span);
+   pivot.position.set(pose.pivotX,pose.pivotY,pose.pivotZ);
+   swing.rotation.set(pose.rotationX,pose.rotationY,pose.rotationZ);
+   pivot.updateMatrixWorld(true);
+  }
+  function updateAnchor(){
+   palm!.getWorldPosition(focus);focus.project(camera);
+   let top=focus.y;
+   for(const finger of fingertips){
+    if(!finger?.parent)continue;
+    finger.getWorldPosition(tip);finger.parent.getWorldPosition(parentJoint);
+    distal.subVectors(tip,parentJoint);tip.addScaledVector(distal,.95).project(camera);top=Math.max(top,tip.y);
+   }
+   crown.set(focus.x,Math.min(.88,top+.12),0);
+   const x=(focus.x+1)/2,y=(1-focus.y)/2,highest=(1-top)/2;
+   if(Math.abs(anchor.x-x)+Math.abs(anchor.y-y)+Math.abs(anchor.top-highest)>.0001){
+    anchor.x=x;anchor.y=y;anchor.top=highest;onAnchorChange();
+   }
+  }
   RectAreaLightUniformsLib.init();
   scene.add(new HemisphereLight(0xdde7ff,0x111219,.16));
   const softbox=(color:number,intensity:number,width:number,height:number,x:number,y:number,z:number)=>{
@@ -100,45 +132,43 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   function render(now:number){
    frame=0;
    if(disposed||!visible||document.hidden)return;
-   if(lastTime===desiredTime&&lastPaint&&now-lastPaint<1000/30){if(presentation.presence>.001)schedule();return}
+   const poseChanged=lastTime!==desiredTime||lastArrival!==(presentation.arrival??0);
+   if(!poseChanged&&lastPaint&&now-lastPaint<1000/30){if(presentation.presence>.001)schedule();return}
    const delta=lastFrame?Math.min(.05,(now-lastFrame)/1000):0;lastFrame=now;clock+=delta;
    const settle=1-Math.exp(-delta*3);
    pointerX+=(targetX-pointerX)*settle;pointerY+=(targetY-pointerY)*settle;
    key.intensity=3.05+presentation.opening*.75;
    rim.intensity=1.8+presentation.opening*1.1;
    renderer.toneMappingExposure=.72+presentation.opening*.13;
-   if(lastTime!==desiredTime){
+   if(poseChanged){
     applyTime(desiredTime);renderer.setRenderTarget(handTarget!);renderer.render(scene,camera);renderer.setRenderTarget(null);
     glow!.refresh();
-    if(middleTip?.parent){
-     middleTip.getWorldPosition(tip);middleTip.parent.getWorldPosition(parentJoint);
-     distal.subVectors(tip,parentJoint);tip.addScaledVector(distal,.95);tip.y-=.019;tip.project(camera);
-     focus.set(Math.max(-.25,Math.min(.25,tip.x)),Math.max(-.78,Math.min(.7,tip.y)),0);
-    }
+    updateAnchor();
    }
    glow!.setStrength((.30+presentation.opening*.82)*presentation.presence);
-   atmosphere!.update(presentation,clock,pointerX,pointerY,focus);
-   renderer.render(background,compositionCamera);lastTime=desiredTime;lastPaint=now;
+   atmosphere!.update(presentation,clock,pointerX,pointerY,focus,crown);
+   renderer.render(background,compositionCamera);lastTime=desiredTime;lastArrival=presentation.arrival??0;lastPaint=now;
    if(presentation.presence>.001)schedule();
   }
-  function resize(bottom:number){
-   if(disposed)return;handBottom=bottom;
+  function resize(){
+   if(disposed)return;
    const width=Math.max(1,host.clientWidth),height=Math.max(1,host.clientHeight);
    renderer.setPixelRatio(Math.min(devicePixelRatio||1,matchMedia('(max-width:760px)').matches?1.25:1.5));
    renderer.setSize(width,height,false);
    handTarget!.setSize(Math.round(width*renderer.getPixelRatio()),Math.round(height*renderer.getPixelRatio()));
    glow!.resize(width,height,renderer.getPixelRatio());
    atmosphere!.resize(width,height,renderer.getPixelRatio());
-   const span=.40,top=minY+handBottom/height*span,centre=top-span/2;
-   camera.left=-span*width/height/2;camera.right=-camera.left;camera.top=span/2;camera.bottom=-span/2;
-   camera.position.set(-.0072,centre,.8);camera.lookAt(-.0072,centre,0);camera.updateProjectionMatrix();lastTime=-1;schedule();
+   camera.aspect=width/height;span=Math.max(.56,.29/camera.aspect);
+   camera.position.set(0,-.035,span/(2*Math.tan(camera.fov*Math.PI/360)));camera.lookAt(0,-.035,0);
+   camera.updateProjectionMatrix();lastTime=-1;schedule();
   }
-  desiredTime=0;resize(handBottom);applyTime(0);
+  desiredTime=0;resize();applyTime(0);
   await renderer.compileAsync(scene,camera);
   if(disposed||signal.aborted)throw new DOMException('Aborted','AbortError');
   host.dataset.handDuration=String(clip.duration);host.dataset.handTracks=String(clip.tracks.length);host.dataset.handReady='true';
   return {
    duration:clip.duration,
+   get anchor(){return anchor},
    seek(seconds,state){desiredTime=Math.max(0,Math.min(clip.duration,seconds));if(state)presentation=state;host.dataset.handTime=desiredTime.toFixed(4);schedule()},
    resize,
    setVisible(value){if(visible===value)return;visible=value;lastFrame=0;if(value)schedule();else{cancelAnimationFrame(frame);frame=0}},
