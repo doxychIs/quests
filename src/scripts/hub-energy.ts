@@ -20,6 +20,7 @@ export function initHubEnergy(){
  let frame=0,lastPaint=0,measureNeeded=true,routeDirty=true,disposed=false;
  let heroTop=0,heroHeight=0,stageHeight=0,headerHeight=0,anchor={x:.5,y:.62},heroProgress=0;
  let previousSource={x:-1,y:-1};
+ let departingWorld='',departureAt=0;
  const calm=()=>media.matches||document.documentElement.classList.contains('calm');
  const setPoint=(node:SVGElement,x:number,y:number)=>node.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)})`);
  const box=(node:Element):EnergyBox=>{const r=node.getBoundingClientRect();return {left:r.left,top:r.top+scrollY,width:r.width,height:r.height}};
@@ -58,6 +59,8 @@ export function initHubEnergy(){
   if(strength>0)loadRibbon();
   if(ribbon){
    if(ribbonRoute!==route){ribbon.resize(layout.width,innerHeight);ribbon.setRoute(route,layout.width<=760);ribbonRoute=route}
+   const active=departingWorld||document.querySelector<HTMLElement>('[data-world-selector]')?.dataset.activeWorld||'';
+   ribbon.setInteraction(cards.findIndex(card=>card.dataset.worldZone===active),departingWorld?Math.min(1,(now-departureAt)/650):0);
    ribbon.render(route,frontier,branchAmounts,scrollY,clock,strength);
   }
   setPoint(source,origin.x,origin.y);source.style.opacity=String(.10+Math.sin(clock*.8)*.025);
@@ -88,6 +91,7 @@ export function initHubEnergy(){
   if(!detail||!Number.isFinite(detail.x+detail.y+detail.progress))return;
   anchor={x:detail.x,y:detail.y};heroProgress=detail.progress;schedule();
  };
+ const onDeparture=(event:Event)=>{departingWorld=(event as CustomEvent<{world:string}>).detail.world;departureAt=performance.now();schedule()};
  function motion(){
   cancelAnimationFrame(frame);frame=0;root!.dataset.energyState=calm()?'reduced':'loading';
   if(calm())cards.forEach(card=>card.style.setProperty('--energy-charge','0'));else measure();
@@ -96,6 +100,7 @@ export function initHubEnergy(){
  const resize=new ResizeObserver(measure);[hero,stage,...cards].forEach(node=>resize.observe(node!));
  const settings=new MutationObserver(motion);settings.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
  hero.addEventListener('inoe:hero-energy',onAnchor);
+ document.addEventListener('inoe:world-enter',onDeparture);
  addEventListener('scroll',schedule,{passive:true});addEventListener('resize',measure);addEventListener('pageshow',measure);
  document.addEventListener('visibilitychange',visibility);media.addEventListener('change',motion);
  const destroy=(event:PageTransitionEvent)=>{
@@ -104,6 +109,7 @@ export function initHubEnergy(){
   ribbon?.dispose();ribbon=undefined;
   removeEventListener('scroll',schedule);removeEventListener('resize',measure);removeEventListener('pageshow',measure);removeEventListener('pagehide',destroy);
   document.removeEventListener('visibilitychange',visibility);media.removeEventListener('change',motion);
+  document.removeEventListener('inoe:world-enter',onDeparture);
  };
  addEventListener('pagehide',destroy);document.fonts?.ready.then(()=>{if(!disposed)measure()});motion();
 }

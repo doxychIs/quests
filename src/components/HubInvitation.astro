@@ -1,5 +1,6 @@
 ---
 import {worlds,worldKeys} from '../lib/data';
+import BrandWordmark from './BrandWordmark.astro';
 ---
 <div class="hub-invitation-layout">
  <form id="gift-form" class="hub-invitation-form">
@@ -17,6 +18,7 @@ import {worlds,worldKeys} from '../lib/data';
    <h3 data-gift-title>Для <span data-recipient>вас</span>.</h3>
    <p data-gift-world>Три мира на выбор</p>
    <p class="hub-invite-message" data-gift-message>Пусть этот день станет приключением.</p>
+   <span class="hub-invite-seal" data-gift-seal aria-hidden="true"><BrandWordmark id="invitation-seal"/></span>
    <small>Демонстрационная открытка.<br/>Не является оплаченным сертификатом.</small>
   </div>
  </div>

@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AgeGate from '../components/AgeGate.astro';
 import GlyphDefinitions from '../components/GlyphDefinitions.astro';
+import WorldTransition from '../components/WorldTransition.astro';
 import {href,type World} from '../lib/data';
 import '../styles/global.css';
 import '../styles/refinement.css';
@@ -19,6 +20,7 @@ import '../styles/portal-shared.css';
 import '../styles/entry-controls.css';
 import '../styles/hub-theme.css';
 import '../styles/brand.css';
+import '../styles/world-transitions.css';
 const {title='ИНОЕ — три мира квестов в Перми',description='Выберите квест: хоррор, детектив или семейное приключение. Интерактивный демонстрационный проект.',world,page='home',footer=true,cinema=false,immersive=false}=Astro.props as {title?:string;description?:string;world?:World;page?:string;footer?:boolean;cinema?:boolean;immersive?:boolean};
 ---
 <!doctype html>
@@ -45,7 +47,7 @@ const {title='ИНОЕ — три мира квестов в Перми',descrip
   <p id="sound-description">{world==='arhiv'?'Шелест страниц, дерево и тихое фортепиано.':world==='ostrov'?'Тихое море, укулеле, разворот карты и звуки находок.':world==='iznanka'?'Тревожная мелодия шкатулки, гул и щелчки телевизора.':'Короткие эффекты действий и тихий фон.'} Звук включается кнопкой «Звук» и затихает, когда вкладка скрыта.</p>
   <button id="reset-age" class="text-link">Сбросить согласие 18+</button>
  </dialog>
- <div class="route-curtain" aria-hidden="true"><span>ИНОЕ</span></div>
+ <WorldTransition/>
  <noscript><div class="no-script">Для интерактивных сцен и мини-игр нужен JavaScript. <a href={href()}>Вернуться к выбору мира</a>.</div></noscript>
  <script>import '../scripts/app';</script>
 </body>

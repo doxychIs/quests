@@ -1,0 +1,19 @@
+.world-transfer{position:fixed;inset:0;z-index:900;pointer-events:none;overflow:hidden;isolation:isolate}
+.world-transfer[hidden]{display:none}
+.world-transfer-shade{position:absolute;inset:0;background:#030303;opacity:0}
+.world-transfer[data-mode^=arrival] .world-transfer-shade{opacity:1}
+.world-transfer-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.world-transfer[data-mode=arrival-world] .world-transfer-image{opacity:1}
+.world-transfer canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.world-transfer-logo{position:absolute;left:50%;top:50%;width:min(62vw,600px);transform:translate(-50%,-50%);opacity:0}
+.world-transfer[data-mode=arrival-home] .world-transfer-logo{opacity:0}
+.world-transfer-card{position:fixed!important;z-index:1;max-width:none;margin:0;pointer-events:none;contain:paint}
+.world-transfer-card .hub-world-preview{transform:none!important;opacity:1!important}
+.world-transfer-card .hub-world-preview-title{transition:opacity .2s}
+.world-transfer-card.is-expanding .hub-world-preview-title{opacity:0}
+.world-transfer-card.is-expanding .hub-preview-library{inset:0;width:100%;height:100%;border-width:0;transform:none;transition:all .65s cubic-bezier(.22,1,.36,1)}
+.world-transfer-card.is-expanding .hub-photo-life{inset:0;width:100%;height:100%;transform:none;clip-path:none;transition:all .65s cubic-bezier(.22,1,.36,1)}
+.world-transfer-card.is-expanding .hub-preview-scene{transform:scale(1);transition:transform .65s}
+html.route-departing{cursor:progress}.route-departing .hub-world{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.world-transfer{display:none!important}}
+.calm .world-transfer{display:none!important}

@@ -108,7 +108,7 @@ export function initHubHero(){
    letter.style.setProperty('--letter-filter',amount===1?'none':`blur(${((1-amount)*3.5).toFixed(3)}px)`);
    letter.style.transform=`translate3d(0,${((1-amount)*.24).toFixed(4)}em,0) rotateX(${((1-amount)*24).toFixed(3)}deg) rotateZ(${((1-amount)*(index-1.5)*.7).toFixed(3)}deg)`;
   });
-  logo!.style.opacity=simplified||controller&&revealed>0?'1':'0';
+  logo!.style.opacity=simplified||hero!.dataset.returned==='true'||controller&&revealed>0?'1':'0';
   logo!.tabIndex=simplified||revealed>.1?0:-1;
   hero!.dataset.introPhase=reduced?'reduced':failed?'fallback':controller?poseState.phase:'loading';
   hero!.dataset.scrollProgress=progress.toFixed(5);hero!.dataset.dockProgress=docking.toFixed(5);

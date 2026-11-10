@@ -1,0 +1,22 @@
+---
+import {href} from '../lib/data';
+import BrandWordmark from './BrandWordmark.astro';
+---
+<div class="world-transfer" data-world-transfer data-home={href()} data-preview-iznanka={href('assets/hub-preview-iznanka.png')} data-preview-arhiv={href('assets/archive-hero-poster.webp')} data-preview-ostrov={href('assets/island-hero-poster.webp')} hidden aria-hidden="true" inert>
+ <div class="world-transfer-shade"></div>
+ <img class="world-transfer-image" data-transfer-image alt=""/>
+ <canvas data-transfer-particles></canvas>
+ <div class="world-transfer-logo" data-transfer-logo><BrandWordmark id="world-transfer-wordmark"/></div>
+</div>
+<script is:inline>
+ (()=>{try{
+  const record=JSON.parse(sessionStorage.getItem('inoe-world-transfer')||'null');
+  sessionStorage.removeItem('inoe-world-transfer');
+  if(!record||Date.now()-record.at>15000||!['iznanka','arhiv','ostrov'].includes(record.world)||matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('calm'))return;
+  const root=document.querySelector('[data-world-transfer]'),home=document.body.dataset.page==='home'&&document.body.dataset.world==='hub';
+  if(!root||!(record.direction==='home'&&home||record.direction==='world'&&document.body.dataset.world===record.world))return;
+  root.hidden=false;root.dataset.arrival=record.direction;root.dataset.world=record.world;
+  if(record.direction==='world'){const picture=root.querySelector('[data-transfer-image]');picture.src=root.dataset['preview'+record.world[0].toUpperCase()+record.world.slice(1)];root.dataset.mode='arrival-world'}else root.dataset.mode='arrival-home';
+  setTimeout(()=>{if(root.dataset.arrival){root.hidden=true;delete root.dataset.arrival}},6500);
+ }catch{}})();
+</script>

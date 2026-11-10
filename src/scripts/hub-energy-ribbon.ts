@@ -13,7 +13,7 @@ export function createEnergyRibbon(canvas:HTMLCanvasElement,onLost:()=>void){
  const meshes=colors.map((color,i)=>{
   const material=new ShaderMaterial({
    transparent:true,depthTest:false,depthWrite:false,side:DoubleSide,blending:AdditiveBlending,toneMapped:false,
-   uniforms:{...shared,uColor:{value:new Color(color)},uFrontier:{value:0},uLength:{value:1},uBranch:{value:i===0?0:1}},
+   uniforms:{...shared,uColor:{value:new Color(color)},uFrontier:{value:0},uLength:{value:1},uBranch:{value:i===0?0:1},uFocus:{value:0},uDeparture:{value:0}},
    vertexShader:`
     uniform vec2 uViewport;uniform float uScroll;
     attribute float aDistance,aSide;varying float vDistance,vSide;
@@ -22,7 +22,7 @@ export function createEnergyRibbon(canvas:HTMLCanvasElement,onLost:()=>void){
      gl_Position=vec4(position.x/uViewport.x*2.0-1.0,1.0-(position.y-uScroll)/uViewport.y*2.0,0.0,1.0);
     }`,
    fragmentShader:`
-    uniform float uTime,uStrength,uFrontier,uLength,uBranch;uniform vec3 uColor;
+    uniform float uTime,uStrength,uFrontier,uLength,uBranch,uFocus,uDeparture;uniform vec3 uColor;
     varying float vDistance,vSide;
     ${SILK_FABRIC_GLSL}
     void main(){
@@ -36,7 +36,8 @@ export function createEnergyRibbon(canvas:HTMLCanvasElement,onLost:()=>void){
      float edge=1.0-smoothstep(.72,1.0,abs(vSide));
      float reveal=1.0-smoothstep(uFrontier-65.0,uFrontier+8.0,vDistance);
      float ends=smoothstep(0.0,22.0,vDistance)*(1.0-smoothstep(uLength-30.0,uLength,vDistance));
-     float alpha=silk*edge*reveal*ends*uStrength*(.96+.04*sin(uTime*.65));
+     float absorption=mix(1.0,smoothstep(uDeparture*uLength-55.0,uDeparture*uLength+12.0,vDistance),step(.001,uDeparture));
+     float alpha=silk*edge*reveal*ends*uStrength*(.96+.04*sin(uTime*.65))*(1.0+uFocus*1.25)*absorption;
      gl_FragColor=vec4(uColor,alpha*mix(.90,1.05,uBranch));
     }`,
   });
@@ -90,6 +91,7 @@ export function createEnergyRibbon(canvas:HTMLCanvasElement,onLost:()=>void){
    route.branches.forEach((branch,i)=>meshes[i+1].material.uniforms.uFrontier.value=branch.path.length*branchAmounts[i]);
    renderer.render(scene,camera);
   },
+  setInteraction(index:number,departure:number){meshes.forEach((mesh,i)=>{const selected=index>=0&&i===index+1;mesh.material.uniforms.uFocus.value+=(Number(selected)-mesh.material.uniforms.uFocus.value)*.18;mesh.material.uniforms.uDeparture.value=selected?departure:0})},
   dispose(){if(disposed)return;disposed=true;canvas.removeEventListener('webglcontextlost',lost);meshes.forEach(mesh=>{mesh.geometry.dispose();mesh.material.dispose()});renderer.dispose()},
  };
 }

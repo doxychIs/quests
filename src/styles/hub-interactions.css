@@ -1,0 +1,44 @@
+/* Small, local responses share the silver material of the intro. */
+.hub-header .desktop-nav{position:relative}
+.hub-nav-indicator{position:absolute;left:0;bottom:-13px;height:1px;background:linear-gradient(90deg,#bbc4d655,#eef3ff,#bbc4d655);width:var(--nav-width,0px);transform:translateX(var(--nav-x,0px));transition:transform .45s cubic-bezier(.22,1,.36,1),width .45s,opacity .25s;pointer-events:none;opacity:var(--nav-visible,0)}
+.hub-header a[aria-current=location]{color:#fff}
+.hub-facts.hub-facts-ready>div{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .7s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--fact-index,0)*110ms)}
+.hub-facts.hub-facts-visible>div{opacity:1;transform:none}
+.hub-world{--world-light:0;--world-x:50%;--world-y:35%}
+.hub-world:before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;border:1px solid rgb(var(--energy-rgb) / .65);box-shadow:inset 0 0 28px rgb(var(--energy-rgb) / .12);opacity:var(--world-light);mask-image:radial-gradient(ellipse at var(--world-x) var(--world-y),#000,transparent 70%);transition:opacity .35s}
+.hub-world.is-current,.hub-world:focus-visible{--world-light:1}
+.hub-world.is-entering{--world-light:1;box-shadow:0 0 48px rgb(var(--energy-rgb) / .28)}
+.hub-world.is-entering .hub-world-cover{transform:translateX(-100%);opacity:0}.hub-world.is-entering .hub-world-preview{transform:none}
+.hub-photo-life{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .7s;overflow:hidden}
+.hub-world.is-current .hub-photo-life,.hub-world:focus-visible .hub-photo-life{opacity:1}
+.hub-photo-life:before,.hub-photo-life:after{content:'';position:absolute;inset:-30%;animation-play-state:paused}
+.hub-world.is-current .hub-photo-life:before,.hub-world.is-current .hub-photo-life:after,.hub-world:focus-visible .hub-photo-life:before,.hub-world:focus-visible .hub-photo-life:after{animation-play-state:running}
+.hub-world-iznanka .hub-photo-life:before{background:radial-gradient(ellipse at 28% 65%,#ccdbe023,transparent 38%),radial-gradient(ellipse at 74% 50%,#aab7c51c,transparent 35%);filter:blur(12px);animation:hub-photo-fog 11s ease-in-out infinite alternate}
+.hub-world-arhiv .hub-photo-life{inset:11% 5% auto auto;width:82%;height:56%;transform:rotate(5deg);clip-path:inset(10px)}
+.hub-world-arhiv .hub-photo-life:before{background:linear-gradient(110deg,transparent 32%,#fff4cb05 38%,#fff5d44d 48%,#fff4cb08 58%,transparent 65%);mix-blend-mode:screen;animation:hub-photo-light 10s ease-in-out infinite alternate}
+.hub-world-arhiv .hub-photo-life:after{background-image:radial-gradient(circle,#fff3d6b0 0 1px,transparent 1.8px);background-size:69px 83px;opacity:.35;animation:hub-photo-dust 16s linear infinite}
+.hub-world-ostrov .hub-photo-life:before{background:repeating-radial-gradient(ellipse at 50% 130%,transparent 0 28px,#d7ffff19 31px,transparent 36px 63px);mask-image:linear-gradient(transparent 35%,#000);animation:hub-photo-water 9s ease-in-out infinite alternate}
+.hub-world-preview-title{z-index:2}
+.hub-world.photo-offscreen .hub-photo-life:before,.hub-world.photo-offscreen .hub-photo-life:after{animation-play-state:paused!important}
+@keyframes hub-photo-fog{from{transform:translate(-8%,4%) scale(1)}to{transform:translate(10%,-5%) scale(1.16)}}
+@keyframes hub-photo-light{from{transform:translateX(-25%);opacity:.3}to{transform:translateX(24%);opacity:.8}}
+@keyframes hub-photo-dust{from{transform:translateY(0)}to{transform:translate(18px,-83px)}}
+@keyframes hub-photo-water{from{transform:translateY(8px) scale(1)}to{transform:translateY(-8px) scale(1.06)}}
+.hub-invite-preview{perspective:1100px}
+.hub-invite-card{transform:rotateX(var(--invite-rx,0deg)) rotateY(var(--invite-ry,0deg)) translateY(var(--invite-lift,0px));transform-style:preserve-3d;transition:transform .35s ease,box-shadow .45s,background-color .65s,color .65s;box-shadow:var(--invite-shadow-x,0px) var(--invite-shadow-y,10px) 35px #0005}
+.hub-invite-card:after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at var(--invite-light-x,50%) var(--invite-light-y,30%),#ffffff2b,transparent 62%);opacity:var(--invite-light,0);transition:opacity .35s}
+.hub-invite-card [data-recipient]{transition:text-shadow .4s,color .4s}
+.hub-invite-card.is-personal [data-recipient]{text-shadow:0 1px 0 #ffffff55,0 -1px 1px color-mix(in srgb,var(--invite-ink),transparent 45%)}
+.hub-invite-seal{position:absolute;right:28px;bottom:29px;width:86px;height:86px;border:1px solid #929ba8;border-radius:50%;display:grid;place-items:center;transform:scale(1.7) rotate(-18deg);opacity:0;pointer-events:none;color:#aab3c1;background:radial-gradient(circle,#c5cbd31a,transparent 70%);box-shadow:inset 0 0 0 5px #c2c9d31c}
+.hub-invite-seal .inoe-wordmark{width:64px}.hub-invite-seal .inoe-wordmark{--brand-face-light:#e1e6ef;--brand-face-mid:#9ba6b7;--brand-face-dark:#6f798a;--brand-face-shadow:#414b5c}
+.hub-invite-card.is-stamped{--invite-lift:-7px;box-shadow:0 22px 48px #0008}
+.hub-invite-card.is-stamped .hub-invite-seal{opacity:.9;transform:scale(1) rotate(-12deg);transition:transform .55s cubic-bezier(.16,1.3,.35,1),opacity .12s}
+.hub-invite-card.is-stamped>small{max-width:calc(100% - 92px)}
+.hub-questions details{overflow:hidden;transition:height .32s cubic-bezier(.22,1,.36,1)}
+.hub-questions summary{position:relative;padding-right:30px}
+.hub-questions summary:after{content:'+';position:absolute;right:0;top:7px;font-size:22px;font-weight:400;transition:transform .3s;opacity:.65}.hub-questions details[open] summary:after{transform:rotate(45deg)}
+.hub-contact-list a{position:relative;display:inline-block;text-decoration:none}
+.hub-contact-list a:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,#9faab600,#ecf2ff,#9faab600);transform:scaleX(0);transform-origin:left;transition:transform .35s}.hub-contact-list a:is(:hover,:focus-visible):after{transform:scaleX(1)}
+@media(hover:none){.hub-photo-life{opacity:.8}.hub-photo-life:before,.hub-photo-life:after{animation-play-state:running!important}}
+@media(prefers-reduced-motion:reduce){.hub-photo-life{display:none}.hub-facts.hub-facts-ready>div{opacity:1;transform:none;transition:none}.hub-invite-card{transform:none;transition:none}.hub-invite-seal,.hub-nav-indicator,.hub-questions details{transition:none!important}}
+.calm .hub-photo-life{display:none}.calm .hub-facts.hub-facts-ready>div{opacity:1;transform:none;transition:none}.calm .hub-invite-card{transform:none;transition:none}

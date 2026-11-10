@@ -8,6 +8,7 @@ import {config} from '../lib/config';
 import {worlds,href,worldKeys} from '../lib/data';
 import '../styles/hub.css';
 import '../styles/hub-energy.css';
+import '../styles/hub-interactions.css';
 const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остров'};
 ---
 <Base>
@@ -16,7 +17,8 @@ const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остр
  <script is:inline>
   document.documentElement.classList.add('hub-hand-enhanced');
   const loadingScreen=document.querySelector('[data-hub-loader]');
-  if(loadingScreen&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('calm')){
+  let returningToHub=false;try{const entry=JSON.parse(sessionStorage.getItem('inoe-world-transfer')||'null');returningToHub=entry?.direction==='home'&&Date.now()-entry.at<15000}catch{}
+  if(loadingScreen&&!returningToHub&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('calm')){
    loadingScreen.hidden=false;document.documentElement.classList.add('hub-loading');
    const previousScrollRestoration=history.scrollRestoration;
    history.scrollRestoration='manual';scrollTo({top:0,left:0,behavior:'instant'});
@@ -76,5 +78,5 @@ const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остр
    {config.demo&&<p class="hub-contact-note">Демонстрационные контакты.</p>}
   </div>
  </section>
- <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';import {initHubEnergy} from '../scripts/hub-energy';initHubEnergy();initWorldSelector();initHubHero();</script>
+ <script>import {initWorldSelector} from '../scripts/world-selector';import {initHubHero} from '../scripts/hub-hero';import {initHubEnergy} from '../scripts/hub-energy';import {initHubInteractions} from '../scripts/hub-interactions';initHubEnergy();initWorldSelector();initHubHero();initHubInteractions();</script>
 </Base>
