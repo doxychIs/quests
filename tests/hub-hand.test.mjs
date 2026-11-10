@@ -9,6 +9,7 @@ import {HERO_PIN_END,HAND_ENTRY_END,HAND_HOLD_END,HAND_ASSET_ROLL,HAND_LEVER_LEN
 import {setupDOM} from './dom-harness.mjs';
 import {createHandAtmosphere} from '../src/scripts/hub-atmosphere.ts';
 import {createHandGlow} from '../src/scripts/hub-hand-glow.ts';
+import {HAND_ORIGIN_FADE_START,HAND_ORIGIN_FADE_END,handOriginOpacity} from '../src/lib/hand-origin.ts';
 
 test('Скролл сначала вводит руку, затем держит открытую позу и только после этого отправляет название в шапку',()=>{
  assert.equal(HERO_PIN_END,.97);
@@ -124,6 +125,17 @@ test('Настоящий утверждённый GLB декодируется: 
  assert.equal(clip.name,'INOE_Hand_10s');assert.equal(clip.duration,10);assert.equal(clip.tracks.length,69);
  const bones=[],skins=[];gltf.scene.traverse(o=>{if(o.isBone)bones.push(o);if(o.isSkinnedMesh)skins.push(o)});
  assert.equal(bones.length,21);assert.equal(skins.length,6);
+ const porcelain=skins.find(m=>m.name==='Hand_Porcelain'),vertices=porcelain.geometry.attributes.position;
+ let cut=0,palm=0;
+ for(let i=0;i<vertices.count;i++){
+  // Raw quantised bind positions differ from the model's animated metre coordinates.
+  const y=porcelain.getVertexPosition(i,new Vector3()).y,opacity=handOriginOpacity(y);
+  if(y>HAND_ORIGIN_FADE_END+.003){assert.equal(opacity,0);cut++}
+  if(y<=0){assert.equal(opacity,1);palm++}
+ }
+ assert.ok(cut>0&&palm>0,'реальный срез полностью растворяется, ладонь и пальцы остаются целыми');
+ const fades=Array.from({length:51},(_,i)=>handOriginOpacity(HAND_ORIGIN_FADE_START+i/50*(HAND_ORIGIN_FADE_END-HAND_ORIGIN_FADE_START)));
+ assert.equal(fades[0],1);assert.equal(fades.at(-1),0);assert.ok(fades.every((v,i)=>!i||v<fades[i-1]));
  const mixer=new AnimationMixer(gltf.scene),action=mixer.clipAction(clip);action.play();action.paused=true;
  const snapshot=time=>{action.time=time;mixer.update(0);return {bones:bones.map(b=>[...b.position,...b.quaternion]),nails:skins.map(m=>[...m.morphTargetInfluences])}};
  const times=[0,2.8,5,7,10],forward=times.map(snapshot);
@@ -156,6 +168,7 @@ test('Спокойный режим сразу показывает заголо
  const x=setupDOM('',{reduced:true,theme:'light'});try{
   assert.equal(x.d.documentElement.dataset.siteTheme,'dark');assert.equal(x.w.localStorage.getItem('inoe-theme'),'light');
   const hero=x.d.querySelector('[data-hub-hero]');assert.equal(hero.dataset.introPhase,'reduced');
+  assert.equal(x.d.querySelector('[data-hub-loader]').hidden,true);assert.equal(x.d.documentElement.classList.contains('hub-loading'),false);
   assert.equal(hero.querySelector('canvas'),null);assert.equal(hero.querySelector('[data-hub-logo]').style.opacity,'1');
   assert.equal(x.d.querySelectorAll('[data-world-zone]').length,3);
   assert.deepEqual(x.errors,[]);

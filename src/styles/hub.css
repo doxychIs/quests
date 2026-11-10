@@ -1,6 +1,18 @@
 /* One pinned scene: black → arrival/opening → title docking → page content. */
 .hub-worlds,.hub-about,.hub-invitations,.hub-questions,.hub-contacts{max-width:1600px;margin-inline:auto;padding-inline:var(--hub-pad)}
 html body[data-world=hub][data-page=home]{--paper:#030303;--ink:#e5e7eb;--muted:#a4a8b1;--line:#d6dce023;background:var(--paper);color:var(--ink)}
+html.hub-loading,html.hub-loading body{overflow:hidden;overscroll-behavior:none;overflow-anchor:none;scrollbar-gutter:stable}
+.hub-loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#030303;color:#b8bdc6;opacity:1;transition:opacity .3s ease;touch-action:none}
+.hub-loader[hidden]{display:none}.hub-loader[data-loader-state=ready]{opacity:0;pointer-events:none}
+.hub-loader-content{display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center}
+.hub-loader-brand{width:clamp(180px,34vw,290px);margin-bottom:36px}
+.hub-loader-content p{font-size:15px;letter-spacing:.07em;line-height:1.5}
+.hub-loader-line{display:block;width:180px;height:1px;background:#ffffff18;margin-top:22px;overflow:hidden}
+.hub-loader-line:after{content:'';display:block;width:55%;height:100%;background:linear-gradient(90deg,transparent,#c5cedb,transparent);animation:hub-loading-line 1.8s ease-in-out infinite}
+.hub-loader-content button{font:400 14px/1.5 var(--sans);color:#a4a8b1;padding:12px 8px;margin-top:36px;cursor:pointer;min-height:44px}
+.hub-loader-content button:hover{color:#fff}.hub-loader-content button:focus-visible{outline:1px solid #b8bdc6;outline-offset:4px}
+@keyframes hub-loading-line{from{transform:translateX(-110%)}to{transform:translateX(290%)}}
+@media(prefers-reduced-motion:reduce){.hub-loader{transition:none}.hub-loader-line:after{animation:none}}
 html body[data-world=hub] header.site-header.hub-header{position:sticky;top:0;z-index:50}
 html body[data-world=hub][data-page=home] .hub-header{max-width:none;background:#030303}
 .hub-header[data-hub-home=true] [data-logo-target]{visibility:hidden}

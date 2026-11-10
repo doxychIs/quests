@@ -1,6 +1,7 @@
 import {logoPose,logoProgress,type LogoRect} from '../lib/hub-logo';
 import {HERO_PIN_END,clamp01,handScrollState,introLetterProgress,smoothstep,smootherstep,smoothScrollProgress} from '../lib/hub-hand-motion';
 import type {HandController} from './hub-hand';
+import {createHubLoader} from './hub-loader';
 
 /** Native scrolling drives the entry, hold and exit of one pinned scene. */
 export function initHubHero(){
@@ -17,24 +18,30 @@ export function initHubHero(){
  let failed=false,frame=0,measureNeeded=true,loadTimer=0;
  let origin:LogoRect={left:0,top:0,width:1,height:1},pinTravel=1,travel=1,start=0;
  let displayedProgress=0,positioned=false,lastFrame=0;
+ const loaderRoot=document.querySelector<HTMLElement>('[data-hub-loader]')||undefined;
+ const loader=createHubLoader(loaderRoot,()=>{
+  fallback();abort.abort();
+  requestAnimationFrame(()=>document.getElementById('worlds')?.scrollIntoView({block:'start',behavior:'instant'}));
+ });
  const calm=()=>media.matches||document.documentElement.classList.contains('calm');
  const active=()=>!destroyed&&typeof document!=='undefined'&&!!document.documentElement;
  function schedule(){if(!frame&&active()&&!document.hidden)frame=requestAnimationFrame(update)}
  function measure(){measureNeeded=true;schedule()}
  function fallback(){
   clearTimeout(loadTimer);failed=true;controller?.dispose();controller=undefined;
-  hero!.dataset.handState='fallback';measure();
+  hero!.dataset.handState='fallback';loader.finish();measure();
  }
  async function load(){
   if(started||destroyed||calm())return;started=true;
-  loadTimer=window.setTimeout(()=>{fallback();abort.abort()},12000);
+  loadTimer=window.setTimeout(()=>{fallback();abort.abort()},45000);
   try{
    const {createHubHand}=await import('./hub-hand');
    if(!active()||abort.signal.aborted)return;
-   const hand=await createHubHand(host!,host!.dataset.handSrc!,abort.signal,fallback,schedule);
+   const [hand]=await Promise.all([createHubHand(host!,host!.dataset.handSrc!,abort.signal,fallback,schedule),document.fonts?.ready]);
    if(destroyed||abort.signal.aborted){hand.dispose();return}
    clearTimeout(loadTimer);controller=hand;
    hero!.dataset.handState=calm()?'reduced':'ready';measure();
+   requestAnimationFrame(()=>{if(active())loader.finish()});
   }catch(error){if(active()){fallback();if(!abort.signal.aborted)console.warn('ИНОЕ: 3D недоступно, навигация сохранена.',error)}}
  }
  function update(now=performance.now()){
@@ -118,6 +125,7 @@ export function initHubHero(){
  }
  function motionChange(){
   hero!.dataset.handState=calm()?'reduced':failed?'fallback':controller?'ready':'loading';
+  if(calm())loader.finish();
   if(!calm()&&!started)void load();measure();
  }
  function visibility(){controller?.setVisible(!document.hidden&&visible&&!calm());if(!document.hidden)measure();else{cancelAnimationFrame(frame);frame=0}}
@@ -130,10 +138,12 @@ export function initHubHero(){
  media.addEventListener('change',motionChange);document.addEventListener('visibilitychange',visibility);
  addEventListener('pagehide',event=>{
   cancelAnimationFrame(frame);frame=0;if(event.persisted)return;
-  destroyed=true;clearTimeout(loadTimer);abort.abort();controller?.dispose();resizeObserver.disconnect();intersection.disconnect();settingsObserver.disconnect();
+  destroyed=true;clearTimeout(loadTimer);abort.abort();controller?.dispose();loader.dispose();resizeObserver.disconnect();intersection.disconnect();settingsObserver.disconnect();
+  loaderRoot?.removeEventListener('inoe:loader-expired',expire);
   removeEventListener('scroll',schedule);removeEventListener('resize',measure);removeEventListener('pageshow',measure);
   document.removeEventListener('visibilitychange',visibility);media.removeEventListener('change',motionChange);
  });
+ const expire=()=>{fallback();abort.abort()};loaderRoot?.addEventListener('inoe:loader-expired',expire,{once:true});
  hero.dataset.handState=calm()?'reduced':'loading';hero.dataset.logoReady='true';
  const initialHash=location.hash;
  document.fonts?.ready.then(()=>{

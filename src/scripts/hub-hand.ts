@@ -9,6 +9,7 @@ import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniform
 import {createHandAtmosphere,type HandPresentation} from './hub-atmosphere';
 import {createHandGlow} from './hub-hand-glow';
 import {HAND_ASSET_ROLL,HAND_LEVER_LENGTH,handStagePose} from '../lib/hub-hand-motion';
+import {HAND_ORIGIN_Y,softenHandOrigin} from '../lib/hand-origin';
 
 export interface HandAnchor{x:number;y:number;top:number}
 
@@ -34,7 +35,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
  scene.add(pivot);pivot.add(swing);swing.add(wristOffset);wristOffset.position.y=HAND_LEVER_LENGTH;
  const background=new Scene(),compositionCamera=new OrthographicCamera(-1,1,1,-1,.1,5);compositionCamera.position.z=1;
  const meshes:Mesh[]=[],materials=new Set<Material>();
- let mixer:AnimationMixer|undefined,root:Group|undefined,disposed=false;
+ let mixer:AnimationMixer|undefined,root:Group|undefined,disposed=false,prepared=false;
  let visible=true,lastTime=-1,lastArrival=-1,desiredTime=0,span=.56;
  let atmosphere:ReturnType<typeof createHandAtmosphere>|undefined,frame=0,lastFrame=0,clock=0;
  let handTarget:WebGLRenderTarget|undefined,glow:ReturnType<typeof createHandGlow>|undefined,lastPaint=0;
@@ -74,16 +75,25 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   root.rotation.set(0,0,HAND_ASSET_ROLL);
   if(signal.aborted||disposed){root.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});throw new DOMException('Aborted','AbortError')}
   const clip=gltf.animations.find(a=>a.name==='INOE_Hand_10s');
-  const wrist=root.getObjectByName('wrist'),palm=root.getObjectByName('middle_palm');
+  const wrist=root.getObjectByName('wrist'),palm=root.getObjectByName('middle_palm'),forearm=root.getObjectByName('forearm');
   const fingertips=['index_3','middle_3','ring_3','pinky_3','thumb_3'].map(name=>root!.getObjectByName(name)).filter(Boolean);
   if(!clip||clip.duration<=0)throw new Error('The approved hand animation is missing');
-  if(!wrist||!palm)throw new Error('The approved hand wrist and palm anchors are missing');
+  if(!wrist||!palm||!forearm)throw new Error('The approved hand wrist and palm anchors are missing');
   wristOffset.add(root);
+  root.updateMatrixWorld(true);
+  const originLocal=forearm.worldToLocal(root.localToWorld(new Vector3(0,HAND_ORIGIN_Y,0)));
+  const originSideLocal=forearm.worldToLocal(root.localToWorld(new Vector3(.045,HAND_ORIGIN_Y,0)));
+  const originWristLocal=forearm.worldToLocal(root.localToWorld(new Vector3(0,0,0)));
+  const originDirection=forearm.worldToLocal(root.localToWorld(new Vector3(0,1,0))).sub(originWristLocal).normalize();
+  const originFades:ReturnType<typeof softenHandOrigin>[]=[];
+  const originPoint=new Vector3(),originSide=new Vector3(),originWrist=new Vector3();
   root.traverse(object=>{
    if(!(object instanceof Mesh))return;
    // Animated skin/morph bounds can extend beyond their bind-pose bounds.
    object.frustumCulled=false;meshes.push(object);
-   (Array.isArray(object.material)?object.material:[object.material]).forEach(m=>materials.add(m));
+   (Array.isArray(object.material)?object.material:[object.material]).forEach(m=>{
+    if(object.name==='Hand_Porcelain')originFades.push(softenHandOrigin(m,forearm,originWristLocal,originDirection));materials.add(m);
+   });
   });
   mixer=new AnimationMixer(root);
   const action=mixer.clipAction(clip);action.setLoop(LoopOnce,1);action.clampWhenFinished=true;
@@ -111,6 +121,10 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
    // A palm-up forearm recedes behind the wrist. Keep the word above its cuff too.
    pivot.getWorldPosition(tip);tip.y+=.032;tip.project(camera);top=Math.max(top,tip.y);
    crown.set(focus.x,Math.min(.88,top+.12),0);
+   forearm!.localToWorld(originPoint.copy(originLocal)).project(camera);
+   forearm!.localToWorld(originSide.copy(originSideLocal)).project(camera);
+   wrist!.getWorldPosition(originWrist).project(camera);
+   glow!.setOrigin(originPoint,originWrist,originSide);
    const x=(focus.x+1)/2,y=(1-focus.y)/2,highest=(1-top)/2;
    if(Math.abs(anchor.x-x)+Math.abs(anchor.y-y)+Math.abs(anchor.top-highest)>.0001){
     anchor.x=x;anchor.y=y;anchor.top=highest;onAnchorChange();
@@ -130,7 +144,7 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   handTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,samples:2});
   glow=createHandGlow(renderer,handTarget.texture,background);
   atmosphere=createHandAtmosphere(background,matchMedia('(max-width:760px)').matches);
-  function schedule(){if(!frame&&!disposed&&visible&&!document.hidden)frame=requestAnimationFrame(render)}
+  function schedule(){if(!frame&&!disposed&&prepared&&visible&&!document.hidden)frame=requestAnimationFrame(render)}
   function render(now:number){
    frame=0;
    if(disposed||!visible||document.hidden)return;
@@ -143,12 +157,14 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
    rim.intensity=1.8+presentation.opening*1.1;
    renderer.toneMappingExposure=.72+presentation.opening*.13;
    if(poseChanged){
-    applyTime(desiredTime);renderer.setRenderTarget(handTarget!);renderer.render(scene,camera);renderer.setRenderTarget(null);
+    applyTime(desiredTime);originFades.forEach(fade=>fade.update());
+    renderer.setRenderTarget(handTarget!);renderer.render(scene,camera);renderer.setRenderTarget(null);
     glow!.refresh();
     updateAnchor();
    }
    glow!.setStrength((.30+presentation.opening*.82)*presentation.presence);
    glow!.setOpacity(presentation.handOpacity??1);
+   glow!.setTime(clock);
    atmosphere!.update(presentation,clock,pointerX,pointerY,focus,crown);
    renderer.render(background,compositionCamera);lastTime=desiredTime;lastArrival=presentation.arrival??0;lastPaint=now;
    if(presentation.presence>.001)schedule();
@@ -167,7 +183,10 @@ export async function createHubHand(host:HTMLElement,url:string,signal:AbortSign
   }
   desiredTime=0;resize();applyTime(0);
   await renderer.compileAsync(scene,camera);
+  await renderer.compileAsync(background,compositionCamera);
   if(disposed||signal.aborted)throw new DOMException('Aborted','AbortError');
+  // Warm the silhouette, blur passes and composition while the loading screen still covers them.
+  prepared=true;render(performance.now());
   host.dataset.handDuration=String(clip.duration);host.dataset.handTracks=String(clip.tracks.length);host.dataset.handReady='true';
   return {
    duration:clip.duration,

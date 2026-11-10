@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import BrandWordmark from '../components/BrandWordmark.astro';
 import HubEnergy from '../components/HubEnergy.astro';
+import HubLoader from '../components/HubLoader.astro';
 import HubInvitation from '../components/HubInvitation.astro';
 import {config} from '../lib/config';
 import {worlds,href,worldKeys} from '../lib/data';
@@ -10,9 +11,25 @@ import '../styles/hub-energy.css';
 const previewNames={iznanka:'ИЗНАНКА',arhiv:'Архив',ostrov:'Остров'};
 ---
 <Base>
+ <HubLoader/>
  <HubEnergy/>
  <script is:inline>
   document.documentElement.classList.add('hub-hand-enhanced');
+  const loadingScreen=document.querySelector('[data-hub-loader]');
+  if(loadingScreen&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('calm')){
+   loadingScreen.hidden=false;document.documentElement.classList.add('hub-loading');
+   const previousScrollRestoration=history.scrollRestoration;
+   history.scrollRestoration='manual';scrollTo({top:0,left:0,behavior:'instant'});
+   addEventListener('pagehide',()=>{history.scrollRestoration=previousScrollRestoration},{once:true});
+   const loadingWatchdog=setTimeout(()=>{
+    history.scrollRestoration=previousScrollRestoration;
+    document.documentElement.classList.remove('hub-loading','hub-hand-enhanced');loadingScreen.hidden=true;
+    document.querySelector('main')?.removeAttribute('aria-busy');
+    document.querySelectorAll('[data-hub-loading-inert]').forEach(node=>{node.removeAttribute('inert');node.removeAttribute('data-hub-loading-inert')});
+    loadingScreen.dispatchEvent(new Event('inoe:loader-expired'));
+   },60000);
+   loadingScreen.addEventListener('inoe:loader-finished',()=>clearTimeout(loadingWatchdog),{once:true});
+  }
   setTimeout(()=>{const hero=document.querySelector('[data-hub-hero]');if(hero&&!hero.hasAttribute('data-logo-ready'))document.documentElement.classList.remove('hub-hand-enhanced')},15000);
  </script>
  <section class="hub-intro" data-hub-hero aria-labelledby="hub-title">

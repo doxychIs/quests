@@ -1,0 +1,11 @@
+---
+import BrandWordmark from './BrandWordmark.astro';
+---
+<div class="hub-loader" data-hub-loader hidden aria-label="Загрузка вступления">
+ <div class="hub-loader-content">
+  <div class="hub-loader-brand" aria-hidden="true"><BrandWordmark id="loading-wordmark"/></div>
+  <p role="status" aria-live="polite">Загрузка сцены…</p>
+  <span class="hub-loader-line" aria-hidden="true"></span>
+  <button type="button" data-hub-loader-skip>Пропустить вступление</button>
+ </div>
+</div>
